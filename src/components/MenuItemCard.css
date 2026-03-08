@@ -127,15 +127,15 @@
 }
 
 .set-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
   margin-top: 12px;
-  flex-wrap: wrap;
 }
 
 .set-btn {
-  min-width: 52px;
-  min-height: 52px;
+  aspect-ratio: 1;
+  width: 100%;
   border-radius: 50%;
   touch-action: manipulation;
   font-size: 1.15rem;

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { MenuItem } from '@/types'
 import './MenuItemCard.css'
 
@@ -9,6 +9,9 @@ interface MenuItemCardProps {
   onUpdate: (item: MenuItem) => void
   onRemove: (itemId: string) => void
   canRemove?: boolean
+  isEditing?: boolean
+  onEditStart?: () => void
+  onEditEnd?: () => void
 }
 
 export default function MenuItemCard({
@@ -18,12 +21,31 @@ export default function MenuItemCard({
   onUpdate,
   onRemove,
   canRemove = true,
+  isEditing = false,
+  onEditStart,
+  onEditEnd,
 }: MenuItemCardProps) {
-  const [editing, setEditing] = useState(false)
+  const editing = isEditing
   const [name, setName] = useState(item.name)
   const [weight, setWeight] = useState(String(item.weight))
   const [reps, setReps] = useState(String(item.reps))
   const [sets, setSets] = useState(String(item.sets))
+
+  useEffect(() => {
+    setName(item.name)
+    setWeight(String(item.weight))
+    setReps(String(item.reps))
+    setSets(String(item.sets))
+  }, [item.name, item.weight, item.reps, item.sets])
+
+  useEffect(() => {
+    if (!isEditing) {
+      setName(item.name)
+      setWeight(String(item.weight))
+      setReps(String(item.reps))
+      setSets(String(item.sets))
+    }
+  }, [isEditing])
 
   const handleSave = () => {
     onUpdate({
@@ -33,7 +55,19 @@ export default function MenuItemCard({
       reps: Math.max(1, parseInt(reps, 10) || 1),
       sets: Math.max(1, parseInt(sets, 10) || 1),
     })
-    setEditing(false)
+    onEditEnd?.()
+  }
+
+  const handleCancel = () => {
+    setName(item.name)
+    setWeight(String(item.weight))
+    setReps(String(item.reps))
+    setSets(String(item.sets))
+    onEditEnd?.()
+  }
+
+  const handleEditClick = () => {
+    onEditStart?.()
   }
 
   const setButtons = Array.from({ length: item.sets }, (_, i) => i + 1)
@@ -96,7 +130,7 @@ export default function MenuItemCard({
               <button type="button" className="btn-save" onClick={handleSave}>
                 Save
               </button>
-              <button type="button" className="btn-cancel" onClick={() => setEditing(false)}>
+              <button type="button" className="btn-cancel" onClick={handleCancel}>
                 Cancel
               </button>
             </div>
@@ -114,7 +148,7 @@ export default function MenuItemCard({
               <button
                 type="button"
                 className="btn-edit"
-                onClick={() => setEditing(true)}
+                onClick={handleEditClick}
                 aria-label="Edit"
               >
                 edit

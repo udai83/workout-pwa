@@ -24,6 +24,7 @@ export default function HomeScreen() {
   useEffect(() => {
     const r = storage.getDailyRecord(selectedDate)
     setRecord(r ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} })
+    setEditingItemId(null)
   }, [selectedDate])
 
   const overrides = record?.menuOverrides ?? []
@@ -37,6 +38,8 @@ export default function HomeScreen() {
     })
   const additions = overrides.filter((o) => !o.replacesId).map((o) => o.item)
   const menuItems = [...fromScheduled, ...additions]
+
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
 
   const completedCount = (itemId: string) =>
     record?.completedMenus.find((m) => m.menuItemId === itemId)?.completedCount ?? 0
@@ -195,6 +198,9 @@ export default function HomeScreen() {
                 onUpdate={handleUpdateMenuItem}
                 onRemove={handleRemoveMenuItem}
                 canRemove
+                isEditing={editingItemId === item.id}
+                onEditStart={() => setEditingItemId(item.id)}
+                onEditEnd={() => setEditingItemId(null)}
               />
             ))
           )}
