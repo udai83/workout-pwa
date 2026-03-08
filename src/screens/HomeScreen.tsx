@@ -166,7 +166,7 @@ export default function HomeScreen() {
   return (
     <div className="home-screen">
       <header className="home-header">
-        <h1>Today's workout</h1>
+        <h1>今日のメニュー</h1>
         <div className="date-selector-row">
           <div className="date-input-wrapper">
             <input
@@ -183,7 +183,7 @@ export default function HomeScreen() {
             className="today-btn"
             onClick={() => handleDateChange(today)}
           >
-            Today
+            今日
           </button>
         </div>
       </header>
@@ -194,7 +194,7 @@ export default function HomeScreen() {
         <div className="menu-list">
           {menuItems.length === 0 ? (
             <p className="empty-message">
-              No menus. Add from Menu setting or the button below.
+              メニューがありません。メニュー設定で登録するか、下のボタンから追加してください。
             </p>
           ) : (
             menuItems

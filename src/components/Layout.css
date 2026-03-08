@@ -23,14 +23,14 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(10, 10, 15, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border);
   padding: 10px 4px;
   padding-bottom: calc(10px + env(safe-area-inset-bottom, 0));
   z-index: 100;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 245, 255, 0.15);
 }
 
 .nav-item {

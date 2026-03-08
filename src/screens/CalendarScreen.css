@@ -132,8 +132,9 @@
 
 .day-cell.selected {
   background: var(--accent);
-  color: white;
+  color: var(--bg-primary);
   border: 2px solid var(--accent);
+  box-shadow: var(--neon-glow);
 }
 
 .day-cell.empty {
@@ -150,7 +151,7 @@
 }
 
 .day-cell.selected .day-dot {
-  background: white;
+  background: var(--bg-primary);
 }
 
 .day-detail-overlay {
@@ -172,7 +173,8 @@
   max-width: 100%;
   max-height: 70vh;
   overflow-y: auto;
-  border: 2px solid var(--border);
+  border: 2px solid var(--accent);
+  box-shadow: 0 -4px 24px rgba(0, 245, 255, 0.2);
 }
 
 .day-detail h3 {
@@ -234,11 +236,13 @@
   color: var(--accent);
   border: 2px solid var(--accent);
   border-radius: 12px;
+  transition: box-shadow 0.2s;
   font-weight: 600;
 }
 
 .register-menu-btn:hover {
   background: var(--accent-bg-hover);
+  box-shadow: var(--neon-glow);
 }
 
 .close-btn {
@@ -247,11 +251,13 @@
   padding: 14px;
   margin-top: 10px;
   background: var(--accent);
-  color: white;
+  color: var(--bg-primary);
   border-radius: 12px;
   font-weight: 600;
+  box-shadow: var(--neon-glow);
 }
 
 .close-btn:hover {
   background: var(--accent-hover);
+  box-shadow: var(--neon-glow);
 }

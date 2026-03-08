@@ -44,23 +44,23 @@ export default function DailyRecordForm({
 
   return (
     <section className="daily-record-form">
-      <h2 className="section-title">Daily record</h2>
+      <h2 className="section-title">デイリー記録</h2>
 
       <div className="form-group">
-        <label htmlFor="memo">Memo</label>
+        <label htmlFor="memo">メモ</label>
         <textarea
           id="memo"
           value={localMemo}
           onChange={(e) => setLocalMemo(e.target.value)}
           onBlur={handleBlur}
-          placeholder="Notes or memo..."
+          placeholder="今日の感想やメモ..."
           rows={3}
           className="memo-input"
         />
       </div>
 
       <div className="form-group">
-        <label>Body info</label>
+        <label>身体情報</label>
         <div className="body-info-grid">
           {BODY_INFO_FIELDS.map((field) => (
             <div key={field.key} className="body-info-item">

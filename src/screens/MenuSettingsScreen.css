@@ -130,7 +130,8 @@
 
 .btn-save {
   background: var(--accent);
-  color: white;
+  color: var(--bg-primary);
+  box-shadow: var(--neon-glow);
 }
 
 .btn-edit {
@@ -161,8 +162,17 @@
   border: 2px solid var(--border);
 }
 
-.menu-item-row.edit {
-  flex-wrap: wrap;
+.menu-item-row .row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-item-row .row-actions {
+  display: flex;
+  gap: 4px;
 }
 
 .row-name {
@@ -175,6 +185,57 @@
 .row-spec {
   font-size: 0.8rem;
   color: var(--text-secondary);
+}
+
+.menu-item-row.edit {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.menu-item-row.edit .row-input.name {
+  width: 100%;
+}
+
+.menu-item-row.edit .row-spec-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.menu-item-row.edit .row-spec-inputs .row-input.small {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-item-row.edit .row-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .menu-item-row {
+    flex-wrap: wrap;
+  }
+
+  .menu-item-row .row-main {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    order: 1;
+  }
+
+  .menu-item-row .row-main .row-name {
+    width: 100%;
+  }
+
+  .menu-item-row .row-main .row-spec {
+    margin-top: 4px;
+  }
+
+  .menu-item-row .row-actions {
+    order: 2;
+    margin-left: auto;
+  }
 }
 
 .row-input {

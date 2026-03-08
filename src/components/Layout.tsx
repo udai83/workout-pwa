@@ -2,10 +2,10 @@ import { NavLink } from 'react-router-dom'
 import './Layout.css'
 
 const navItems = [
-  { to: '/', label: "Today's workout", icon: '🏠' },
-  { to: '/menu', label: 'Menu setting', icon: '⚙️' },
-  { to: '/calendar', label: 'Calendar', icon: '📅' },
-  { to: '/changes', label: 'Changes', icon: '📈' },
+  { to: '/', label: '今日のメニュー', icon: '🏠' },
+  { to: '/menu', label: 'メニュー設定', icon: '⚙️' },
+  { to: '/calendar', label: 'カレンダー', icon: '📅' },
+  { to: '/changes', label: '変化', icon: '📈' },
 ] as const
 
 interface LayoutProps {

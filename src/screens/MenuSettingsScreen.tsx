@@ -82,9 +82,9 @@ export default function MenuSettingsScreen() {
   return (
     <div className="menu-settings-screen">
       <header className="settings-header">
-        <h1>Menu setting</h1>
+        <h1>メニュー設定</h1>
         <p className="settings-desc">
-          Register menus by weekday or date
+          曜日または日付にメニューを紐づけて登録します
         </p>
       </header>
 
@@ -294,66 +294,74 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           placeholder="Menu name"
           className="row-input name"
         />
-        <input
-          type="number"
-          min="0"
-          step="0.5"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          onFocus={(e) => e.target.select()}
-          placeholder="Weight"
-          className="row-input small"
-        />
-        <input
-          type="number"
-          min="1"
-          value={reps}
-          onChange={(e) => setReps(e.target.value)}
-          onFocus={(e) => e.target.select()}
-          placeholder="Reps"
-          className="row-input small"
-        />
-        <input
-          type="number"
-          min="1"
-          value={sets}
-          onChange={(e) => setSets(e.target.value)}
-          onFocus={(e) => e.target.select()}
-          placeholder="Sets"
-          className="row-input small"
-        />
-        <button type="button" className="btn-save-sm" onClick={handleSave}>
-          Save
-        </button>
-        <button type="button" className="btn-cancel-sm" onClick={() => setEditing(false)}>
-          Cancel
-        </button>
+        <div className="row-spec-inputs">
+          <input
+            type="number"
+            min="0"
+            step="0.5"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            placeholder="Weight"
+            className="row-input small"
+          />
+          <input
+            type="number"
+            min="1"
+            value={reps}
+            onChange={(e) => setReps(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            placeholder="Reps"
+            className="row-input small"
+          />
+          <input
+            type="number"
+            min="1"
+            value={sets}
+            onChange={(e) => setSets(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            placeholder="Sets"
+            className="row-input small"
+          />
+        </div>
+        <div className="row-edit-actions">
+          <button type="button" className="btn-save-sm" onClick={handleSave}>
+            Save
+          </button>
+          <button type="button" className="btn-cancel-sm" onClick={() => setEditing(false)}>
+            Cancel
+          </button>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="menu-item-row">
-      <span className="row-name">{item.name}</span>
-      <span className="row-spec">
-        {item.weight > 0 ? `${item.weight}kg` : '-'} × {item.reps} reps × {item.sets} sets
-      </span>
-      <button
-        type="button"
-        className="btn-edit-sm"
-        onClick={() => setEditing(true)}
-        aria-label="Edit"
-      >
-        ✏️
-      </button>
-      <button
-        type="button"
-        className="btn-delete-sm"
-        onClick={onDelete}
-        aria-label="Delete"
-      >
-        🗑️
-      </button>
+      <div className="row-main">
+        <span className="row-name">{item.name}</span>
+        <span className="row-spec">
+          {item.weight > 0 ? `${item.weight}kg` : '-'} × {item.reps} reps × {item.sets} sets
+        </span>
+      </div>
+      <div className="row-actions">
+        <button
+          type="button"
+          className="btn-edit-sm"
+          onClick={() => setEditing(true)}
+          aria-label="Edit"
+        >
+          ✏️
+        </button>
+        <button
+          type="button"
+          className="btn-delete-sm"
+          onClick={onDelete}
+          aria-label="Delete"
+        >
+          🗑️
+        </button>
+      </div>
     </div>
   )
 }

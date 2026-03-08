@@ -52,11 +52,12 @@
 }
 
 .btn-remove {
-  color: #dc3545;
+  color: #ff3366;
 }
 
 .btn-remove:hover {
-  background: rgba(220, 53, 69, 0.08);
+  background: rgba(255, 51, 102, 0.15);
+  text-shadow: 0 0 8px rgba(255, 51, 102, 0.8);
 }
 
 .edit-form {
@@ -134,13 +135,15 @@
   min-height: 44px;
   padding: 10px 18px;
   background: var(--accent);
-  color: white;
+  color: var(--bg-primary);
   border-radius: 10px;
   font-weight: 600;
+  box-shadow: var(--neon-glow);
 }
 
 .btn-save:hover {
   background: var(--accent-hover);
+  box-shadow: var(--neon-glow);
 }
 
 .btn-cancel {
@@ -186,12 +189,14 @@
 .set-btn.done {
   background: var(--accent);
   border-color: var(--accent);
-  color: white;
+  color: var(--bg-primary);
   cursor: pointer;
+  box-shadow: var(--neon-glow);
 }
 
 .set-btn.done:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: white;
+  color: var(--bg-primary);
+  box-shadow: var(--neon-glow);
 }
