@@ -10,7 +10,6 @@ export interface BodyInfoFieldConfig {
 }
 
 export const BODY_INFO_FIELDS: BodyInfoFieldConfig[] = [
-  { key: 'height', label: 'Height', unit: 'cm', min: 0, step: 0.1 },
   { key: 'weight', label: 'Weight', unit: 'kg', min: 0, step: 0.1 },
   { key: 'bodyFat', label: 'Body fat', unit: '%', min: 0, max: 100, step: 0.1 },
   { key: 'muscleMass', label: 'Muscle mass', unit: 'kg', min: 0, step: 0.1 },

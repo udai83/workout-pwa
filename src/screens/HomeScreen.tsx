@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { MenuItem, DailyRecord, BodyInfo, CompletedSet } from '@/types'
 import { storage } from '@/lib/storage'
@@ -40,6 +40,14 @@ export default function HomeScreen() {
   const menuItems = [...fromScheduled, ...additions]
 
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
+
+  const handleEditStart = useCallback((id: string) => {
+    setEditingItemId(id)
+  }, [])
+
+  const handleEditEnd = useCallback(() => {
+    setEditingItemId(null)
+  }, [])
 
   const completedCount = (itemId: string) =>
     record?.completedMenus.find((m) => m.menuItemId === itemId)?.completedCount ?? 0
@@ -191,7 +199,7 @@ export default function HomeScreen() {
           ) : (
             menuItems.map((item) => (
               <MenuItemCard
-                key={item.id}
+                key={`${item.id}-${editingItemId === item.id ? 'editing' : 'view'}`}
                 item={item}
                 completedCount={completedCount(item.id)}
                 onSetComplete={(setNum) => handleSetComplete(item.id, setNum)}
@@ -199,8 +207,8 @@ export default function HomeScreen() {
                 onRemove={handleRemoveMenuItem}
                 canRemove
                 isEditing={editingItemId === item.id}
-                onEditStart={() => setEditingItemId(item.id)}
-                onEditEnd={() => setEditingItemId(null)}
+                onEditStart={() => handleEditStart(item.id)}
+                onEditEnd={handleEditEnd}
               />
             ))
           )}

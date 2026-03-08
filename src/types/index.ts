@@ -24,7 +24,6 @@ export interface MenuSchedule {
 
 /** 身体情報 */
 export interface BodyInfo {
-  height?: number
   weight?: number
   bodyFat?: number
   muscleMass?: number
