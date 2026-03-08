@@ -65,7 +65,7 @@ export default function CalendarScreen() {
             ‹
           </button>
           <span className="month-label">
-            {month + 1}/{year}
+            {year}/{month + 1}
           </span>
           <button type="button" onClick={nextMonth} aria-label="Next month">
             ›
