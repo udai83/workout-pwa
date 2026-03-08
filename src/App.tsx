@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import HomeScreen from './screens/HomeScreen'
 import MenuSettingsScreen from './screens/MenuSettingsScreen'
 import CalendarScreen from './screens/CalendarScreen'
+import ChangesScreen from './screens/ChangesScreen'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<HomeScreen />} />
         <Route path="/menu" element={<MenuSettingsScreen />} />
         <Route path="/calendar" element={<CalendarScreen />} />
+        <Route path="/changes" element={<ChangesScreen />} />
       </Routes>
     </Layout>
   )

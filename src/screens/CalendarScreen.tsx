@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { storage } from '@/lib/storage'
 import { getWeekday, formatDate } from '@/lib/utils'
 import { findMenuItem } from '@/lib/menuUtils'
+import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import type { DailyRecord } from '@/types'
 import './CalendarScreen.css'
 
@@ -190,18 +191,16 @@ function DayDetailContent({ record }: DayDetailContentProps) {
           <p className="total-weight">総重量: {totalWeight}kg</p>
         </div>
       )}
-      {(record.bodyInfo?.height ?? record.bodyInfo?.weight ?? record.bodyInfo?.bodyFat) != null && (
+      {Object.values(record.bodyInfo ?? {}).some((v) => v != null) && (
         <div className="detail-section">
           <h4>身体情報</h4>
           <div className="body-info">
-            {record.bodyInfo.height != null && (
-              <span>身長: {record.bodyInfo.height}cm</span>
-            )}
-            {record.bodyInfo.weight != null && (
-              <span>体重: {record.bodyInfo.weight}kg</span>
-            )}
-            {record.bodyInfo.bodyFat != null && (
-              <span>体脂肪率: {record.bodyInfo.bodyFat}%</span>
+            {BODY_INFO_FIELDS.filter((f) => record.bodyInfo![f.key] != null).map(
+              (f) => (
+                <span key={f.key}>
+                  {f.label}: {record.bodyInfo![f.key]}{f.unit}
+                </span>
+              )
             )}
           </div>
         </div>

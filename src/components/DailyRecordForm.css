@@ -1,8 +1,9 @@
 .daily-record-form {
   background: var(--bg-secondary);
-  border-radius: 12px;
-  padding: 14px;
-  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 .section-title {
@@ -30,10 +31,10 @@
 .memo-input {
   width: 100%;
   min-height: 88px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
   resize: vertical;
@@ -46,15 +47,22 @@
 
 .body-info-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .body-info-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   min-width: 0;
+}
+
+.body-info-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  min-width: 4em;
 }
 
 .body-input {
@@ -63,8 +71,8 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
 }

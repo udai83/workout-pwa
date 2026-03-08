@@ -5,6 +5,7 @@ import { getTodayString, getWeekday, generateId } from '@/lib/utils'
 import { useTodayMenu } from '@/hooks/useTodayMenu'
 import MenuItemCard from '@/components/MenuItemCard'
 import DailyRecordForm from '@/components/DailyRecordForm'
+import GrowthMessage from '@/components/GrowthMessage'
 import './HomeScreen.css'
 
 const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
@@ -153,6 +154,8 @@ export default function HomeScreen() {
           {today}（{WEEKDAY_NAMES[weekday]}）
         </p>
       </header>
+
+      <GrowthMessage todayRecord={record} />
 
       <section className="menu-section">
         <div className="menu-list">

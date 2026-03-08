@@ -27,6 +27,7 @@ export interface BodyInfo {
   height?: number
   weight?: number
   bodyFat?: number
+  muscleMass?: number
 }
 
 /** 1種目の実行結果（セット完了状況） */

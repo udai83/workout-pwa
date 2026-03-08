@@ -40,7 +40,7 @@
 }
 
 .add-schedule-btn:hover {
-  background: rgba(139, 92, 246, 0.15);
+  background: rgba(162, 155, 254, 0.15);
 }
 
 .schedule-list {
@@ -51,9 +51,10 @@
 
 .schedule-card {
   background: var(--bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-header {
@@ -84,7 +85,7 @@
 
 .schedule-body {
   padding: 0 14px 14px;
-  border-top: 1px solid var(--border);
+  border-top: 2px solid var(--border);
 }
 
 .schedule-edit,
@@ -112,7 +113,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -135,7 +136,7 @@
 .btn-edit {
   background: var(--bg-card);
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
 }
 
 .btn-delete {
@@ -157,7 +158,7 @@
   min-height: 44px;
   background: var(--bg-primary);
   border-radius: 10px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
 }
 
 .menu-item-row.edit {
@@ -180,7 +181,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-secondary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 8px;
   color: var(--text-primary);
 }
@@ -220,11 +221,11 @@
   padding: 12px;
   background: transparent;
   color: var(--accent);
-  border: 1px dashed var(--border);
+  border: 2px dashed var(--border);
   border-radius: 10px;
   font-size: 0.9rem;
 }
 
 .add-item-btn:hover {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(162, 155, 254, 0.15);
 }

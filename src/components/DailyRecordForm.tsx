@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { BodyInfo } from '@/types'
+import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import './DailyRecordForm.css'
 
 interface DailyRecordFormProps {
@@ -14,23 +15,31 @@ export default function DailyRecordForm({
   onChange,
 }: DailyRecordFormProps) {
   const [localMemo, setLocalMemo] = useState(memo)
-  const [height, setHeight] = useState(String(bodyInfo.height ?? ''))
-  const [weight, setWeight] = useState(String(bodyInfo.weight ?? ''))
-  const [bodyFat, setBodyFat] = useState(String(bodyInfo.bodyFat ?? ''))
+  const [values, setValues] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setLocalMemo(memo)
-    setHeight(String(bodyInfo.height ?? ''))
-    setWeight(String(bodyInfo.weight ?? ''))
-    setBodyFat(String(bodyInfo.bodyFat ?? ''))
+    const v: Record<string, string> = {}
+    for (const f of BODY_INFO_FIELDS) {
+      v[f.key] = String(bodyInfo[f.key] ?? '')
+    }
+    setValues(v)
   }, [memo, bodyInfo])
 
   const handleBlur = () => {
-    onChange(localMemo, {
-      height: height ? parseFloat(height) : undefined,
-      weight: weight ? parseFloat(weight) : undefined,
-      bodyFat: bodyFat ? parseFloat(bodyFat) : undefined,
-    })
+    const newBodyInfo: BodyInfo = {}
+    for (const f of BODY_INFO_FIELDS) {
+      const v = values[f.key]
+      if (v) {
+        const num = parseFloat(v)
+        if (!isNaN(num)) newBodyInfo[f.key] = num
+      }
+    }
+    onChange(localMemo, newBodyInfo)
+  }
+
+  const updateValue = (key: string, value: string) => {
+    setValues((prev) => ({ ...prev, [key]: value }))
   }
 
   return (
@@ -53,46 +62,23 @@ export default function DailyRecordForm({
       <div className="form-group">
         <label>身体情報</label>
         <div className="body-info-grid">
-          <div className="body-info-item">
-            <input
-              type="number"
-              min="0"
-              step="0.1"
-              placeholder="身長"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              onBlur={handleBlur}
-              className="body-input"
-            />
-            <span className="unit">cm</span>
-          </div>
-          <div className="body-info-item">
-            <input
-              type="number"
-              min="0"
-              step="0.1"
-              placeholder="体重"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              onBlur={handleBlur}
-              className="body-input"
-            />
-            <span className="unit">kg</span>
-          </div>
-          <div className="body-info-item">
-            <input
-              type="number"
-              min="0"
-              max="100"
-              step="0.1"
-              placeholder="体脂肪率"
-              value={bodyFat}
-              onChange={(e) => setBodyFat(e.target.value)}
-              onBlur={handleBlur}
-              className="body-input"
-            />
-            <span className="unit">%</span>
-          </div>
+          {BODY_INFO_FIELDS.map((field) => (
+            <div key={field.key} className="body-info-item">
+              <span className="body-info-label">{field.label}</span>
+              <input
+                type="number"
+                min={field.min}
+                max={field.max}
+                step={field.step}
+                placeholder={field.label}
+                value={values[field.key] ?? ''}
+                onChange={(e) => updateValue(field.key, e.target.value)}
+                onBlur={handleBlur}
+                className="body-input"
+              />
+              <span className="unit">{field.unit}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

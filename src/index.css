@@ -1,14 +1,19 @@
 :root {
   --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-card: #141414;
-  --accent: #8B5CF6;
-  --accent-hover: #7E22CE;
-  --accent-muted: #a78bfa;
-  --text-primary: #FFFFFF;
-  --text-secondary: #a1a1aa;
-  --success: #8B5CF6;
-  --border: #8B5CF6;
+  --bg-secondary: #0d0d0f;
+  --bg-card: #161618;
+  --accent: #a29bfe;
+  --accent-hover: #8b7cf7;
+  --accent-muted: #c4b5fd;
+  --text-primary: #ffffff;
+  --text-secondary: #9898a0;
+  --success: #a29bfe;
+  --border: rgba(162, 155, 254, 0.35);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
   --safe-bottom: env(safe-area-inset-bottom, 0);
 }
 
@@ -24,13 +29,15 @@ html {
 }
 
 body {
-  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100dvh;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
 @media (max-width: 414px) {

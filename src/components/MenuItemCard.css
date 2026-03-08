@@ -1,8 +1,9 @@
 .menu-item-card {
   background: var(--bg-secondary);
-  border-radius: 12px;
-  padding: 14px;
-  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 .menu-item-header {
@@ -61,7 +62,7 @@
   min-height: 44px;
   padding: 12px 14px;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 1rem;

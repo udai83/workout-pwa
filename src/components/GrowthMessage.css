@@ -1,0 +1,25 @@
+.growth-message {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, rgba(162, 155, 254, 0.14) 0%, rgba(162, 155, 254, 0.06) 100%);
+  border: 1px solid rgba(162, 155, 254, 0.25);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.growth-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.growth-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
