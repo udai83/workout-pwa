@@ -3,10 +3,10 @@ import HelpButton from './HelpButton'
 import './Layout.css'
 
 const navItems = [
-  { to: '/', label: 'Today' },
-  { to: '/menu', label: 'Menu' },
-  { to: '/calendar', label: 'Calendar' },
-  { to: '/changes', label: 'Changes' },
+  { to: '/', label: 'Today', icon: '🏠' },
+  { to: '/menu', label: 'Menu', icon: '📋' },
+  { to: '/calendar', label: 'Calendar', icon: '📅' },
+  { to: '/changes', label: 'Changes', icon: '📈' },
 ] as const
 
 interface LayoutProps {
@@ -19,12 +19,13 @@ export default function Layout({ children }: LayoutProps) {
       <HelpButton />
       <main className="layout-main">{children}</main>
       <nav className="bottom-nav" role="navigation">
-        {navItems.map(({ to, label }) => (
+        {navItems.map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
+            <span className="nav-icon">{icon}</span>
             <span className="nav-text">{label}</span>
           </NavLink>
         ))}

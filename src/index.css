@@ -39,10 +39,11 @@ html {
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   background:
-    radial-gradient(ellipse 90% 60% at 15% 90%, rgba(0, 245, 255, 0.1) 0%, transparent 55%),
-    radial-gradient(ellipse 80% 50% at 85% 15%, rgba(255, 0, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(0, 255, 136, 0.07) 0%, transparent 45%),
-    radial-gradient(ellipse 60% 40% at 0% 50%, rgba(0, 200, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 120% 80% at 10% 95%, rgba(0, 245, 255, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 70% at 90% 5%, rgba(255, 0, 255, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 50% at 0% 40%, rgba(0, 200, 255, 0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 45% at 100% 60%, rgba(255, 100, 200, 0.04) 0%, transparent 50%),
     var(--bg-primary);
   color: var(--text-primary);
   min-height: 100dvh;
@@ -61,7 +62,7 @@ body {
 
 #root {
   min-height: 100dvh;
-  padding-bottom: calc(72px + var(--safe-bottom));
+  padding-bottom: calc(80px + var(--safe-bottom));
 }
 
 button {
