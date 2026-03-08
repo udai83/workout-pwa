@@ -2,11 +2,11 @@
   --bg-primary: #000000;
   --bg-secondary: #0a0a0a;
   --bg-card: #0d0d0d;
-  --accent: #ffdd00;
-  --accent-hover: #ffe033;
-  --accent-muted: #ffeb66;
+  --accent: #ff5f00;
+  --accent-hover: #ff7a33;
+  --accent-muted: #ffa366;
   --accent-pink: #ff00ff;
-  --accent-rgb: 255, 221, 0;
+  --accent-rgb: 255, 95, 0;
   --text-primary: #e8e8ff;
   --text-secondary: #a0a0b8;
   --success: #00ff88;
@@ -40,12 +40,13 @@ html {
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   background:
-    radial-gradient(ellipse 60% 40% at 5% 10%, rgba(255, 221, 0, 0.35) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 35% at 95% 15%, rgba(255, 0, 255, 0.3) 0%, transparent 45%),
-    radial-gradient(ellipse 45% 30% at 50% 5%, rgba(0, 255, 200, 0.25) 0%, transparent 40%),
-    radial-gradient(ellipse 55% 40% at 0% 85%, rgba(255, 100, 200, 0.28) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 35% at 100% 90%, rgba(255, 200, 0, 0.3) 0%, transparent 45%),
-    radial-gradient(ellipse 40% 25% at 80% 50%, rgba(0, 255, 255, 0.2) 0%, transparent 40%),
+    radial-gradient(ellipse 55% 45% at 5% 8%, rgba(255, 95, 0, 0.65) 0%, rgba(255, 95, 0, 0.2) 35%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 95% 12%, rgba(255, 0, 255, 0.6) 0%, rgba(255, 0, 255, 0.15) 35%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 50% 0%, rgba(0, 255, 220, 0.55) 0%, rgba(0, 255, 220, 0.15) 30%, transparent 50%),
+    radial-gradient(ellipse 50% 45% at 0% 90%, rgba(255, 50, 180, 0.6) 0%, rgba(255, 50, 180, 0.15) 35%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 85%, rgba(255, 200, 0, 0.6) 0%, rgba(255, 200, 0, 0.15) 35%, transparent 55%),
+    radial-gradient(ellipse 45% 35% at 85% 45%, rgba(0, 255, 255, 0.5) 0%, rgba(0, 255, 255, 0.12) 30%, transparent 50%),
+    radial-gradient(ellipse 40% 30% at 15% 50%, rgba(255, 150, 0, 0.45) 0%, transparent 45%),
     var(--bg-primary);
   color: var(--text-primary);
   min-height: 100dvh;
