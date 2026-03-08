@@ -26,7 +26,7 @@
   padding: 12px 4px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
   background: var(--bg-card);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid #2A2A2F;
   z-index: 100;
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
 }
@@ -39,7 +39,7 @@
   gap: 4px;
   min-height: 56px;
   padding: 8px 4px;
-  color: #6B6B72;
+  color: #8A8A93;
   text-decoration: none;
   font-size: 0.7rem;
   font-weight: 500;
@@ -50,7 +50,7 @@
 .nav-icon {
   font-size: 1.5rem;
   line-height: 1;
-  filter: grayscale(0.5);
+  color: inherit;
 }
 
 .nav-icon--dumbbell {
@@ -59,8 +59,11 @@
   font-size: 0;
 }
 
-.nav-item:hover .nav-icon,
-.nav-item.active .nav-icon {
+.nav-item:not(.active) .nav-icon--emoji {
+  filter: grayscale(1) brightness(0.9);
+}
+
+.nav-item.active .nav-icon--emoji {
   filter: none;
 }
 
@@ -68,6 +71,7 @@
   text-align: center;
   line-height: 1.2;
   letter-spacing: 0.02em;
+  color: inherit;
 }
 
 .nav-item:hover {
@@ -75,10 +79,10 @@
 }
 
 .nav-item.active {
-  color: var(--accent);
+  color: #FF5A00;
   background: var(--accent-bg-hover);
 }
 
 .nav-item.active .nav-icon {
-  filter: none;
+  color: #FF5A00;
 }

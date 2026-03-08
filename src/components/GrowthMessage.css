@@ -4,10 +4,10 @@
   gap: 14px;
   padding: 18px 22px;
   margin-bottom: 24px;
-  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.1) 0%, rgba(var(--accent-rgb), 0.03) 100%);
-  border: 2px solid var(--accent-border);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.08) 0%, rgba(var(--accent-rgb), 0.02) 100%);
+  border: 1px solid #2A2A2F;
   border-radius: var(--radius-md);
-  box-shadow: var(--neon-glow);
+  box-shadow: 0 0 8px rgba(255, 176, 102, 0.1);
 }
 
 .growth-icon {

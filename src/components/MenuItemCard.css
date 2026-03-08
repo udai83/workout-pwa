@@ -2,7 +2,7 @@
   background: var(--bg-card);
   padding: 20px;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #2A2A2F;
 }
 
 .menu-item-header {
@@ -50,20 +50,20 @@
 
 .btn-edit {
   color: #B0B0B5;
-  border-color: rgba(176, 176, 181, 0.5);
+  border-color: #3A3A40;
 }
 
 .btn-edit:hover {
-  background: rgba(176, 176, 181, 0.1);
+  background: rgba(176, 176, 181, 0.08);
 }
 
 .btn-remove {
-  color: var(--danger);
-  border-color: var(--danger);
+  color: #FF453A;
+  border-color: #FF453A;
 }
 
 .btn-remove:hover {
-  background: rgba(255, 59, 48, 0.1);
+  background: rgba(255, 69, 58, 0.08);
 }
 
 .edit-form {
@@ -100,7 +100,7 @@
   min-height: 44px;
   padding: 12px 14px;
   background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #2A2A2F;
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 1rem;
@@ -140,14 +140,15 @@
 .btn-save {
   min-height: 44px;
   padding: 10px 18px;
-  background: var(--accent);
+  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
   color: #000;
-  border-radius: 10px;
+  border-radius: 14px;
   font-weight: 600;
+  border: none;
 }
 
 .btn-save:hover {
-  background: var(--accent-hover);
+  background: linear-gradient(180deg, #FF8533 0%, #FF7A1A 100%);
 }
 
 .btn-cancel {
@@ -179,12 +180,14 @@
   font-weight: 600;
   background: #15151A;
   color: var(--text-primary);
-  border: 2px solid var(--accent);
-  transition: transform 0.15s ease;
+  border: 2px solid #FF5A00;
+  box-shadow: 0 0 0 1px rgba(255, 122, 26, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.2s;
 }
 
 .set-btn:hover:not(:disabled) {
-  background: rgba(var(--accent-rgb), 0.08);
+  background: rgba(var(--accent-rgb), 0.06);
+  box-shadow: 0 0 12px rgba(255, 176, 102, 0.15);
 }
 
 .set-btn:active:not(:disabled) {
@@ -192,16 +195,18 @@
 }
 
 .set-btn.done {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
+  border-color: #FF7A1A;
   color: #000;
   cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 176, 102, 0.18);
 }
 
 .set-btn.done:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
+  background: linear-gradient(180deg, #FF8533 0%, #FF7A1A 100%);
+  border-color: #FF7A1A;
   color: #000;
+  box-shadow: 0 0 10px rgba(255, 176, 102, 0.22);
 }
 
 .set-btn.done:active {

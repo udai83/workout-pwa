@@ -64,7 +64,7 @@
 .schedule-card {
   background: #141419;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #2A2A2F;
   overflow: hidden;
 }
 
@@ -111,7 +111,7 @@
 
 .schedule-body {
   padding: 0 18px 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid #2A2A2F;
 }
 
 .schedule-edit,
@@ -139,7 +139,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #2A2A2F;
   border-radius: 14px;
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -155,41 +155,42 @@
 }
 
 .btn-save {
-  background: #FF5A00;
+  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
   color: #000;
+  border: none;
 }
 
 .btn-save:hover {
-  background: var(--accent-hover);
+  background: linear-gradient(180deg, #FF8533 0%, #FF7A1A 100%);
 }
 
 .btn-edit {
   background: transparent;
-  color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #B0B0B5;
+  border: 1px solid #3A3A40;
 }
 
 .btn-edit:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .btn-delete {
   background: transparent;
-  color: var(--danger);
-  border: 1px solid var(--danger);
+  color: #FF453A;
+  border: 1px solid #FF453A;
 }
 
 .btn-delete:hover {
-  background: rgba(255, 59, 48, 0.1);
+  background: rgba(255, 69, 58, 0.08);
 }
 
 .schedule-edit .btn-delete {
-  color: var(--danger);
-  border-color: var(--danger);
+  color: #FF453A;
+  border-color: #FF453A;
 }
 
 .schedule-edit .btn-delete:hover {
-  background: rgba(255, 59, 48, 0.1);
+  background: rgba(255, 69, 58, 0.08);
 }
 
 .menu-items {
@@ -207,7 +208,7 @@
   background: transparent;
   border-radius: 0;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #2A2A2F;
 }
 
 .menu-item-row:last-of-type {
@@ -248,7 +249,7 @@
   align-items: stretch;
   gap: 12px;
   padding: 16px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #2A2A2F;
 }
 
 .menu-item-row.edit .row-input.name {
@@ -300,7 +301,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #2A2A2F;
   border-radius: 14px;
   color: var(--text-primary);
 }
@@ -357,6 +358,6 @@
   color: #8A8A93;
   font-size: 14px;
   background: #141419;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #2A2A2F;
   border-radius: 16px;
 }

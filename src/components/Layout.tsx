@@ -39,7 +39,9 @@ export default function Layout({ children }: LayoutProps) {
             to={to}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           >
-            <span className="nav-icon">{icon}</span>
+            <span className={`nav-icon ${typeof icon === 'string' ? 'nav-icon--emoji' : ''}`}>
+              {icon}
+            </span>
             <span className="nav-text">{label}</span>
           </NavLink>
         ))}

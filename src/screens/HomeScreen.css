@@ -35,7 +35,7 @@
   min-height: 44px;
   padding: 10px 14px;
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid #2A2A2F;
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -59,16 +59,18 @@
   min-height: 44px;
   padding: 10px 16px;
   background: transparent;
-  color: var(--accent);
-  border: 2px solid var(--accent);
+  color: #FF5A00;
+  border: 2px solid #FF5A00;
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
+  box-shadow: 0 0 0 1px rgba(255, 122, 26, 0.15);
 }
 
 .today-btn:hover {
   background: var(--accent-bg-hover);
+  box-shadow: 0 0 8px rgba(255, 176, 102, 0.12);
 }
 
 .today-btn:active {
@@ -92,7 +94,7 @@
   color: var(--text-secondary);
   font-size: 1rem;
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid #2A2A2F;
   border-radius: var(--radius-md);
 }
 
@@ -101,8 +103,8 @@
   min-height: 52px;
   padding: 16px 20px;
   background: transparent;
-  color: var(--accent);
-  border: 2px dashed rgba(var(--accent-rgb), 0.4);
+  color: #FF5A00;
+  border: 1.5px dashed #FF5A00;
   border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
@@ -111,7 +113,7 @@
 
 .add-menu-btn:hover {
   background: var(--accent-bg-hover);
-  border-color: var(--accent);
+  border-color: #FF7A1A;
 }
 
 .add-menu-btn:active {
@@ -137,7 +139,7 @@
   width: 100%;
   max-width: 400px;
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid #2A2A2F;
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-md);
