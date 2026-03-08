@@ -4,7 +4,7 @@ import { storage } from '@/lib/storage'
 import { generateId } from '@/lib/utils'
 import './MenuSettingsScreen.css'
 
-const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
 
 export default function MenuSettingsScreen() {
   const [schedules, setSchedules] = useState<MenuSchedule[]>([])
@@ -53,7 +53,7 @@ export default function MenuSettingsScreen() {
   const handleAddMenuItem = (scheduleId: string) => {
     const newItem: MenuItem = {
       id: generateId(),
-      name: 'New menu',
+      name: '新規メニュー',
       weight: 0,
       reps: 10,
       sets: 3,
@@ -94,21 +94,21 @@ export default function MenuSettingsScreen() {
           className="add-schedule-btn"
           onClick={() => handleAddSchedule('weekday')}
         >
-          ＋ Add by weekday
+          ＋ 曜日で追加
         </button>
         <button
           type="button"
           className="add-schedule-btn"
           onClick={() => handleAddSchedule('date')}
         >
-          ＋ Add by date
+          ＋ 日付で追加
         </button>
       </div>
 
       <div className="schedule-list">
         {schedules.length === 0 ? (
           <p className="empty-message">
-            No menus. Add from the buttons above.
+            メニューがありません。上のボタンから追加してください。
           </p>
         ) : (
           schedules.map((schedule) => (
@@ -168,7 +168,7 @@ function ScheduleCard({
 }: ScheduleCardProps) {
   const label =
     schedule.scheduleType === 'weekday'
-      ? `Every ${WEEKDAY_NAMES[schedule.weekday ?? 0]}`
+      ? `毎週${WEEKDAY_NAMES[schedule.weekday ?? 0]}曜日`
       : schedule.date ?? ''
 
   return (
@@ -182,7 +182,7 @@ function ScheduleCard({
       >
         <span className="schedule-label">{label}</span>
         <span className="schedule-count">
-          {schedule.menuItems.length} items
+          {schedule.menuItems.length}件
         </span>
         <span className="expand-icon">{isExpanded ? '▼' : '▶'}</span>
       </div>
@@ -193,7 +193,7 @@ function ScheduleCard({
             <div className="schedule-edit">
               {schedule.scheduleType === 'weekday' ? (
                 <div className="edit-row">
-                  <label>Weekday</label>
+                  <label>曜日</label>
                   <select
                     value={schedule.weekday ?? 0}
                     onChange={(e) =>
@@ -210,7 +210,7 @@ function ScheduleCard({
                 </div>
               ) : (
                 <div className="edit-row">
-                  <label>Date</label>
+                  <label>日付</label>
                   <input
                     type="date"
                     value={schedule.date ?? ''}
@@ -220,16 +220,16 @@ function ScheduleCard({
                 </div>
               )}
               <button type="button" className="btn-save" onClick={onSave}>
-                Save
+                保存
               </button>
             </div>
           ) : (
             <div className="schedule-actions">
               <button type="button" className="btn-edit" onClick={onEdit}>
-                Edit
+                編集
               </button>
               <button type="button" className="btn-delete" onClick={onDelete}>
-                Delete
+                削除
               </button>
             </div>
           )}
@@ -248,7 +248,7 @@ function ScheduleCard({
               className="add-item-btn"
               onClick={onAddMenuItem}
             >
-              ＋ Add item
+              ＋ メニューを追加
             </button>
           </div>
         </div>
@@ -289,9 +289,9 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           onFocus={(e) => {
-            if (name === 'New menu') e.target.select()
+            if (name === '新規メニュー') e.target.select()
           }}
-          placeholder="Menu name"
+          placeholder="メニュー名"
           className="row-input name"
         />
         <div className="row-spec-inputs">
@@ -302,7 +302,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
             onFocus={(e) => e.target.select()}
-            placeholder="Weight"
+            placeholder="重さ"
             className="row-input small"
           />
           <input
@@ -311,7 +311,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
             value={reps}
             onChange={(e) => setReps(e.target.value)}
             onFocus={(e) => e.target.select()}
-            placeholder="Reps"
+            placeholder="回数"
             className="row-input small"
           />
           <input
@@ -320,16 +320,16 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
             value={sets}
             onChange={(e) => setSets(e.target.value)}
             onFocus={(e) => e.target.select()}
-            placeholder="Sets"
+            placeholder="セット数"
             className="row-input small"
           />
         </div>
         <div className="row-edit-actions">
           <button type="button" className="btn-save-sm" onClick={handleSave}>
-            Save
+            保存
           </button>
           <button type="button" className="btn-cancel-sm" onClick={() => setEditing(false)}>
-            Cancel
+            キャンセル
           </button>
         </div>
       </div>
@@ -341,7 +341,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
       <div className="row-main">
         <span className="row-name">{item.name}</span>
         <span className="row-spec">
-          {item.weight > 0 ? `${item.weight}kg` : '-'} × {item.reps} reps × {item.sets} sets
+          {item.weight > 0 ? `${item.weight}kg` : '-'} × {item.reps}回 × {item.sets}セット
         </span>
       </div>
       <div className="row-actions">
@@ -349,7 +349,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           type="button"
           className="btn-edit-sm"
           onClick={() => setEditing(true)}
-          aria-label="Edit"
+          aria-label="編集"
         >
           ✏️
         </button>
@@ -357,7 +357,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           type="button"
           className="btn-delete-sm"
           onClick={onDelete}
-          aria-label="Delete"
+          aria-label="削除"
         >
           🗑️
         </button>
