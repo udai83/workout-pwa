@@ -77,54 +77,56 @@ export default function MenuItemCard({
       <div className="menu-item-header">
         {editing ? (
           <div className="edit-form">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onFocus={(e) => {
-                if (name === 'New menu') e.target.select()
-              }}
-              placeholder="Menu name"
-              className="edit-input"
-              autoFocus
-            />
-            <div className="edit-row">
-              <label>
-                Weight
-                <input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  onFocus={(e) => e.target.select()}
-                  className="edit-input small"
-                />
-                kg
-              </label>
-              <label>
-                Reps
-                <input
-                  type="number"
-                  min="1"
-                  value={reps}
-                  onChange={(e) => setReps(e.target.value)}
-                  onFocus={(e) => e.target.select()}
-                  className="edit-input small"
-                />
-                reps
-              </label>
-              <label>
-                Sets
-                <input
-                  type="number"
-                  min="1"
-                  value={sets}
-                  onChange={(e) => setSets(e.target.value)}
-                  onFocus={(e) => e.target.select()}
-                  className="edit-input small"
-                />
-              </label>
+            <div className="edit-form-row-1">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onFocus={(e) => {
+                  if (name === 'New menu') e.target.select()
+                }}
+                placeholder="Menu name"
+                className="edit-input name-input"
+                autoFocus
+              />
+              <div className="edit-row">
+                <label>
+                  Weight
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    className="edit-input small"
+                  />
+                  kg
+                </label>
+                <label>
+                  Reps
+                  <input
+                    type="number"
+                    min="1"
+                    value={reps}
+                    onChange={(e) => setReps(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    className="edit-input small"
+                  />
+                  reps
+                </label>
+                <label>
+                  Sets
+                  <input
+                    type="number"
+                    min="1"
+                    value={sets}
+                    onChange={(e) => setSets(e.target.value)}
+                    onFocus={(e) => e.target.select()}
+                    className="edit-input small"
+                  />
+                </label>
+              </div>
             </div>
             <div className="edit-actions">
               <button type="button" className="btn-save" onClick={handleSave}>
