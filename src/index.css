@@ -1,7 +1,7 @@
 :root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: #16161f;
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #0d0d0d;
   --accent: #00f5ff;
   --accent-hover: #00d4ff;
   --accent-muted: #7df9ff;
@@ -9,11 +9,12 @@
   --text-primary: #e8e8ff;
   --text-secondary: #a0a0b8;
   --success: #00ff88;
-  --border: rgba(0, 245, 255, 0.3);
-  --border-subtle: rgba(0, 245, 255, 0.15);
+  --border: rgba(0, 245, 255, 0.4);
+  --border-subtle: rgba(0, 245, 255, 0.25);
   --accent-border: rgba(0, 245, 255, 0.5);
   --accent-bg-hover: rgba(0, 245, 255, 0.1);
   --accent-bg-muted: rgba(0, 245, 255, 0.06);
+  --border-width: 2px;
   --neon-glow: 0 0 10px rgba(0, 245, 255, 0.5), 0 0 20px rgba(0, 245, 255, 0.3);
   --neon-text: 0 0 5px rgba(0, 245, 255, 0.8), 0 0 10px rgba(0, 245, 255, 0.5);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -37,7 +38,12 @@ html {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
-  background: var(--bg-primary);
+  background:
+    radial-gradient(ellipse 90% 60% at 15% 90%, rgba(0, 245, 255, 0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 85% 15%, rgba(255, 0, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(0, 255, 136, 0.07) 0%, transparent 45%),
+    radial-gradient(ellipse 60% 40% at 0% 50%, rgba(0, 200, 255, 0.06) 0%, transparent 50%),
+    var(--bg-primary);
   color: var(--text-primary);
   min-height: 100dvh;
   min-height: 100vh;
@@ -47,9 +53,9 @@ body {
   letter-spacing: -0.01em;
 }
 
-@media (max-width: 414px) {
+@media (max-width: 768px) {
   html {
-    font-size: 15px;
+    font-size: 17px;
   }
 }
 

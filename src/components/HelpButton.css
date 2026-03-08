@@ -11,7 +11,7 @@
   font-weight: 700;
   color: var(--text-secondary);
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: 2px solid var(--border-subtle);
   border-radius: 50%;
   z-index: 90;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
@@ -36,7 +36,7 @@
 
 .help-panel {
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius-md);
   max-width: 340px;
   width: 100%;
@@ -48,7 +48,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 18px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 2px solid var(--border-subtle);
 }
 
 .help-panel-header h2 {
@@ -84,8 +84,8 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border-subtle);
-  font-size: 0.9rem;
+  border-bottom: 2px solid var(--border-subtle);
+  font-size: 1rem;
   color: var(--text-secondary);
 }
 
@@ -95,5 +95,5 @@
 
 .help-list li strong {
   color: var(--accent);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }

@@ -5,7 +5,7 @@
   padding: 18px 22px;
   margin-bottom: 24px;
   background: linear-gradient(135deg, rgba(0, 245, 255, 0.1) 0%, rgba(0, 245, 255, 0.03) 100%);
-  border: 1px solid var(--accent-border);
+  border: 2px solid var(--accent-border);
   border-radius: var(--radius-md);
   box-shadow: var(--neon-glow);
 }

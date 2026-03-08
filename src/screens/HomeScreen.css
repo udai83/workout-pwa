@@ -93,9 +93,9 @@
   padding: 24px 20px;
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 1rem;
   background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
+  border: 2px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
@@ -125,7 +125,7 @@
 
 .daily-record-section {
   padding-top: 24px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 2px solid var(--border-subtle);
 }
 
 .edit-overlay {

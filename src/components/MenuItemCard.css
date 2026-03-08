@@ -16,7 +16,7 @@
 }
 
 .menu-item-name {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-primary);
   min-width: 20ch;
@@ -26,7 +26,7 @@
 
 .menu-item-spec {
   margin-top: 4px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 

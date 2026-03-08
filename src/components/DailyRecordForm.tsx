@@ -44,10 +44,7 @@ export default function DailyRecordForm({
 
   return (
     <section className="daily-record-form">
-      <h2 className="section-title">デイリー記録</h2>
-
-      <div className="form-group">
-        <label htmlFor="memo">メモ</label>
+      <div className="daily-record-inner">
         <textarea
           id="memo"
           value={localMemo}
@@ -57,10 +54,6 @@ export default function DailyRecordForm({
           rows={3}
           className="memo-input"
         />
-      </div>
-
-      <div className="form-group">
-        <label>身体情報</label>
         <div className="body-info-grid">
           {BODY_INFO_FIELDS.map((field) => (
             <div key={field.key} className="body-info-item">

@@ -26,10 +26,10 @@
   gap: 6px;
   padding: 10px 8px;
   padding-bottom: calc(10px + env(safe-area-inset-bottom, 0));
-  background: rgba(10, 10, 15, 0.95);
+  background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--border);
+  border-top: 2px solid var(--border);
   z-index: 100;
   box-shadow: 0 -4px 24px rgba(0, 245, 255, 0.15);
 }
@@ -43,10 +43,10 @@
   padding: 10px 16px;
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 500;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
+  border: 2px solid var(--border-subtle);
   background: var(--bg-card);
   transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
 }

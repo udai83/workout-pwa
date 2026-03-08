@@ -16,7 +16,7 @@
 
 .settings-desc {
   margin-top: 4px;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--text-secondary);
 }
 
@@ -52,7 +52,7 @@
 .schedule-card {
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(0, 245, 255, 0.2);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
 }

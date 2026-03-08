@@ -1,43 +1,26 @@
 .daily-record-form {
+  padding-top: 20px;
+}
+
+.daily-record-inner {
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
-  padding: 20px;
-  border: 1px solid var(--border-subtle);
+  padding: 16px;
+  border: 2px solid var(--border);
   box-shadow: var(--shadow-sm);
-}
-
-.section-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 10px;
-}
-
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group:last-child {
-  margin-bottom: 0;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
 }
 
 .memo-input {
   width: 100%;
-  min-height: 88px;
-  padding: 14px 16px;
+  min-height: 80px;
+  padding: 12px 14px;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 1rem;
   resize: vertical;
+  margin-bottom: 12px;
 }
 
 .memo-input::placeholder {
@@ -64,10 +47,10 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .body-input::placeholder {
@@ -75,7 +58,7 @@
 }
 
 .unit {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   white-space: nowrap;
 }
