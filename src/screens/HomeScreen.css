@@ -19,8 +19,16 @@
 .date-selector-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 10px;
+}
+
+.date-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .home-date-input {
@@ -31,6 +39,8 @@
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .home-date-input:focus {
@@ -38,10 +48,30 @@
   border-color: var(--accent);
 }
 
-.home-date {
-  font-size: 0.9rem;
+.date-weekday {
+  font-size: 0.95rem;
   color: var(--text-secondary);
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.today-btn {
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.today-btn:hover {
+  background: var(--accent-hover);
+}
+
+.today-btn:active {
+  transform: scale(0.98);
 }
 
 .menu-section {

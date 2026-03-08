@@ -20,8 +20,9 @@ export function getWeekday(dateStr: string): number {
   return new Date(dateStr + 'T12:00:00').getDay()
 }
 
-/** 日付のフォーマット（例: 3月8日） */
+/** 日付のフォーマット（例: Mar 8） */
 export function formatDate(dateStr: string): string {
   const d = new Date(dateStr + 'T12:00:00')
-  return `${d.getMonth() + 1}月${d.getDate()}日`
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  return `${months[d.getMonth()]} ${d.getDate()}`
 }

@@ -135,3 +135,57 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
+
+.menu-trend-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.menu-trend-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.menu-select-form {
+  margin-bottom: 16px;
+}
+
+.menu-select-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.menu-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.menu-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.menu-trend-card {
+  margin-top: 0;
+}
+
+.menu-trend-item .trend-value {
+  text-align: right;
+}
+
+.menu-volume {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}

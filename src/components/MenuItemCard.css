@@ -1,9 +1,6 @@
 .menu-item-card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  padding: 18px;
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-sm);
+  background: transparent;
+  padding: 18px 0;
 }
 
 .menu-item-header {
@@ -37,20 +34,26 @@
 
 .btn-edit,
 .btn-remove {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 10px;
-  font-size: 1.2rem;
-  border-radius: 10px;
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--accent);
+  border-radius: 8px;
   transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-edit:hover,
 .btn-remove:hover {
-  background: var(--bg-card);
+  background: var(--accent-bg-hover);
+}
+
+.btn-remove {
+  color: #dc3545;
+}
+
+.btn-remove:hover {
+  background: rgba(220, 53, 69, 0.08);
 }
 
 .edit-form {
@@ -125,28 +128,27 @@
 
 .set-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-top: 12px;
   flex-wrap: wrap;
 }
 
 .set-btn {
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 12px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 50%;
   touch-action: manipulation;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 600;
-  background: var(--bg-card);
+  background: transparent;
   color: var(--text-primary);
-  border: 2px solid var(--border);
+  border: 2px solid var(--accent);
   transition: all 0.2s;
 }
 
 .set-btn:hover:not(:disabled) {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
+  background: var(--accent-bg-hover);
+  color: var(--accent);
 }
 
 .set-btn:active:not(:disabled) {
@@ -158,4 +160,10 @@
   border-color: var(--accent);
   color: white;
   cursor: pointer;
+}
+
+.set-btn.done:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: white;
 }

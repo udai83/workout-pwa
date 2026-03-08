@@ -1,16 +1,28 @@
 import type { MenuItem, DailyRecord } from '@/types'
-import { storage } from './storage'
-import { getWeekday } from './utils'
+import { storage } from '@/lib/storage'
+import { getWeekday } from '@/lib/utils'
 
-/** 指定日付の有効なメニュー項目を取得（スケジュール + オーバーライド） */
-export function getMenuItemsForDate(dateStr: string): MenuItem[] {
+/** 指定日のメニューから menuItemId に一致する項目を取得 */
+export function findMenuItem(
+  menuItemId: string,
+  dateStr: string,
+  record: DailyRecord | null
+): MenuItem | undefined {
+  const items = getMenuItemsForDate(dateStr, record)
+  return items.find((m) => m.id === menuItemId)
+}
+
+/** 指定日に適用されるメニュー一覧を取得（曜日指定 + 日付指定の両方） */
+export function getMenuItemsForDate(
+  dateStr: string,
+  record: DailyRecord | null
+): MenuItem[] {
   const weekday = getWeekday(dateStr)
   const schedules = storage.getMenuSchedules()
-  const record = storage.getDailyRecord(dateStr)
   const hiddenIds = new Set(record?.hiddenScheduleItemIds ?? [])
   const overrides = record?.menuOverrides ?? []
-  const items: MenuItem[] = []
 
+  const items: MenuItem[] = []
   for (const s of schedules) {
     const matches =
       (s.scheduleType === 'weekday' && s.weekday === weekday) ||
@@ -23,23 +35,8 @@ export function getMenuItemsForDate(dateStr: string): MenuItem[] {
       items.push(ov ? ov.item : m)
     }
   }
-
   for (const ov of overrides) {
     if (!ov.replacesId) items.push(ov.item)
   }
-
   return items
-}
-
-/** メニューIDから項目を検索（指定日の記録 + スケジュール） */
-export function findMenuItem(
-  itemId: string,
-  dateStr: string,
-  record: DailyRecord | null
-): MenuItem | null {
-  const ov = record?.menuOverrides?.find((o) => o.item.id === itemId)
-  if (ov) return ov.item
-
-  const items = getMenuItemsForDate(dateStr)
-  return items.find((m) => m.id === itemId) ?? null
 }

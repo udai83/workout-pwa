@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { storage } from '@/lib/storage'
 import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
+import { getMenuItemsForDate } from '@/lib/menuUtils'
 import { formatDate } from '@/lib/utils'
 import type { BodyInfo } from '@/types'
 import './ChangesScreen.css'
@@ -8,6 +9,14 @@ import './ChangesScreen.css'
 interface DataPoint {
   date: string
   value: number
+}
+
+interface MenuTrendPoint {
+  date: string
+  weight: number
+  reps: number
+  completedCount: number
+  volume: number
 }
 
 export default function ChangesScreen() {
@@ -53,21 +62,66 @@ export default function ChangesScreen() {
     return result
   }, [records, startDate, endDate])
 
+  const performedMenuNames = useMemo(() => {
+    const names = new Set<string>()
+    for (const [date, record] of Object.entries(records)) {
+      const items = getMenuItemsForDate(date, record)
+      const completed = record.completedMenus ?? []
+      for (const cm of completed) {
+        if (cm.completedCount <= 0) continue
+        const item = items.find((m) => m.id === cm.menuItemId)
+        if (item) names.add(item.name)
+      }
+    }
+    return Array.from(names).sort()
+  }, [records])
+
+  const [selectedMenuName, setSelectedMenuName] = useState<string>('')
+
+  const menuTrendData = useMemo((): MenuTrendPoint[] => {
+    if (!selectedMenuName) return []
+    const points: MenuTrendPoint[] = []
+    const dates = Object.keys(records).filter(
+      (d) => d >= startDate && d <= endDate
+    )
+    dates.sort()
+    for (const date of dates) {
+      const record = records[date]
+      const items = getMenuItemsForDate(date, record ?? null)
+      const completed = record?.completedMenus ?? []
+      for (const cm of completed) {
+        if (cm.completedCount <= 0) continue
+        const item = items.find((m) => m.id === cm.menuItemId)
+        if (item?.name === selectedMenuName) {
+          const volume = item.weight * item.reps * cm.completedCount
+          points.push({
+            date,
+            weight: item.weight,
+            reps: item.reps,
+            completedCount: cm.completedCount,
+            volume,
+          })
+        }
+      }
+    }
+    return points
+  }, [records, startDate, endDate, selectedMenuName])
+
   const hasAnyData = Object.values(trendData).some((arr) => arr.length > 0)
 
   return (
     <div className="changes-screen">
       <header className="changes-header">
-        <h1>変化</h1>
+        <h1>Changes</h1>
         <p className="changes-desc">
-          身体情報の推移を確認できます
+          View your body stats over time
         </p>
       </header>
 
       <section className="date-range-section">
         <div className="date-range-row">
           <label>
-            <span className="date-label">開始日</span>
+            <span className="date-label">Start date</span>
             <input
               type="date"
               value={startDate}
@@ -77,7 +131,7 @@ export default function ChangesScreen() {
           </label>
           <span className="date-separator">〜</span>
           <label>
-            <span className="date-label">終了日</span>
+            <span className="date-label">End date</span>
             <input
               type="date"
               value={endDate}
@@ -94,15 +148,15 @@ export default function ChangesScreen() {
             setEndDate(lastDate)
           }}
         >
-          期間をリセット
+          Reset period
         </button>
       </section>
 
       {!hasAnyData ? (
         <p className="no-data-message">
-          指定期間に身体情報の記録がありません。
+          No body stats in this period.
           <br />
-          今日のメニューで身体情報を入力してください。
+          Enter body stats in Today's workout.
         </p>
       ) : (
         <section className="trend-section">
@@ -125,7 +179,7 @@ export default function ChangesScreen() {
                 <div className="trend-minmax">
                   {data.length > 1 && (
                     <span>
-                      最小: {Math.min(...data.map((d) => d.value))}{field.unit} / 最大: {Math.max(...data.map((d) => d.value))}{field.unit}
+                      Min: {Math.min(...data.map((d) => d.value))}{field.unit} / Max: {Math.max(...data.map((d) => d.value))}{field.unit}
                     </span>
                   )}
                 </div>
@@ -134,6 +188,68 @@ export default function ChangesScreen() {
           })}
         </section>
       )}
+
+      <section className="menu-trend-section">
+        <h2 className="menu-trend-section-title">Workout menu changes</h2>
+        <div className="menu-select-form">
+          <label htmlFor="menu-select" className="menu-select-label">
+            Select menu
+          </label>
+          <select
+            id="menu-select"
+            value={selectedMenuName}
+            onChange={(e) => setSelectedMenuName(e.target.value)}
+            className="menu-select"
+            disabled={performedMenuNames.length === 0}
+          >
+            <option value="">
+              {performedMenuNames.length === 0
+                ? 'No completed menus yet'
+                : 'Select'}
+            </option>
+            {performedMenuNames.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {selectedMenuName && (
+          <div className="trend-card menu-trend-card">
+            <h3 className="trend-title">{selectedMenuName}</h3>
+            {menuTrendData.length === 0 ? (
+              <p className="no-data-message">
+                No records for this menu in period.
+              </p>
+            ) : (
+              <>
+                <div className="trend-list">
+                  {menuTrendData.map(({ date, weight, reps, completedCount, volume }, i) => (
+                    <div key={`${date}-${i}`} className="trend-item menu-trend-item">
+                      <span className="trend-date">{formatDate(date)}</span>
+                      <span className="trend-value">
+                        {weight}kg × {reps} reps × {completedCount} sets
+                        {volume > 0 && (
+                          <span className="menu-volume">（{volume.toLocaleString()}kg）</span>
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {menuTrendData.length > 1 && (
+                  <div className="trend-minmax">
+                    <span>
+                      Max weight: {Math.max(...menuTrendData.map((d) => d.weight))}kg /
+                      Max volume: {Math.max(...menuTrendData.map((d) => d.volume)).toLocaleString()}kg
+                    </span>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </section>
     </div>
   )
 }

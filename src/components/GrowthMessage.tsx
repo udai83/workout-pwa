@@ -27,29 +27,29 @@ export default function GrowthMessage({ todayRecord }: GrowthMessageProps) {
       yesterdayBody.muscleMass != null &&
       todayBody.muscleMass > yesterdayBody.muscleMass
     ) {
-      improvements.push('筋肉量が増えてる')
+      improvements.push('Muscle mass up')
     }
     if (
       todayBody.bodyFat != null &&
       yesterdayBody.bodyFat != null &&
       todayBody.bodyFat < yesterdayBody.bodyFat
     ) {
-      improvements.push('体脂肪率が減ってる')
+      improvements.push('Body fat down')
     }
     if (
       todayBody.weight != null &&
       yesterdayBody.weight != null &&
       todayBody.weight < yesterdayBody.weight
     ) {
-      improvements.push('体重が減ってる')
+      improvements.push('Weight down')
     }
 
     if (improvements.length > 0) {
-      const detail = improvements.join('し、')
-      return `${detail}！成長してるね！`
+      const detail = improvements.join(', ')
+      return `${detail}! Keep it up!`
     }
 
-    return '継続してる！その調子！'
+    return 'Keep going! Nice work!'
   }, [todayRecord])
 
   if (!message) return null

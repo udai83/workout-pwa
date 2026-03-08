@@ -9,7 +9,7 @@ import DailyRecordForm from '@/components/DailyRecordForm'
 import GrowthMessage from '@/components/GrowthMessage'
 import './HomeScreen.css'
 
-const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
+const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function HomeScreen() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -83,7 +83,7 @@ export default function HomeScreen() {
   const handleAddMenu = () => {
     const newItem: MenuItem = {
       id: generateId(),
-      name: '新規メニュー',
+      name: 'New menu',
       weight: 0,
       reps: 10,
       sets: 3,
@@ -155,18 +155,25 @@ export default function HomeScreen() {
   return (
     <div className="home-screen">
       <header className="home-header">
-        <h1>今日のメニュー</h1>
+        <h1>Today's workout</h1>
         <div className="date-selector-row">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => handleDateChange(e.target.value)}
-            className="home-date-input"
-            aria-label="表示する日付を選択"
-          />
-          <p className="home-date">
-            {selectedDate}（{WEEKDAY_NAMES[weekday]}）
-          </p>
+          <div className="date-input-wrapper">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => handleDateChange(e.target.value)}
+              className="home-date-input"
+              aria-label="Select date"
+            />
+            <span className="date-weekday">（{WEEKDAY_NAMES[weekday]}）</span>
+          </div>
+          <button
+            type="button"
+            className="today-btn"
+            onClick={() => handleDateChange(today)}
+          >
+            Today
+          </button>
         </div>
       </header>
 
@@ -176,7 +183,7 @@ export default function HomeScreen() {
         <div className="menu-list">
           {menuItems.length === 0 ? (
             <p className="empty-message">
-              メニューがありません。メニュー設定で登録するか、下のボタンから追加してください。
+              No menus. Add from Menu setting or the button below.
             </p>
           ) : (
             menuItems.map((item) => (
@@ -196,9 +203,9 @@ export default function HomeScreen() {
           type="button"
           className="add-menu-btn"
           onClick={handleAddMenu}
-          aria-label="メニューを追加"
+          aria-label="Add menu"
         >
-          ＋ メニューを追加
+          ＋ Add menu
         </button>
       </section>
 

@@ -7,7 +7,7 @@ import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import type { DailyRecord } from '@/types'
 import './CalendarScreen.css'
 
-const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
+const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function CalendarScreen() {
   const navigate = useNavigate()
@@ -59,15 +59,15 @@ export default function CalendarScreen() {
   return (
     <div className="calendar-screen">
       <header className="calendar-header">
-        <h1>カレンダー</h1>
+        <h1>Calendar</h1>
         <div className="month-nav">
-          <button type="button" onClick={prevMonth} aria-label="前月">
+          <button type="button" onClick={prevMonth} aria-label="Previous month">
             ‹
           </button>
           <span className="month-label">
-            {year}年{month + 1}月
+            {month + 1}/{year}
           </span>
-          <button type="button" onClick={nextMonth} aria-label="翌月">
+          <button type="button" onClick={nextMonth} aria-label="Next month">
             ›
           </button>
         </div>
@@ -75,7 +75,7 @@ export default function CalendarScreen() {
 
       {Object.keys(monthlySummary).length > 0 && (
         <section className="monthly-summary">
-          <h2>今月の総重量</h2>
+          <h2>This month's total weight</h2>
           <div className="summary-list">
             {Object.entries(monthlySummary).map(([name, total]) => (
               <div key={name} className="summary-item">
@@ -114,7 +114,7 @@ export default function CalendarScreen() {
               >
                 <span className="day-num">{day}</span>
                 {record?.completedMenus && record.completedMenus.length > 0 && (
-                  <span className="day-dot" title="トレーニング済み" />
+                  <span className="day-dot" title="Workout done" />
                 )}
               </button>
             )
@@ -138,7 +138,7 @@ export default function CalendarScreen() {
             {selectedRecord ? (
               <DayDetailContent record={selectedRecord} />
             ) : (
-              <p className="no-data">記録がありません</p>
+              <p className="no-data">No records</p>
             )}
             <button
               type="button"
@@ -148,14 +148,14 @@ export default function CalendarScreen() {
                 navigate(`/?date=${selectedDate}`)
               }}
             >
-              メニューに登録する
+              Add to menu
             </button>
             <button
               type="button"
               className="close-btn"
               onClick={() => setSelectedDate(null)}
             >
-              閉じる
+              Close
             </button>
           </div>
         </div>
@@ -192,7 +192,7 @@ function DayDetailContent({ record }: DayDetailContentProps) {
     <div className="day-detail-content">
       {record.completedMenus.length > 0 && (
         <div className="detail-section">
-          <h4>完了メニュー</h4>
+          <h4>Completed menus</h4>
           <ul className="completed-list">
             {Object.entries(completedWithWeight).map(([name, weight]) => (
               <li key={name}>
@@ -200,12 +200,12 @@ function DayDetailContent({ record }: DayDetailContentProps) {
               </li>
             ))}
           </ul>
-          <p className="total-weight">総重量: {totalWeight}kg</p>
+          <p className="total-weight">Total weight: {totalWeight}kg</p>
         </div>
       )}
       {Object.values(record.bodyInfo ?? {}).some((v) => v != null) && (
         <div className="detail-section">
-          <h4>身体情報</h4>
+          <h4>Body info</h4>
           <div className="body-info">
             {BODY_INFO_FIELDS.filter((f) => record.bodyInfo![f.key] != null).map(
               (f) => (
@@ -219,7 +219,7 @@ function DayDetailContent({ record }: DayDetailContentProps) {
       )}
       {record.memo && (
         <div className="detail-section">
-          <h4>メモ</h4>
+          <h4>Memo</h4>
           <p className="memo-text">{record.memo}</p>
         </div>
       )}

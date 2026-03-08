@@ -48,15 +48,15 @@ export default function MenuItemCard({
               value={name}
               onChange={(e) => setName(e.target.value)}
               onFocus={(e) => {
-                if (name === '新規メニュー') e.target.select()
+                if (name === 'New menu') e.target.select()
               }}
-              placeholder="メニュー名"
+              placeholder="Menu name"
               className="edit-input"
               autoFocus
             />
             <div className="edit-row">
               <label>
-                重量
+                Weight
                 <input
                   type="number"
                   min="0"
@@ -69,7 +69,7 @@ export default function MenuItemCard({
                 kg
               </label>
               <label>
-                回数
+                Reps
                 <input
                   type="number"
                   min="1"
@@ -78,10 +78,10 @@ export default function MenuItemCard({
                   onFocus={(e) => e.target.select()}
                   className="edit-input small"
                 />
-                回
+                reps
               </label>
               <label>
-                セット
+                Sets
                 <input
                   type="number"
                   min="1"
@@ -94,10 +94,10 @@ export default function MenuItemCard({
             </div>
             <div className="edit-actions">
               <button type="button" className="btn-save" onClick={handleSave}>
-                保存
+                Save
               </button>
               <button type="button" className="btn-cancel" onClick={() => setEditing(false)}>
-                キャンセル
+                Cancel
               </button>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function MenuItemCard({
               <h3 className="menu-item-name">{item.name}</h3>
               <p className="menu-item-spec">
                 {item.weight > 0 ? `${item.weight}kg × ` : ''}
-                {item.reps}回 × {item.sets}セット
+                {item.reps} reps × {item.sets} sets
               </p>
             </div>
             <div className="menu-item-actions">
@@ -115,18 +115,18 @@ export default function MenuItemCard({
                 type="button"
                 className="btn-edit"
                 onClick={() => setEditing(true)}
-                aria-label="編集"
+                aria-label="Edit"
               >
-                ✏️
+                edit
               </button>
               {canRemove && (
                 <button
                   type="button"
                   className="btn-remove"
                   onClick={() => onRemove(item.id)}
-                  aria-label="削除"
+                  aria-label="Delete"
                 >
-                  🗑️
+                  delete
                 </button>
               )}
             </div>
@@ -145,7 +145,7 @@ export default function MenuItemCard({
                 className={`set-btn ${done ? 'done' : ''}`}
                 onClick={() => onSetComplete(setNum)}
                 aria-pressed={done}
-                aria-label={`セット${setNum} ${done ? '完了' : '未完了'}`}
+                aria-label={`Set ${setNum} ${done ? 'done' : 'not done'}`}
               >
                 {done ? '✓' : setNum}
               </button>
