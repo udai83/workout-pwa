@@ -191,12 +191,21 @@
   border-color: var(--accent);
   color: var(--bg-primary);
   cursor: pointer;
-  box-shadow: var(--neon-glow);
+  box-shadow:
+    0 0 12px rgba(0, 245, 255, 0.8),
+    0 0 24px rgba(0, 245, 255, 0.5),
+    0 0 36px rgba(0, 245, 255, 0.3),
+    inset 0 0 12px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
 
 .set-btn.done:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
   color: var(--bg-primary);
-  box-shadow: var(--neon-glow);
+  box-shadow:
+    0 0 16px rgba(0, 245, 255, 0.9),
+    0 0 32px rgba(0, 245, 255, 0.6),
+    0 0 48px rgba(0, 245, 255, 0.4),
+    inset 0 0 14px rgba(255, 255, 255, 0.25);
 }
