@@ -197,22 +197,53 @@ export default function HomeScreen() {
               No menus. Add from Menu setting or the button below.
             </p>
           ) : (
-            menuItems.map((item) => (
-              <MenuItemCard
-                key={`${item.id}-${editingItemId === item.id ? 'editing' : 'view'}`}
-                item={item}
-                completedCount={completedCount(item.id)}
-                onSetComplete={(setNum) => handleSetComplete(item.id, setNum)}
-                onUpdate={handleUpdateMenuItem}
-                onRemove={handleRemoveMenuItem}
-                canRemove
-                isEditing={editingItemId === item.id}
-                onEditStart={() => handleEditStart(item.id)}
-                onEditEnd={handleEditEnd}
-              />
-            ))
+            menuItems
+              .filter((item) => editingItemId !== item.id)
+              .map((item) => (
+                <MenuItemCard
+                  key={item.id}
+                  item={item}
+                  completedCount={completedCount(item.id)}
+                  onSetComplete={(setNum) => handleSetComplete(item.id, setNum)}
+                  onUpdate={handleUpdateMenuItem}
+                  onRemove={handleRemoveMenuItem}
+                  canRemove
+                  isEditing={false}
+                  onEditStart={() => handleEditStart(item.id)}
+                  onEditEnd={handleEditEnd}
+                />
+              ))
           )}
         </div>
+
+        {editingItemId && (() => {
+          const editingItem = menuItems.find((m) => m.id === editingItemId)
+          if (!editingItem) return null
+          return (
+            <div
+              className="edit-overlay"
+              onClick={(e) => e.target === e.currentTarget && handleEditEnd()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Escape' && handleEditEnd()}
+            >
+              <div className="edit-overlay-content">
+                <MenuItemCard
+                  key={editingItem.id}
+                  item={editingItem}
+                  completedCount={completedCount(editingItem.id)}
+                  onSetComplete={(setNum) => handleSetComplete(editingItem.id, setNum)}
+                  onUpdate={handleUpdateMenuItem}
+                  onRemove={handleRemoveMenuItem}
+                  canRemove
+                  isEditing
+                  onEditStart={() => {}}
+                  onEditEnd={handleEditEnd}
+                />
+              </div>
+            </div>
+          )
+        })()}
         <button
           type="button"
           className="add-menu-btn"
