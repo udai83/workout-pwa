@@ -21,12 +21,12 @@
 }
 
 .date-range-section {
-  background: var(--bg-card);
+  background: #141419;
   border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 24px;
   border: 1px solid #2A2A2F;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .date-range-row {
@@ -91,11 +91,11 @@
 }
 
 .trend-card {
-  background: var(--bg-card);
+  background: #141419;
   border-radius: var(--radius-md);
   padding: 20px;
   border: 1px solid #2A2A2F;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .trend-title {

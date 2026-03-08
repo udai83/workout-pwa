@@ -1,8 +1,9 @@
 .menu-item-card {
-  background: var(--bg-card);
+  background: #141419;
   padding: 20px;
   border-radius: 16px;
   border: 1px solid #2A2A2F;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .menu-item-header {
@@ -181,13 +182,11 @@
   background: #15151A;
   color: var(--text-primary);
   border: 2px solid #FF5A00;
-  box-shadow: 0 0 0 1px rgba(255, 122, 26, 0.2);
-  transition: transform 0.15s ease, box-shadow 0.2s;
+  transition: transform 0.15s ease;
 }
 
 .set-btn:hover:not(:disabled) {
   background: rgba(var(--accent-rgb), 0.06);
-  box-shadow: 0 0 12px rgba(255, 176, 102, 0.15);
 }
 
 .set-btn:active:not(:disabled) {
@@ -195,18 +194,16 @@
 }
 
 .set-btn.done {
-  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
+  background: linear-gradient(180deg, #FF7A1A, #FF5A00);
   border-color: #FF7A1A;
   color: #000;
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(255, 176, 102, 0.18);
 }
 
 .set-btn.done:hover {
-  background: linear-gradient(180deg, #FF8533 0%, #FF7A1A 100%);
+  background: linear-gradient(180deg, #FF8533, #FF7A1A);
   border-color: #FF7A1A;
   color: #000;
-  box-shadow: 0 0 10px rgba(255, 176, 102, 0.22);
 }
 
 .set-btn.done:active {

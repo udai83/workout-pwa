@@ -80,7 +80,6 @@
 
 .nav-item.active {
   color: #FF5A00;
-  background: var(--accent-bg-hover);
 }
 
 .nav-item.active .nav-icon {

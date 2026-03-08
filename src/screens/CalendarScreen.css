@@ -160,7 +160,7 @@
 }
 
 .day-detail {
-  background: var(--bg-card);
+  background: #141419;
   border-radius: 16px 16px 0 0;
   padding: 24px;
   width: 100%;
@@ -169,7 +169,7 @@
   overflow-y: auto;
   border: 1px solid #2A2A2F;
   border-bottom: none;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .day-detail h3 {
