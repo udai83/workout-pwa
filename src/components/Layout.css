@@ -25,18 +25,10 @@
   gap: 0;
   padding: 12px 4px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
-  background: linear-gradient(
-    180deg,
-    rgba(6, 10, 16, 0.98) 0%,
-    rgba(2, 6, 12, 0.98) 100%
-  );
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 2px solid var(--border);
+  background: var(--bg-card);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   z-index: 100;
-  box-shadow:
-    0 -4px 32px rgba(var(--accent-rgb), 0.25),
-    inset 0 1px 0 rgba(var(--accent-rgb), 0.1);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
 }
 
 .nav-item {
@@ -47,18 +39,18 @@
   gap: 4px;
   min-height: 56px;
   padding: 8px 4px;
-  color: var(--text-secondary);
+  color: #6B6B72;
   text-decoration: none;
   font-size: 0.7rem;
   font-weight: 500;
   border-radius: var(--radius-sm);
-  transition: color 0.2s, background 0.2s, box-shadow 0.2s;
+  transition: color 0.2s, background 0.2s;
 }
 
 .nav-icon {
   font-size: 1.5rem;
   line-height: 1;
-  filter: grayscale(0.3);
+  filter: grayscale(0.5);
 }
 
 .nav-icon--dumbbell {
@@ -85,9 +77,8 @@
 .nav-item.active {
   color: var(--accent);
   background: var(--accent-bg-hover);
-  box-shadow: var(--neon-glow);
 }
 
 .nav-item.active .nav-icon {
-  filter: drop-shadow(0 0 4px rgba(var(--accent-rgb), 0.6));
+  filter: none;
 }

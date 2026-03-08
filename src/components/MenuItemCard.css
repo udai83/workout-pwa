@@ -1,6 +1,8 @@
 .menu-item-card {
-  background: transparent;
-  padding: 18px 0;
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .menu-item-header {
@@ -41,23 +43,27 @@
   padding: 8px 14px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--accent);
   border-radius: 8px;
+  border: 1px solid;
   transition: background 0.2s;
 }
 
-.btn-edit:hover,
-.btn-remove:hover {
-  background: var(--accent-bg-hover);
+.btn-edit {
+  color: #B0B0B5;
+  border-color: rgba(176, 176, 181, 0.5);
+}
+
+.btn-edit:hover {
+  background: rgba(176, 176, 181, 0.1);
 }
 
 .btn-remove {
-  color: #ff3366;
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .btn-remove:hover {
-  background: rgba(255, 51, 102, 0.15);
-  text-shadow: 0 0 8px rgba(255, 51, 102, 0.8);
+  background: rgba(255, 59, 48, 0.1);
 }
 
 .edit-form {
@@ -94,7 +100,7 @@
   min-height: 44px;
   padding: 12px 14px;
   background: var(--bg-primary);
-  border: 2px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 1rem;
@@ -135,15 +141,13 @@
   min-height: 44px;
   padding: 10px 18px;
   background: var(--accent);
-  color: var(--bg-primary);
+  color: #000;
   border-radius: 10px;
   font-weight: 600;
-  box-shadow: var(--neon-glow);
 }
 
 .btn-save:hover {
   background: var(--accent-hover);
-  box-shadow: var(--neon-glow);
 }
 
 .btn-cancel {
@@ -158,54 +162,48 @@
 }
 
 .set-buttons {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 20px;
 }
 
 .set-btn {
-  aspect-ratio: 1;
-  width: 100%;
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
   border-radius: 50%;
   touch-action: manipulation;
-  font-size: 1.15rem;
+  font-size: 24px;
   font-weight: 600;
-  background: transparent;
+  background: #15151A;
   color: var(--text-primary);
   border: 2px solid var(--accent);
-  transition: all 0.2s;
+  transition: transform 0.15s ease;
 }
 
 .set-btn:hover:not(:disabled) {
-  background: var(--accent-bg-hover);
-  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 .set-btn:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
 
 .set-btn.done {
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--bg-primary);
+  color: #000;
   cursor: pointer;
-  box-shadow:
-    0 0 12px rgba(var(--accent-rgb), 0.8),
-    0 0 24px rgba(var(--accent-rgb), 0.5),
-    0 0 36px rgba(var(--accent-rgb), 0.3),
-    inset 0 0 12px rgba(255, 255, 255, 0.2);
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
 
 .set-btn.done:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: var(--bg-primary);
-  box-shadow:
-    0 0 16px rgba(var(--accent-rgb), 0.9),
-    0 0 32px rgba(var(--accent-rgb), 0.6),
-    0 0 48px rgba(var(--accent-rgb), 0.4),
-    inset 0 0 14px rgba(255, 255, 255, 0.25);
+  color: #000;
+}
+
+.set-btn.done:active {
+  transform: scale(0.92);
 }

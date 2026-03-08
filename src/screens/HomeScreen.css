@@ -34,8 +34,8 @@
 .home-date-input {
   min-height: 44px;
   padding: 10px 14px;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -46,7 +46,6 @@
 .home-date-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3);
 }
 
 .date-weekday {
@@ -66,12 +65,10 @@
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: var(--neon-glow);
 }
 
 .today-btn:hover {
   background: var(--accent-bg-hover);
-  box-shadow: var(--neon-glow);
 }
 
 .today-btn:active {
@@ -85,7 +82,7 @@
 .menu-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   margin-bottom: 12px;
 }
 
@@ -94,10 +91,9 @@
   text-align: center;
   color: var(--text-secondary);
   font-size: 1rem;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-subtle);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
 }
 
 .add-menu-btn {
@@ -106,17 +102,16 @@
   padding: 16px 20px;
   background: transparent;
   color: var(--accent);
-  border: 2px dashed var(--accent-border);
+  border: 2px dashed rgba(var(--accent-rgb), 0.4);
   border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .add-menu-btn:hover {
   background: var(--accent-bg-hover);
   border-color: var(--accent);
-  box-shadow: var(--neon-glow);
 }
 
 .add-menu-btn:active {
@@ -141,9 +136,9 @@
 .edit-overlay-content {
   width: 100%;
   max-width: 400px;
-  background: var(--bg-secondary);
-  border: 2px solid var(--accent);
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: var(--neon-glow);
+  box-shadow: var(--shadow-md);
 }

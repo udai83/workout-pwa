@@ -172,7 +172,7 @@ function ScheduleCard({
       : schedule.date ?? ''
 
   return (
-    <article className="schedule-card">
+    <article className={`schedule-card ${isExpanded ? 'expanded' : ''}`}>
       <div
         className="schedule-header"
         onClick={onToggleExpand}
@@ -182,9 +182,9 @@ function ScheduleCard({
       >
         <span className="schedule-label">{label}</span>
         <span className="schedule-count">
-          {schedule.menuItems.length}件
+          {schedule.menuItems.length}メニュー
         </span>
-        <span className="expand-icon">{isExpanded ? '▼' : '▶'}</span>
+        <span className="expand-icon">›</span>
       </div>
 
       {isExpanded && (
