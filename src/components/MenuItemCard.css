@@ -1,0 +1,155 @@
+.menu-item-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+
+.menu-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.menu-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-item-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.menu-item-spec {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.menu-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-edit,
+.btn-remove {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit:hover,
+.btn-remove:hover {
+  background: var(--bg-card);
+}
+
+.edit-form {
+  width: 100%;
+}
+
+.edit-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.edit-input.small {
+  min-width: 0;
+  width: 56px;
+  max-width: 72px;
+  margin-right: 2px;
+}
+
+.edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.edit-row label {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-save {
+  min-height: 44px;
+  padding: 10px 18px;
+  background: var(--accent);
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-save:hover {
+  background: var(--accent-hover);
+}
+
+.btn-cancel {
+  min-height: 44px;
+  padding: 10px 18px;
+  color: var(--text-secondary);
+  border-radius: 10px;
+}
+
+.btn-cancel:hover {
+  color: var(--text-primary);
+}
+
+.set-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.set-btn {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+  transition: all 0.2s;
+}
+
+.set-btn:hover:not(:disabled) {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.set-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.set-btn.done {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  cursor: default;
+}

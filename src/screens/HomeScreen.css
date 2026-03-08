@@ -1,0 +1,69 @@
+.home-screen {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+
+.home-header {
+  margin-bottom: 20px;
+}
+
+.home-header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.home-date {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.menu-section {
+  margin-bottom: 24px;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.empty-message {
+  padding: 20px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.add-menu-btn {
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 16px;
+  background: transparent;
+  color: var(--accent);
+  border: 2px dashed var(--accent);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.add-menu-btn:hover {
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.add-menu-btn:active {
+  transform: scale(0.98);
+}
+
+.daily-record-section {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}

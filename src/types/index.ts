@@ -1,0 +1,54 @@
+/** メニュー項目（1種目） */
+export interface MenuItem {
+  id: string
+  name: string
+  weight: number
+  reps: number
+  sets: number
+}
+
+/** スケジュールタイプ */
+export type ScheduleType = 'weekday' | 'date'
+
+/** メニュースケジュール（曜日 or 日付に紐づくメニュー） */
+export interface MenuSchedule {
+  id: string
+  scheduleType: ScheduleType
+  /** 曜日指定時: 0=日, 1=月, ..., 6=土 */
+  weekday?: number
+  /** 日付指定時: YYYY-MM-DD */
+  date?: string
+  menuItems: MenuItem[]
+  createdAt: string
+}
+
+/** 身体情報 */
+export interface BodyInfo {
+  height?: number
+  weight?: number
+  bodyFat?: number
+}
+
+/** 1種目の実行結果（セット完了状況） */
+export interface CompletedSet {
+  menuItemId: string
+  completedCount: number
+}
+
+/** メニューオーバーライド（その日だけの追加・編集） */
+export interface MenuOverride {
+  item: MenuItem
+  /** スケジュール項目を置き換える場合の元ID */
+  replacesId?: string
+}
+
+/** 日次記録 */
+export interface DailyRecord {
+  date: string
+  menuOverrides?: MenuOverride[]
+  /** その日非表示にしたスケジュール項目のID */
+  hiddenScheduleItemIds?: string[]
+  completedMenus: CompletedSet[]
+  memo: string
+  bodyInfo: BodyInfo
+}

@@ -1,0 +1,230 @@
+.menu-settings-screen {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+
+.settings-header {
+  margin-bottom: 20px;
+}
+
+.settings-header h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.settings-desc {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.add-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.add-schedule-btn {
+  min-height: 48px;
+  padding: 14px 16px;
+  background: transparent;
+  color: var(--accent);
+  border: 2px dashed var(--accent);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.add-schedule-btn:hover {
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.schedule-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.schedule-label {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.schedule-count {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.expand-icon {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.schedule-body {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.schedule-edit,
+.schedule-actions {
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-row label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.edit-select,
+.edit-input {
+  min-height: 44px;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.btn-save,
+.btn-edit,
+.btn-delete {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.btn-save {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-edit {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-delete {
+  background: transparent;
+  color: var(--accent);
+}
+
+.menu-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  min-height: 44px;
+  background: var(--bg-primary);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.menu-item-row.edit {
+  flex-wrap: wrap;
+}
+
+.row-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.row-spec {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.row-input {
+  min-height: 44px;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+}
+
+.row-input.name {
+  flex: 1;
+  min-width: 0;
+}
+
+.row-input.small {
+  width: 56px;
+  min-width: 56px;
+}
+
+.btn-save-sm,
+.btn-cancel-sm {
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+
+.btn-edit-sm,
+.btn-delete-sm {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-item-btn {
+  min-height: 48px;
+  padding: 12px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.add-item-btn:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
