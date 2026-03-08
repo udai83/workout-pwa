@@ -222,6 +222,9 @@ function ScheduleCard({
               <button type="button" className="btn-save" onClick={onSave}>
                 保存
               </button>
+              <button type="button" className="btn-delete" onClick={onDelete}>
+                削除
+              </button>
             </div>
           ) : (
             <div className="schedule-actions">

@@ -146,6 +146,14 @@
   color: var(--accent);
 }
 
+.schedule-edit .btn-delete {
+  color: #ff3366;
+}
+
+.schedule-edit .btn-delete:hover {
+  background: rgba(255, 51, 102, 0.15);
+}
+
 .menu-items {
   display: flex;
   flex-direction: column;
