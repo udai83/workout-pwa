@@ -35,8 +35,8 @@
   border-top: 2px solid var(--border);
   z-index: 100;
   box-shadow:
-    0 -4px 32px rgba(0, 245, 255, 0.25),
-    inset 0 1px 0 rgba(0, 245, 255, 0.1);
+    0 -4px 32px rgba(var(--accent-rgb), 0.25),
+    inset 0 1px 0 rgba(var(--accent-rgb), 0.1);
 }
 
 .nav-item {
@@ -61,6 +61,12 @@
   filter: grayscale(0.3);
 }
 
+.nav-icon--dumbbell {
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0;
+}
+
 .nav-item:hover .nav-icon,
 .nav-item.active .nav-icon {
   filter: none;
@@ -83,5 +89,5 @@
 }
 
 .nav-item.active .nav-icon {
-  filter: drop-shadow(0 0 4px rgba(0, 245, 255, 0.6));
+  filter: drop-shadow(0 0 4px rgba(var(--accent-rgb), 0.6));
 }

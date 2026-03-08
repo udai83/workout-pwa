@@ -2,8 +2,22 @@ import { NavLink } from 'react-router-dom'
 import HelpButton from './HelpButton'
 import './Layout.css'
 
+function DumbbellIcon() {
+  return (
+    <svg
+      className="nav-icon nav-icon--dumbbell"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <circle cx="5" cy="12" r="4" />
+      <circle cx="19" cy="12" r="4" />
+      <rect x="9" y="11" width="6" height="2" />
+    </svg>
+  )
+}
+
 const navItems = [
-  { to: '/', label: 'Today', icon: '🏠' },
+  { to: '/', label: 'Today', icon: <DumbbellIcon /> },
   { to: '/menu', label: 'Menu', icon: '📋' },
   { to: '/calendar', label: 'Calendar', icon: '📅' },
   { to: '/changes', label: 'Changes', icon: '📈' },

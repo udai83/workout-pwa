@@ -2,21 +2,22 @@
   --bg-primary: #000000;
   --bg-secondary: #0a0a0a;
   --bg-card: #0d0d0d;
-  --accent: #00f5ff;
-  --accent-hover: #00d4ff;
-  --accent-muted: #7df9ff;
+  --accent: #ff6600;
+  --accent-hover: #ff8533;
+  --accent-muted: #ffb366;
   --accent-pink: #ff00ff;
+  --accent-rgb: 255, 102, 0;
   --text-primary: #e8e8ff;
   --text-secondary: #a0a0b8;
   --success: #00ff88;
-  --border: rgba(0, 245, 255, 0.4);
-  --border-subtle: rgba(0, 245, 255, 0.25);
-  --accent-border: rgba(0, 245, 255, 0.5);
-  --accent-bg-hover: rgba(0, 245, 255, 0.1);
-  --accent-bg-muted: rgba(0, 245, 255, 0.06);
+  --border: rgba(var(--accent-rgb), 0.4);
+  --border-subtle: rgba(var(--accent-rgb), 0.25);
+  --accent-border: rgba(var(--accent-rgb), 0.5);
+  --accent-bg-hover: rgba(var(--accent-rgb), 0.1);
+  --accent-bg-muted: rgba(var(--accent-rgb), 0.06);
   --border-width: 2px;
-  --neon-glow: 0 0 10px rgba(0, 245, 255, 0.5), 0 0 20px rgba(0, 245, 255, 0.3);
-  --neon-text: 0 0 5px rgba(0, 245, 255, 0.8), 0 0 10px rgba(0, 245, 255, 0.5);
+  --neon-glow: 0 0 10px rgba(var(--accent-rgb), 0.5), 0 0 20px rgba(var(--accent-rgb), 0.3);
+  --neon-text: 0 0 5px rgba(var(--accent-rgb), 0.8), 0 0 10px rgba(var(--accent-rgb), 0.5);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
   --radius-sm: 12px;
@@ -39,11 +40,11 @@ html {
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   background:
-    radial-gradient(ellipse 120% 80% at 10% 95%, rgba(0, 245, 255, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 100% 70% at 90% 5%, rgba(255, 0, 255, 0.05) 0%, transparent 55%),
-    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 50% at 0% 40%, rgba(0, 200, 255, 0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 45% at 100% 60%, rgba(255, 100, 200, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 120% 80% at 10% 95%, rgba(var(--accent-rgb), 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 100% 70% at 90% 5%, rgba(255, 0, 255, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(0, 255, 136, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 0% 40%, rgba(0, 200, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 45% at 100% 60%, rgba(255, 100, 200, 0.1) 0%, transparent 55%),
     var(--bg-primary);
   color: var(--text-primary);
   min-height: 100dvh;

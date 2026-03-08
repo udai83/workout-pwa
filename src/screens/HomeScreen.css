@@ -46,7 +46,7 @@
 .home-date-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3);
 }
 
 .date-weekday {
@@ -106,7 +106,7 @@
   padding: 16px 20px;
   background: transparent;
   color: var(--accent);
-  border: 1px dashed var(--accent-border);
+  border: 2px dashed var(--accent-border);
   border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
