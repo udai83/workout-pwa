@@ -2,7 +2,7 @@
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
   padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-sm);
 }
 
@@ -67,6 +67,10 @@
   color: var(--text-primary);
   font-size: 1rem;
   margin-bottom: 8px;
+}
+
+.edit-input::placeholder {
+  color: var(--text-secondary);
 }
 
 .edit-input.small {

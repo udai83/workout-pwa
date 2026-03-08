@@ -64,7 +64,6 @@ export default function DailyRecordForm({
         <div className="body-info-grid">
           {BODY_INFO_FIELDS.map((field) => (
             <div key={field.key} className="body-info-item">
-              <span className="body-info-label">{field.label}</span>
               <input
                 type="number"
                 min={field.min}

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { getWeekday, formatDate } from '@/lib/utils'
 import { findMenuItem } from '@/lib/menuUtils'
@@ -9,6 +10,7 @@ import './CalendarScreen.css'
 const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
 
 export default function CalendarScreen() {
+  const navigate = useNavigate()
   const [currentDate, setCurrentDate] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
@@ -138,6 +140,16 @@ export default function CalendarScreen() {
             ) : (
               <p className="no-data">記録がありません</p>
             )}
+            <button
+              type="button"
+              className="register-menu-btn"
+              onClick={() => {
+                setSelectedDate(null)
+                navigate(`/?date=${selectedDate}`)
+              }}
+            >
+              メニューに登録する
+            </button>
             <button
               type="button"
               className="close-btn"

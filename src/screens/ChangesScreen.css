@@ -25,7 +25,7 @@
   border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-sm);
 }
 
@@ -73,7 +73,7 @@
 }
 
 .reset-range-btn:hover {
-  background: rgba(162, 155, 254, 0.15);
+  background: var(--accent-bg-hover);
 }
 
 .no-data-message {
@@ -94,7 +94,7 @@
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-sm);
 }
 

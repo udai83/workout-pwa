@@ -2,7 +2,7 @@
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-sm);
 }
 
@@ -33,7 +33,7 @@
   min-height: 88px;
   padding: 14px 16px;
   background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -58,20 +58,13 @@
   min-width: 0;
 }
 
-.body-info-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  min-width: 4em;
-}
-
 .body-input {
   flex: 1;
   min-width: 0;
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;

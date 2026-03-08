@@ -4,8 +4,8 @@
   gap: 14px;
   padding: 18px 22px;
   margin-bottom: 24px;
-  background: linear-gradient(135deg, rgba(162, 155, 254, 0.14) 0%, rgba(162, 155, 254, 0.06) 100%);
-  border: 1px solid rgba(162, 155, 254, 0.25);
+  background: linear-gradient(135deg, var(--accent-bg-hover) 0%, var(--accent-bg-muted) 100%);
+  border: 1px solid var(--accent-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
 }

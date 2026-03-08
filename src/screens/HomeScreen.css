@@ -16,8 +16,29 @@
   letter-spacing: -0.02em;
 }
 
+.date-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.home-date-input {
+  min-height: 44px;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.home-date-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .home-date {
-  margin-top: 6px;
   font-size: 0.9rem;
   color: var(--text-secondary);
   font-weight: 500;
@@ -40,7 +61,7 @@
   color: var(--text-secondary);
   font-size: 0.9rem;
   background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
@@ -51,7 +72,7 @@
   padding: 16px 20px;
   background: transparent;
   color: var(--accent);
-  border: 1px dashed rgba(162, 155, 254, 0.5);
+  border: 1px dashed var(--accent-border);
   border-radius: var(--radius-md);
   font-size: 1rem;
   font-weight: 600;
@@ -59,8 +80,8 @@
 }
 
 .add-menu-btn:hover {
-  background: rgba(162, 155, 254, 0.08);
-  border-color: rgba(162, 155, 254, 0.7);
+  background: var(--accent-bg-hover);
+  border-color: var(--accent);
 }
 
 .add-menu-btn:active {
@@ -69,5 +90,5 @@
 
 .daily-record-section {
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border-subtle);
 }

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { MenuItem, DailyRecord, BodyInfo, CompletedSet } from '@/types'
 import { storage } from '@/lib/storage'
 import { getTodayString, getWeekday, generateId } from '@/lib/utils'
-import { useTodayMenu } from '@/hooks/useTodayMenu'
+import { useMenuForDate } from '@/hooks/useMenuForDate'
 import MenuItemCard from '@/components/MenuItemCard'
 import DailyRecordForm from '@/components/DailyRecordForm'
 import GrowthMessage from '@/components/GrowthMessage'
@@ -11,15 +12,19 @@ import './HomeScreen.css'
 const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
 
 export default function HomeScreen() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const dateParam = searchParams.get('date')
   const today = getTodayString()
-  const weekday = getWeekday(today)
-  const scheduledItems = useTodayMenu()
+  const selectedDate = dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? dateParam : today
+
+  const weekday = getWeekday(selectedDate)
+  const scheduledItems = useMenuForDate(selectedDate)
   const [record, setRecord] = useState<DailyRecord | null>(null)
 
   useEffect(() => {
-    const r = storage.getDailyRecord(today)
-    setRecord(r ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} })
-  }, [today])
+    const r = storage.getDailyRecord(selectedDate)
+    setRecord(r ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} })
+  }, [selectedDate])
 
   const overrides = record?.menuOverrides ?? []
   const hiddenIds = new Set(record?.hiddenScheduleItemIds ?? [])
@@ -35,6 +40,10 @@ export default function HomeScreen() {
 
   const completedCount = (itemId: string) =>
     record?.completedMenus.find((m) => m.menuItemId === itemId)?.completedCount ?? 0
+
+  const handleDateChange = (newDate: string) => {
+    setSearchParams({ date: newDate })
+  }
 
   const handleSetComplete = (itemId: string, setNum: number) => {
     const item = menuItems.find((m) => m.id === itemId)
@@ -64,7 +73,7 @@ export default function HomeScreen() {
     }
 
     const newRecord: DailyRecord = {
-      ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
+      ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       completedMenus: newCompleted,
     }
     setRecord(newRecord)
@@ -81,7 +90,7 @@ export default function HomeScreen() {
     }
     const overrides = record?.menuOverrides ?? []
     const newRecord: DailyRecord = {
-      ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
+      ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       menuOverrides: [...overrides, { item: newItem }],
     }
     setRecord(newRecord)
@@ -95,39 +104,36 @@ export default function HomeScreen() {
       const newOverrides = [...overrides]
       newOverrides[idx] = { ...newOverrides[idx], item: updated }
       const newRecord: DailyRecord = {
-        ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
+        ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
         menuOverrides: newOverrides,
       }
       setRecord(newRecord)
       storage.saveDailyRecord(newRecord)
       return
     }
-    const scheduledIdx = scheduledItems.findIndex((s) => s.id === updated.id)
-    if (scheduledIdx >= 0) {
-      const newItem = { ...updated, id: generateId() }
-      const newOverrides = [...(record?.menuOverrides ?? []), { item: newItem, replacesId: updated.id }]
-      const newRecord: DailyRecord = {
-        ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
-        menuOverrides: newOverrides,
-      }
-      setRecord(newRecord)
-      storage.saveDailyRecord(newRecord)
+    const newItem = { ...updated, id: generateId() }
+    const newOverrides = [...(record?.menuOverrides ?? []), { item: newItem, replacesId: updated.id }]
+    const newRecord: DailyRecord = {
+      ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
+      menuOverrides: newOverrides,
     }
+    setRecord(newRecord)
+    storage.saveDailyRecord(newRecord)
   }
 
   const handleRemoveMenuItem = (itemId: string) => {
-    const isScheduled = scheduledItems.some((s) => s.id === itemId)
+    const isFromOverride = overrides.some((o) => o.item.id === itemId)
     const newOverrides = (record?.menuOverrides ?? []).filter(
       (o) => o.item.id !== itemId && o.replacesId !== itemId
     )
-    const newHidden = isScheduled
+    const newHidden = !isFromOverride
       ? [...(record?.hiddenScheduleItemIds ?? []), itemId]
       : (record?.hiddenScheduleItemIds ?? [])
     const newCompleted = (record?.completedMenus ?? []).filter(
       (m) => m.menuItemId !== itemId
     )
     const newRecord: DailyRecord = {
-      ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
+      ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       menuOverrides: newOverrides,
       hiddenScheduleItemIds: newHidden,
       completedMenus: newCompleted,
@@ -138,7 +144,7 @@ export default function HomeScreen() {
 
   const handleRecordChange = (memo: string, bodyInfo: BodyInfo) => {
     const newRecord: DailyRecord = {
-      ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
+      ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       memo,
       bodyInfo,
     }
@@ -150,12 +156,21 @@ export default function HomeScreen() {
     <div className="home-screen">
       <header className="home-header">
         <h1>今日のメニュー</h1>
-        <p className="home-date">
-          {today}（{WEEKDAY_NAMES[weekday]}）
-        </p>
+        <div className="date-selector-row">
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => handleDateChange(e.target.value)}
+            className="home-date-input"
+            aria-label="表示する日付を選択"
+          />
+          <p className="home-date">
+            {selectedDate}（{WEEKDAY_NAMES[weekday]}）
+          </p>
+        </div>
       </header>
 
-      <GrowthMessage todayRecord={record} />
+      {selectedDate === today && <GrowthMessage todayRecord={record} />}
 
       <section className="menu-section">
         <div className="menu-list">

@@ -40,7 +40,7 @@
 }
 
 .add-schedule-btn:hover {
-  background: rgba(162, 155, 254, 0.15);
+  background: var(--accent-bg-hover);
 }
 
 .schedule-list {
@@ -227,5 +227,5 @@
 }
 
 .add-item-btn:hover {
-  background: rgba(162, 155, 254, 0.15);
+  background: var(--accent-bg-hover);
 }
