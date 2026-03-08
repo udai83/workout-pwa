@@ -35,16 +35,20 @@ export default function HomeScreen() {
   const completedCount = (itemId: string) =>
     record?.completedMenus.find((m) => m.menuItemId === itemId)?.completedCount ?? 0
 
-  const handleSetComplete = (itemId: string) => {
+  const handleSetComplete = (itemId: string, setNum: number) => {
     const item = menuItems.find((m) => m.id === itemId)
     if (!item) return
     const current = completedCount(itemId)
-    if (current >= item.sets) return
-    const next = current + 1
+    const next = setNum <= current ? current - 1 : current + 1
     const newCompleted = [...(record?.completedMenus ?? [])]
     const idx = newCompleted.findIndex((m) => m.menuItemId === itemId)
-    if (idx >= 0) newCompleted[idx] = { ...newCompleted[idx], completedCount: next }
-    else newCompleted.push({ menuItemId: itemId, completedCount: next })
+    if (next <= 0) {
+      if (idx >= 0) newCompleted.splice(idx, 1)
+    } else if (idx >= 0) {
+      newCompleted[idx] = { ...newCompleted[idx], completedCount: next }
+    } else {
+      newCompleted.push({ menuItemId: itemId, completedCount: next })
+    }
     const newRecord: DailyRecord = {
       ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
       completedMenus: newCompleted,
@@ -149,7 +153,7 @@ export default function HomeScreen() {
                 key={item.id}
                 item={item}
                 completedCount={completedCount(item.id)}
-                onSetComplete={() => handleSetComplete(item.id)}
+                onSetComplete={(setNum) => handleSetComplete(item.id, setNum)}
                 onUpdate={handleUpdateMenuItem}
                 onRemove={handleRemoveMenuItem}
                 canRemove

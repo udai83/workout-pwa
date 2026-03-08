@@ -288,6 +288,9 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          onFocus={(e) => {
+            if (name === '新規メニュー') e.target.select()
+          }}
           placeholder="メニュー名"
           className="row-input name"
         />
@@ -297,6 +300,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           step="0.5"
           value={weight}
           onChange={(e) => setWeight(e.target.value)}
+          onFocus={(e) => e.target.select()}
           placeholder="重量"
           className="row-input small"
         />
@@ -305,6 +309,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           min="1"
           value={reps}
           onChange={(e) => setReps(e.target.value)}
+          onFocus={(e) => e.target.select()}
           placeholder="回数"
           className="row-input small"
         />
@@ -313,6 +318,7 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           min="1"
           value={sets}
           onChange={(e) => setSets(e.target.value)}
+          onFocus={(e) => e.target.select()}
           placeholder="セット"
           className="row-input small"
         />

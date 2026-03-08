@@ -5,7 +5,7 @@ import './MenuItemCard.css'
 interface MenuItemCardProps {
   item: MenuItem
   completedCount: number
-  onSetComplete: () => void
+  onSetComplete: (setNum: number) => void
   onUpdate: (item: MenuItem) => void
   onRemove: (itemId: string) => void
   canRemove?: boolean
@@ -47,6 +47,9 @@ export default function MenuItemCard({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onFocus={(e) => {
+                if (name === '新規メニュー') e.target.select()
+              }}
               placeholder="メニュー名"
               className="edit-input"
               autoFocus
@@ -60,6 +63,7 @@ export default function MenuItemCard({
                   step="0.5"
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
+                  onFocus={(e) => e.target.select()}
                   className="edit-input small"
                 />
                 kg
@@ -71,6 +75,7 @@ export default function MenuItemCard({
                   min="1"
                   value={reps}
                   onChange={(e) => setReps(e.target.value)}
+                  onFocus={(e) => e.target.select()}
                   className="edit-input small"
                 />
                 回
@@ -82,6 +87,7 @@ export default function MenuItemCard({
                   min="1"
                   value={sets}
                   onChange={(e) => setSets(e.target.value)}
+                  onFocus={(e) => e.target.select()}
                   className="edit-input small"
                 />
               </label>
@@ -137,8 +143,7 @@ export default function MenuItemCard({
                 key={setNum}
                 type="button"
                 className={`set-btn ${done ? 'done' : ''}`}
-                onClick={onSetComplete}
-                disabled={done}
+                onClick={() => onSetComplete(setNum)}
                 aria-pressed={done}
                 aria-label={`セット${setNum} ${done ? '完了' : '未完了'}`}
               >

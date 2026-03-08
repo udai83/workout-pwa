@@ -151,5 +151,5 @@
   background: var(--accent);
   border-color: var(--accent);
   color: white;
-  cursor: default;
+  cursor: pointer;
 }
