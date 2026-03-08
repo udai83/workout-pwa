@@ -129,6 +129,7 @@
   min-width: 44px;
   min-height: 44px;
   border-radius: 12px;
+  touch-action: manipulation;
   font-size: 1.05rem;
   font-weight: 600;
   background: var(--bg-card);

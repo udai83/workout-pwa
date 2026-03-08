@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { MenuItem, DailyRecord, BodyInfo } from '@/types'
+import type { MenuItem, DailyRecord, BodyInfo, CompletedSet } from '@/types'
 import { storage } from '@/lib/storage'
 import { getTodayString, getWeekday, generateId } from '@/lib/utils'
 import { useTodayMenu } from '@/hooks/useTodayMenu'
@@ -40,15 +40,28 @@ export default function HomeScreen() {
     if (!item) return
     const current = completedCount(itemId)
     const next = setNum <= current ? current - 1 : current + 1
-    const newCompleted = [...(record?.completedMenus ?? [])]
-    const idx = newCompleted.findIndex((m) => m.menuItemId === itemId)
+
+    let newCompleted: CompletedSet[]
     if (next <= 0) {
-      if (idx >= 0) newCompleted.splice(idx, 1)
-    } else if (idx >= 0) {
-      newCompleted[idx] = { ...newCompleted[idx], completedCount: next }
+      newCompleted = (record?.completedMenus ?? []).filter(
+        (m) => m.menuItemId !== itemId
+      )
     } else {
-      newCompleted.push({ menuItemId: itemId, completedCount: next })
+      const idx = (record?.completedMenus ?? []).findIndex(
+        (m) => m.menuItemId === itemId
+      )
+      if (idx >= 0) {
+        newCompleted = (record?.completedMenus ?? []).map((m, i) =>
+          i === idx ? { ...m, completedCount: next } : m
+        )
+      } else {
+        newCompleted = [
+          ...(record?.completedMenus ?? []),
+          { menuItemId: itemId, completedCount: next },
+        ]
+      }
     }
+
     const newRecord: DailyRecord = {
       ...(record ?? { date: today, completedMenus: [], memo: '', bodyInfo: {} }),
       completedMenus: newCompleted,
