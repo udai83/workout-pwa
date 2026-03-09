@@ -1,6 +1,6 @@
 import type { MenuItem, DailyRecord } from '@/types'
 import { storage } from '@/lib/storage'
-import { getWeekday } from '@/lib/utils'
+import { getWeekday, migrateMenuItem } from '@/lib/utils'
 
 /** 指定日のメニューから menuItemId に一致する項目を取得 */
 export function findMenuItem(
@@ -32,11 +32,12 @@ export function getMenuItemsForDate(
     for (const m of s.menuItems) {
       if (hiddenIds.has(m.id)) continue
       const ov = overrides.find((o) => o.replacesId === m.id)
-      items.push(ov ? ov.item : m)
+      const item = ov ? ov.item : m
+      items.push(migrateMenuItem(item))
     }
   }
   for (const ov of overrides) {
-    if (!ov.replacesId) items.push(ov.item)
+    if (!ov.replacesId) items.push(migrateMenuItem(ov.item))
   }
   return items
 }

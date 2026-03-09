@@ -171,9 +171,16 @@ function getCompletedMenusWithWeight(
   const result: Record<string, number> = {}
   for (const cm of record.completedMenus) {
     const menuItem = findMenuItem(cm.menuItemId, dateStr, record)
-    if (menuItem) {
-      const weight = menuItem.weight * menuItem.reps * cm.completedCount
-      result[menuItem.name] = (result[menuItem.name] ?? 0) + weight
+    if (!menuItem) continue
+    const setGroups = menuItem.setGroups ?? []
+    const counts = cm.setGroupCounts ?? (cm.completedCount != null ? [cm.completedCount] : [])
+    let total = 0
+    setGroups.forEach((g, i) => {
+      const c = counts[i] ?? 0
+      total += g.weight * g.reps * c
+    })
+    if (total > 0) {
+      result[menuItem.name] = (result[menuItem.name] ?? 0) + total
     }
   }
   return result

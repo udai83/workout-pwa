@@ -1,3 +1,20 @@
+import type { MenuItem } from '@/types'
+
+/** 旧形式のMenuItemを新形式にマイグレーション */
+export function migrateMenuItem(item: MenuItem & { weight?: number; reps?: number; sets?: number }): MenuItem {
+  if (item.setGroups && item.setGroups.length > 0) {
+    return { id: item.id, name: item.name, setGroups: item.setGroups }
+  }
+  const weight = item.weight ?? 0
+  const reps = item.reps ?? 10
+  const sets = item.sets ?? 3
+  return {
+    id: item.id,
+    name: item.name,
+    setGroups: [{ weight, reps, sets }],
+  }
+}
+
 /** ユニークID生成 */
 export function generateId(): string {
   return crypto.randomUUID?.() ?? `id-${Date.now()}-${Math.random().toString(36).slice(2)}`

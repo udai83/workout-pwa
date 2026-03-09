@@ -1,18 +1,51 @@
-import { useState, useEffect } from 'react'
-import type { MenuSchedule, MenuItem, ScheduleType } from '@/types'
+import { useState, useEffect, useMemo } from 'react'
+import type { MenuSchedule, MenuItem, SetGroup } from '@/types'
 import { storage } from '@/lib/storage'
 import { generateId } from '@/lib/utils'
 import './MenuSettingsScreen.css'
 
 const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
 
+/** 7曜日分のスケジュールを取得。不足分は作成する */
+function getWeekdaySchedules(existing: MenuSchedule[]): MenuSchedule[] {
+  const byWeekday = new Map<number, MenuSchedule>()
+  for (const s of existing) {
+    if (s.scheduleType === 'weekday' && s.weekday != null) {
+      byWeekday.set(s.weekday, s)
+    }
+  }
+  return WEEKDAY_NAMES.map((_, i) => {
+    const existingSchedule = byWeekday.get(i)
+    if (existingSchedule) return existingSchedule
+    return {
+      id: generateId(),
+      scheduleType: 'weekday' as const,
+      weekday: i,
+      menuItems: [],
+      createdAt: new Date().toISOString(),
+    }
+  })
+}
+
 export default function MenuSettingsScreen() {
   const [schedules, setSchedules] = useState<MenuSchedule[]>([])
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedWeekday, setExpandedWeekday] = useState<number | null>(null)
+
+  const weekdaySchedules = useMemo(
+    () => getWeekdaySchedules(schedules),
+    [schedules]
+  )
 
   useEffect(() => {
-    setSchedules(storage.getMenuSchedules())
+    const raw = storage.getMenuSchedules()
+    const merged = getWeekdaySchedules(raw)
+    const toSave: MenuSchedule[] = raw.filter((r) => r.scheduleType !== 'weekday')
+    for (const s of merged) {
+      const existing = raw.find((r) => r.scheduleType === 'weekday' && r.weekday === s.weekday)
+      toSave.push(existing ?? s)
+    }
+    storage.setMenuSchedules(toSave)
+    setSchedules(toSave)
   }, [])
 
   const saveSchedules = (newSchedules: MenuSchedule[]) => {
@@ -20,61 +53,43 @@ export default function MenuSettingsScreen() {
     storage.setMenuSchedules(newSchedules)
   }
 
-  const handleAddSchedule = (type: ScheduleType) => {
-    const base: MenuSchedule = {
-      id: generateId(),
-      scheduleType: type,
-      menuItems: [],
-      createdAt: new Date().toISOString(),
-    }
-    if (type === 'weekday') {
-      base.weekday = 1
-    } else {
-      base.date = new Date().toISOString().slice(0, 10)
-    }
-    const newSchedules = [...schedules, base]
-    saveSchedules(newSchedules)
-    setEditingId(base.id)
-    setExpandedId(base.id)
+  const handleUpdateSchedule = (weekday: number, updates: Partial<MenuSchedule>) => {
+    const schedule = weekdaySchedules[weekday]
+    if (!schedule) return
+    const updated = { ...schedule, ...updates }
+    const others = schedules.filter((s) => s.scheduleType !== 'weekday' || s.weekday !== weekday)
+    saveSchedules([...others, updated])
   }
 
-  const handleUpdateSchedule = (id: string, updates: Partial<MenuSchedule>) => {
-    saveSchedules(
-      schedules.map((s) => (s.id === id ? { ...s, ...updates } : s))
-    )
+  const handleClearRoutine = (weekday: number) => {
+    handleUpdateSchedule(weekday, { menuItems: [] })
   }
 
-  const handleDeleteSchedule = (id: string) => {
-    saveSchedules(schedules.filter((s) => s.id !== id))
-    setEditingId((prev) => (prev === id ? null : prev))
-    setExpandedId((prev) => (prev === id ? null : prev))
-  }
-
-  const handleAddMenuItem = (scheduleId: string) => {
+  const handleAddMenuItem = (weekday: number) => {
+    const schedule = weekdaySchedules[weekday]
+    if (!schedule) return
     const newItem: MenuItem = {
       id: generateId(),
-      name: '新規メニュー',
-      weight: 0,
-      reps: 10,
-      sets: 3,
+      name: '',
+      setGroups: [{ weight: 0, reps: 0, sets: 0 }],
     }
-    handleUpdateSchedule(scheduleId, {
-      menuItems: [...(schedules.find((s) => s.id === scheduleId)?.menuItems ?? []), newItem],
+    handleUpdateSchedule(weekday, {
+      menuItems: [...schedule.menuItems, newItem],
     })
   }
 
-  const handleUpdateMenuItem = (scheduleId: string, itemId: string, item: MenuItem) => {
-    const schedule = schedules.find((s) => s.id === scheduleId)
+  const handleUpdateMenuItem = (weekday: number, itemId: string, item: MenuItem) => {
+    const schedule = weekdaySchedules[weekday]
     if (!schedule) return
-    handleUpdateSchedule(scheduleId, {
+    handleUpdateSchedule(weekday, {
       menuItems: schedule.menuItems.map((m) => (m.id === itemId ? item : m)),
     })
   }
 
-  const handleDeleteMenuItem = (scheduleId: string, itemId: string) => {
-    const schedule = schedules.find((s) => s.id === scheduleId)
+  const handleDeleteMenuItem = (weekday: number, itemId: string) => {
+    const schedule = weekdaySchedules[weekday]
     if (!schedule) return
-    handleUpdateSchedule(scheduleId, {
+    handleUpdateSchedule(weekday, {
       menuItems: schedule.menuItems.filter((m) => m.id !== itemId),
     })
   }
@@ -82,58 +97,35 @@ export default function MenuSettingsScreen() {
   return (
     <div className="menu-settings-screen">
       <header className="settings-header">
-        <h1>メニュー設定</h1>
+        <h1>Set Menu設定</h1>
         <p className="settings-desc">
-          曜日または日付にメニューを紐づけて登録します
+          各曜日のトレーニングルーティンを構成・管理しましょう
         </p>
       </header>
 
-      <div className="add-buttons">
-        <button
-          type="button"
-          className="add-schedule-btn"
-          onClick={() => handleAddSchedule('weekday')}
-        >
-          ＋ 曜日で追加
-        </button>
-        <button
-          type="button"
-          className="add-schedule-btn"
-          onClick={() => handleAddSchedule('date')}
-        >
-          ＋ 日付で追加
-        </button>
-      </div>
-
       <div className="schedule-list">
-        {schedules.length === 0 ? (
-          <p className="empty-message">
-            メニューがありません。上のボタンから追加してください。
-          </p>
-        ) : (
-          schedules.map((schedule) => (
+        {weekdaySchedules.map((schedule, idx) => {
+          const weekday = schedule.weekday ?? idx
+          return (
             <ScheduleCard
               key={schedule.id}
               schedule={schedule}
-              isExpanded={expandedId === schedule.id}
-              isEditing={editingId === schedule.id}
+              weekday={weekday}
+              isExpanded={expandedWeekday === weekday}
               onToggleExpand={() =>
-                setExpandedId((prev) => (prev === schedule.id ? null : schedule.id))
+                setExpandedWeekday((prev) => (prev === weekday ? null : weekday))
               }
-              onEdit={() => setEditingId(schedule.id)}
-              onSave={() => setEditingId(null)}
-              onUpdate={(updates) => handleUpdateSchedule(schedule.id, updates)}
-              onDelete={() => handleDeleteSchedule(schedule.id)}
-              onAddMenuItem={() => handleAddMenuItem(schedule.id)}
+              onClearRoutine={() => handleClearRoutine(weekday)}
+              onAddMenuItem={() => handleAddMenuItem(weekday)}
               onUpdateMenuItem={(itemId, item) =>
-                handleUpdateMenuItem(schedule.id, itemId, item)
+                handleUpdateMenuItem(weekday, itemId, item)
               }
               onDeleteMenuItem={(itemId) =>
-                handleDeleteMenuItem(schedule.id, itemId)
+                handleDeleteMenuItem(weekday, itemId)
               }
             />
-          ))
-        )}
+          )
+        })}
       </div>
     </div>
   )
@@ -141,13 +133,10 @@ export default function MenuSettingsScreen() {
 
 interface ScheduleCardProps {
   schedule: MenuSchedule
+  weekday: number
   isExpanded: boolean
-  isEditing: boolean
   onToggleExpand: () => void
-  onEdit: () => void
-  onSave: () => void
-  onUpdate: (updates: Partial<MenuSchedule>) => void
-  onDelete: () => void
+  onClearRoutine: () => void
   onAddMenuItem: () => void
   onUpdateMenuItem: (itemId: string, item: MenuItem) => void
   onDeleteMenuItem: (itemId: string) => void
@@ -155,21 +144,15 @@ interface ScheduleCardProps {
 
 function ScheduleCard({
   schedule,
+  weekday,
   isExpanded,
-  isEditing,
   onToggleExpand,
-  onEdit,
-  onSave,
-  onUpdate,
-  onDelete,
+  onClearRoutine,
   onAddMenuItem,
   onUpdateMenuItem,
   onDeleteMenuItem,
 }: ScheduleCardProps) {
-  const label =
-    schedule.scheduleType === 'weekday'
-      ? `毎週${WEEKDAY_NAMES[schedule.weekday ?? 0]}曜日`
-      : schedule.date ?? ''
+  const label = `${WEEKDAY_NAMES[weekday]}曜日`
 
   return (
     <article className={`schedule-card ${isExpanded ? 'expanded' : ''}`}>
@@ -189,53 +172,13 @@ function ScheduleCard({
 
       {isExpanded && (
         <div className="schedule-body">
-          {isEditing ? (
-            <div className="schedule-edit">
-              {schedule.scheduleType === 'weekday' ? (
-                <div className="edit-row">
-                  <label>曜日</label>
-                  <select
-                    value={schedule.weekday ?? 0}
-                    onChange={(e) =>
-                      onUpdate({ weekday: parseInt(e.target.value, 10) })
-                    }
-                    className="edit-select"
-                  >
-                    {WEEKDAY_NAMES.map((name, i) => (
-                      <option key={i} value={i}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div className="edit-row">
-                  <label>日付</label>
-                  <input
-                    type="date"
-                    value={schedule.date ?? ''}
-                    onChange={(e) => onUpdate({ date: e.target.value })}
-                    className="edit-input"
-                  />
-                </div>
-              )}
-              <button type="button" className="btn-save" onClick={onSave}>
-                保存
+          <div className="schedule-actions">
+            {schedule.menuItems.length > 0 && (
+              <button type="button" className="btn-delete" onClick={onClearRoutine}>
+                ルーティンをクリア
               </button>
-              <button type="button" className="btn-delete" onClick={onDelete}>
-                削除
-              </button>
-            </div>
-          ) : (
-            <div className="schedule-actions">
-              <button type="button" className="btn-edit" onClick={onEdit}>
-                編集
-              </button>
-              <button type="button" className="btn-delete" onClick={onDelete}>
-                削除
-              </button>
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="menu-items">
             {schedule.menuItems.map((item) => (
@@ -266,86 +209,159 @@ interface MenuItemRowProps {
   onDelete: () => void
 }
 
+function isNewEmptyItem(item: MenuItem): boolean {
+  return (
+    item.name === '' &&
+    item.setGroups.length === 1 &&
+    item.setGroups[0].weight === 0 &&
+    item.setGroups[0].reps === 0 &&
+    item.setGroups[0].sets === 0
+  )
+}
+
 function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
-  const [editing, setEditing] = useState(false)
+  const isNew = isNewEmptyItem(item)
+  const [editing, setEditing] = useState(isNew)
   const [name, setName] = useState(item.name)
-  const [weight, setWeight] = useState(String(item.weight))
-  const [reps, setReps] = useState(String(item.reps))
-  const [sets, setSets] = useState(String(item.sets))
+  const [setGroups, setSetGroups] = useState<SetGroup[]>(() =>
+    item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }]
+  )
+
+  const handleAddSetGroup = () => {
+    setSetGroups((prev) => [...prev, { weight: 0, reps: 0, sets: 0 }])
+  }
+
+  const handleUpdateSetGroup = (index: number, updates: Partial<SetGroup>) => {
+    setSetGroups((prev) =>
+      prev.map((g, i) => (i === index ? { ...g, ...updates } : g))
+    )
+  }
+
+  const handleRemoveSetGroup = (index: number) => {
+    if (setGroups.length <= 1) return
+    setSetGroups((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const handleSave = () => {
     onUpdate({
       ...item,
-      name: name.trim() || item.name,
-      weight: Math.max(0, parseFloat(weight) || 0),
-      reps: Math.max(1, parseInt(reps, 10) || 1),
-      sets: Math.max(1, parseInt(sets, 10) || 1),
+      name: name.trim() || item.name || '未設定',
+      setGroups: setGroups.map((g) => ({
+        weight: Math.max(0, parseFloat(String(g.weight)) || 0),
+        reps: Math.max(1, parseInt(String(g.reps), 10) || 1),
+        sets: Math.max(1, parseInt(String(g.sets), 10) || 1),
+      })),
     })
     setEditing(false)
   }
 
+  const handleCancel = () => {
+    setName(item.name)
+    setSetGroups(item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }])
+    setEditing(false)
+  }
+
+  const showEmpty = (g: SetGroup) => g.weight === 0 && g.reps === 0 && g.sets === 0
+
   if (editing) {
     return (
-      <div className="menu-item-row edit">
+      <>
+        <div
+          className="edit-focus-overlay"
+          onClick={handleCancel}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Escape' && handleCancel()}
+          aria-label="編集をキャンセル"
+        />
+        <div className="menu-item-row edit edit-focus-zoom">
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          onFocus={(e) => {
-            if (name === '新規メニュー') e.target.select()
-          }}
-          placeholder="メニュー名"
+          placeholder="種目名"
           className="row-input name"
         />
-        <div className="row-spec-inputs">
-          <input
-            type="number"
-            min="0"
-            step="0.5"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            placeholder="重さ"
-            className="row-input small"
-          />
-          <input
-            type="number"
-            min="1"
-            value={reps}
-            onChange={(e) => setReps(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            placeholder="回数"
-            className="row-input small"
-          />
-          <input
-            type="number"
-            min="1"
-            value={sets}
-            onChange={(e) => setSets(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            placeholder="セット数"
-            className="row-input small"
-          />
+        <div className="set-groups-list">
+          {setGroups.map((g, idx) => (
+            <div key={idx} className="set-group-row">
+              <div className="row-spec-inputs">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  value={showEmpty(g) ? '' : g.weight}
+                  onChange={(e) =>
+                    handleUpdateSetGroup(idx, { weight: parseFloat(e.target.value) || 0 })
+                  }
+                  onFocus={(e) => e.target.select()}
+                  placeholder="重量"
+                  className="row-input small"
+                />
+                <input
+                  type="number"
+                  min="1"
+                  value={showEmpty(g) ? '' : g.reps}
+                  onChange={(e) =>
+                    handleUpdateSetGroup(idx, { reps: parseInt(e.target.value, 10) || 1 })
+                  }
+                  onFocus={(e) => e.target.select()}
+                  placeholder="回数"
+                  className="row-input small"
+                />
+                <input
+                  type="number"
+                  min="1"
+                  value={showEmpty(g) ? '' : g.sets}
+                  onChange={(e) =>
+                    handleUpdateSetGroup(idx, { sets: parseInt(e.target.value, 10) || 1 })
+                  }
+                  onFocus={(e) => e.target.select()}
+                  placeholder="セット数"
+                  className="row-input small"
+                />
+                {setGroups.length > 1 && (
+                  <button
+                    type="button"
+                    className="btn-remove-set"
+                    onClick={() => handleRemoveSetGroup(idx)}
+                    aria-label="このセットを削除"
+                  >
+                    削除
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="row-edit-actions">
+        <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
+          ＋ セットを追加
+        </button>
+        <div className="row-edit-actions menu-save-actions">
           <button type="button" className="btn-save-sm" onClick={handleSave}>
             保存
           </button>
-          <button type="button" className="btn-cancel-sm" onClick={() => setEditing(false)}>
+          <button type="button" className="btn-cancel-sm" onClick={handleCancel}>
             キャンセル
           </button>
         </div>
       </div>
+      </>
     )
   }
+
+  const specText = item.setGroups
+    .filter((g) => g.reps > 0 && g.sets > 0)
+    .map((g) =>
+      g.weight > 0 ? `${g.weight}kg × ${g.reps}回 × ${g.sets}セット` : `${g.reps}回 × ${g.sets}セット`
+    )
+    .join(' / ') || '（未入力）'
 
   return (
     <div className="menu-item-row">
       <div className="row-main">
-        <span className="row-name">{item.name}</span>
-        <span className="row-spec">
-          {item.weight > 0 ? `${item.weight}kg` : '-'} × {item.reps}回 × {item.sets}セット
-        </span>
+        <span className="row-name">{item.name || '（未設定）'}</span>
+        <span className="row-spec">{specText}</span>
       </div>
       <div className="row-actions">
         <button

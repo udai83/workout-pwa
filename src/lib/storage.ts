@@ -1,4 +1,5 @@
-import type { MenuSchedule, DailyRecord } from '@/types'
+import type { MenuSchedule, DailyRecord, MenuItem } from '@/types'
+import { migrateMenuItem } from '@/lib/utils'
 
 const STORAGE_KEYS = {
   MENU_SCHEDULES: 'workout_menu_schedules',
@@ -15,13 +16,25 @@ function getItem<T>(key: string, defaultValue: T): T {
   }
 }
 
+function migrateMenuItems(items: MenuItem[]): MenuItem[] {
+  return items.map((m) => migrateMenuItem(m as MenuItem & { weight?: number; reps?: number; sets?: number }))
+}
+
+function migrateSchedules(schedules: MenuSchedule[]): MenuSchedule[] {
+  return schedules.map((s) => ({
+    ...s,
+    menuItems: migrateMenuItems(s.menuItems),
+  }))
+}
+
 function setItem<T>(key: string, value: T): void {
   localStorage.setItem(key, JSON.stringify(value))
 }
 
 export const storage = {
   getMenuSchedules(): MenuSchedule[] {
-    return getItem(STORAGE_KEYS.MENU_SCHEDULES, [])
+    const raw = getItem<MenuSchedule[]>(STORAGE_KEYS.MENU_SCHEDULES, [])
+    return migrateSchedules(raw)
   },
 
   setMenuSchedules(schedules: MenuSchedule[]): void {

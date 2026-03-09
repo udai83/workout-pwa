@@ -68,7 +68,9 @@ export default function ChangesScreen() {
       const items = getMenuItemsForDate(date, record)
       const completed = record.completedMenus ?? []
       for (const cm of completed) {
-        if (cm.completedCount <= 0) continue
+        const counts = cm.setGroupCounts ?? (cm.completedCount != null ? [cm.completedCount] : [])
+        const hasAny = counts.some((c) => c > 0)
+        if (!hasAny) continue
         const item = items.find((m) => m.id === cm.menuItemId)
         if (item) names.add(item.name)
       }
@@ -90,16 +92,30 @@ export default function ChangesScreen() {
       const items = getMenuItemsForDate(date, record ?? null)
       const completed = record?.completedMenus ?? []
       for (const cm of completed) {
-        if (cm.completedCount <= 0) continue
         const item = items.find((m) => m.id === cm.menuItemId)
-        if (item?.name === selectedMenuName) {
-          const volume = item.weight * item.reps * cm.completedCount
+        if (item?.name !== selectedMenuName) continue
+        const setGroups = item.setGroups ?? []
+        const counts = cm.setGroupCounts ?? (cm.completedCount != null ? [cm.completedCount] : [])
+        let totalVolume = 0
+        let maxWeight = 0
+        let maxReps = 0
+        let totalCompleted = 0
+        setGroups.forEach((g, i) => {
+          const c = counts[i] ?? 0
+          if (c > 0) {
+            totalVolume += g.weight * g.reps * c
+            maxWeight = Math.max(maxWeight, g.weight)
+            maxReps = Math.max(maxReps, g.reps)
+            totalCompleted += c
+          }
+        })
+        if (totalCompleted > 0) {
           points.push({
             date,
-            weight: item.weight,
-            reps: item.reps,
-            completedCount: cm.completedCount,
-            volume,
+            weight: maxWeight,
+            reps: maxReps,
+            completedCount: totalCompleted,
+            volume: totalVolume,
           })
         }
       }

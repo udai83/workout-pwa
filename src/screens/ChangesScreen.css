@@ -21,12 +21,12 @@
 }
 
 .date-range-section {
-  background: #141419;
+  background: var(--bg-card);
   border-radius: var(--radius-md);
   padding: 20px;
   margin-bottom: 24px;
-  border: 1px solid #2A2A2F;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .date-range-row {
@@ -51,7 +51,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -68,7 +68,7 @@
   font-size: 0.85rem;
   color: var(--accent);
   background: transparent;
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   border-radius: 8px;
 }
 
@@ -91,11 +91,11 @@
 }
 
 .trend-card {
-  background: #141419;
+  background: var(--bg-card);
   border-radius: var(--radius-md);
   padding: 20px;
-  border: 1px solid #2A2A2F;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .trend-title {
@@ -118,7 +118,7 @@
   padding: 8px 12px;
   background: var(--bg-primary);
   border-radius: 8px;
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
 }
 
 .trend-date {
@@ -140,7 +140,7 @@
 .menu-trend-section {
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid #2A2A2F;
+  border-top: 1px solid var(--border);
 }
 
 .menu-trend-section-title {
@@ -166,7 +166,7 @@
   min-height: 44px;
   padding: 10px 14px;
   background: var(--bg-primary);
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;

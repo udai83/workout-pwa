@@ -126,9 +126,9 @@
 }
 
 .day-cell.selected {
-  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
-  color: #000;
-  box-shadow: 0 0 8px rgba(255, 176, 102, 0.2);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--purple-glow);
 }
 
 .day-cell.empty {
@@ -145,7 +145,7 @@
 }
 
 .day-cell.selected .day-dot {
-  background: var(--bg-primary);
+  background: #fff;
 }
 
 .day-detail-overlay {
@@ -160,16 +160,16 @@
 }
 
 .day-detail {
-  background: #141419;
+  background: var(--bg-card);
   border-radius: 16px 16px 0 0;
   padding: 24px;
   width: 100%;
   max-width: 100%;
   max-height: 70vh;
   overflow-y: auto;
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   border-bottom: none;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-md);
 }
 
 .day-detail h3 {
@@ -232,17 +232,17 @@
   margin-top: 16px;
   background: transparent;
   color: var(--accent);
-  border: 2px solid #FF5A00;
+  border: 2px solid var(--accent);
   border-radius: 12px;
   transition: box-shadow 0.2s;
   font-weight: 600;
   font-size: 1.05rem;
-  box-shadow: 0 0 0 1px rgba(255, 122, 26, 0.15);
+  box-shadow: var(--purple-glow);
 }
 
 .register-menu-btn:hover {
   background: var(--accent-bg-hover);
-  box-shadow: 0 0 8px rgba(255, 176, 102, 0.2);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.35);
 }
 
 .close-btn {
@@ -250,15 +250,16 @@
   min-height: 52px;
   padding: 16px;
   margin-top: 12px;
-  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
-  color: #000;
+  background: var(--accent);
+  color: #fff;
+  border: none;
   border-radius: 12px;
   font-weight: 600;
   font-size: 1.05rem;
-  box-shadow: 0 0 8px rgba(255, 176, 102, 0.2);
+  box-shadow: var(--purple-glow);
 }
 
 .close-btn:hover {
-  background: linear-gradient(180deg, #FF8A2A 0%, #FF6A10 100%);
-  box-shadow: 0 0 10px rgba(255, 176, 102, 0.25);
+  background: var(--accent-hover);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.4);
 }

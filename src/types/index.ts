@@ -1,10 +1,25 @@
+/** セットグループ（重量・回数・セット数の組み合わせ） */
+export interface SetGroup {
+  weight: number
+  reps: number
+  sets: number
+}
+
 /** メニュー項目（1種目） */
 export interface MenuItem {
   id: string
   name: string
-  weight: number
-  reps: number
-  sets: number
+  /** 複数のセットグループ（重量・回数・セット数の組み合わせ） */
+  setGroups: SetGroup[]
+}
+
+/** 旧形式のMenuItem（後方互換用） */
+export interface MenuItemLegacy {
+  id: string
+  name: string
+  weight?: number
+  reps?: number
+  sets?: number
 }
 
 /** スケジュールタイプ */
@@ -32,7 +47,10 @@ export interface BodyInfo {
 /** 1種目の実行結果（セット完了状況） */
 export interface CompletedSet {
   menuItemId: string
-  completedCount: number
+  /** 旧形式: 単一セットグループ時の完了数 */
+  completedCount?: number
+  /** 新形式: 各セットグループごとの完了数 [group0, group1, ...] */
+  setGroupCounts?: number[]
 }
 
 /** メニューオーバーライド（その日だけの追加・編集） */

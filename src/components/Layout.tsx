@@ -18,7 +18,7 @@ function DumbbellIcon() {
 
 const navItems = [
   { to: '/', label: 'Today', icon: <DumbbellIcon /> },
-  { to: '/menu', label: 'Menu', icon: '📋' },
+  { to: '/menu', label: 'Set Menu', icon: '📋' },
   { to: '/calendar', label: 'Calendar', icon: '📅' },
   { to: '/changes', label: 'Changes', icon: '📈' },
 ] as const

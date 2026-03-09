@@ -34,14 +34,14 @@
 .home-date-input {
   min-height: 44px;
   padding: 10px 14px;
-  background: #141419;
-  border: 1px solid #2A2A2F;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
   flex: 1;
   min-width: 0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .home-date-input:focus {
@@ -60,18 +60,18 @@
   min-height: 44px;
   padding: 10px 16px;
   background: transparent;
-  color: #FF5A00;
-  border: 2px solid #FF5A00;
+  color: var(--accent);
+  border: 2px solid var(--accent);
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: 0 0 0 1px rgba(255, 122, 26, 0.15);
+  box-shadow: var(--purple-glow);
 }
 
 .today-btn:hover {
   background: var(--accent-bg-hover);
-  box-shadow: 0 0 8px rgba(255, 176, 102, 0.12);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
 }
 
 .today-btn:active {
@@ -94,27 +94,29 @@
   text-align: center;
   color: var(--text-secondary);
   font-size: 1rem;
-  background: #141419;
-  border: 1px solid #2A2A2F;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .add-menu-btn {
   width: 100%;
   min-height: 52px;
   padding: 16px 20px;
-  background: linear-gradient(180deg, #FF7A1A, #FF5A00);
-  color: #000;
+  background: var(--accent);
+  color: #fff;
   border: none;
   border-radius: 16px;
   font-size: 1rem;
   font-weight: 600;
   transition: all 0.2s ease;
+  box-shadow: var(--purple-glow);
 }
 
 .add-menu-btn:hover {
-  background: linear-gradient(180deg, #FF8533, #FF6A10);
+  background: var(--accent-hover);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.35);
 }
 
 .add-menu-btn:active {
@@ -128,20 +130,40 @@
 .edit-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 150;
   padding: 20px;
+  animation: overlayFadeIn 0.25s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .edit-overlay-content {
   width: 100%;
   max-width: 400px;
-  background: #141419;
-  border: 1px solid #2A2A2F;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-md);
+  animation: editZoomIn 0.3s ease;
+}
+
+@keyframes editZoomIn {
+  from {
+    opacity: 0.7;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

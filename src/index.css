@@ -1,25 +1,27 @@
 :root {
-  --bg-primary: #0B0B0F;
-  --bg-secondary: #141419;
-  --bg-card: #141419;
-  --accent: #FF5A00;
-  --accent-hover: #FF7A1A;
-  --accent-muted: #ffa366;
-  --accent-pink: #ff00ff;
-  --accent-rgb: 255, 90, 0;
-  --accent-highlight: #FF7A1A;
-  --accent-glow: rgba(255, 176, 102, 0.28);
-  --text-primary: #FFFFFF;
-  --text-secondary: #8A8A93;
-  --danger: #FF453A;
-  --success: #00ff88;
-  --border: #2A2A2F;
-  --border-subtle: #2A2A2F;
-  --accent-border: #FF5A00;
+  /* 無機質かつミニマルなジム空間テーマ */
+  --bg-primary: #E8E8EC;
+  --bg-secondary: #F2F2F6;
+  --bg-card: #FFFFFF;
+  --accent: #8B5CF6;
+  --accent-hover: #7C3AED;
+  --accent-muted: #A78BFA;
+  --accent-pink: #EC4899;
+  --accent-rgb: 139, 92, 246;
+  --accent-highlight: #A78BFA;
+  --accent-glow: rgba(139, 92, 246, 0.35);
+  --text-primary: #1A1A1F;
+  --text-secondary: #5C5C68;
+  --danger: #EF4444;
+  --success: #22C55E;
+  --border: #D1D1D8;
+  --border-subtle: #E0E0E6;
+  --accent-border: #8B5CF6;
   --accent-bg-hover: rgba(var(--accent-rgb), 0.08);
   --accent-bg-muted: rgba(var(--accent-rgb), 0.06);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --purple-glow: 0 0 20px rgba(139, 92, 246, 0.25);
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 20px;
@@ -47,6 +49,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
+  line-height: 1.5;
 }
 
 @media (max-width: 768px) {
@@ -65,6 +68,9 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
 }
 
 input, textarea {

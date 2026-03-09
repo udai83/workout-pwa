@@ -13,9 +13,8 @@
   font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
+  white-space: normal;
   max-width: 100%;
 }
 
@@ -28,31 +27,7 @@
 .settings-desc {
   margin-top: 6px;
   font-size: 14px;
-  color: #8A8A93;
-}
-
-.add-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.add-schedule-btn {
-  width: 100%;
-  min-height: 48px;
-  padding: 16px;
-  background: transparent;
-  color: #FF5A00;
-  border: 1.5px solid #FF5A00;
-  border-radius: 14px;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: background 0.2s;
-}
-
-.add-schedule-btn:hover {
-  background: var(--accent-bg-hover);
+  color: var(--text-secondary);
 }
 
 .schedule-list {
@@ -62,11 +37,11 @@
 }
 
 .schedule-card {
-  background: #141419;
+  background: var(--bg-card);
   border-radius: 16px;
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-header {
@@ -94,14 +69,14 @@
 
 .schedule-count {
   font-size: 14px;
-  color: #8A8A93;
+  color: var(--text-secondary);
   margin-right: 8px;
   flex-shrink: 0;
 }
 
 .expand-icon {
   font-size: 18px;
-  color: #8A8A93;
+  color: var(--text-secondary);
   transform: rotate(0deg);
   transition: transform 0.2s;
 }
@@ -112,7 +87,40 @@
 
 .schedule-body {
   padding: 0 18px 18px;
-  border-top: 1px solid #2A2A2F;
+  border-top: 1px solid var(--border);
+}
+
+.edit-focus-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 140;
+  animation: overlayFadeIn 0.25s ease;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.menu-item-row.edit.edit-focus-zoom {
+  position: relative;
+  z-index: 150;
+  animation: editZoomIn 0.3s ease;
+  transform-origin: center;
+}
+
+@keyframes editZoomIn {
+  from {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .schedule-edit,
@@ -132,7 +140,7 @@
 
 .edit-row label {
   font-size: 14px;
-  color: #8A8A93;
+  color: var(--text-secondary);
 }
 
 .edit-select,
@@ -140,7 +148,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   border-radius: 14px;
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -156,19 +164,21 @@
 }
 
 .btn-save {
-  background: linear-gradient(180deg, #FF7A1A 0%, #FF5A00 100%);
-  color: #000;
+  background: var(--accent);
+  color: #fff;
   border: none;
+  box-shadow: var(--purple-glow);
 }
 
 .btn-save:hover {
-  background: linear-gradient(180deg, #FF8533 0%, #FF7A1A 100%);
+  background: var(--accent-hover);
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.35);
 }
 
 .btn-edit {
   background: transparent;
-  color: #B0B0B5;
-  border: 1px solid #3A3A40;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
 }
 
 .btn-edit:hover {
@@ -177,21 +187,21 @@
 
 .btn-delete {
   background: transparent;
-  color: #FF453A;
-  border: 1px solid #FF453A;
+  color: var(--danger);
+  border: 1px solid var(--danger);
 }
 
 .btn-delete:hover {
-  background: rgba(255, 69, 58, 0.08);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .schedule-edit .btn-delete {
-  color: #FF453A;
-  border-color: #FF453A;
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .schedule-edit .btn-delete:hover {
-  background: rgba(255, 69, 58, 0.08);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .menu-items {
@@ -209,7 +219,7 @@
   background: transparent;
   border-radius: 0;
   border: none;
-  border-bottom: 1px solid #2A2A2F;
+  border-bottom: 1px solid var(--border);
 }
 
 .menu-item-row:last-of-type {
@@ -242,7 +252,7 @@
 
 .row-spec {
   font-size: 14px;
-  color: #8A8A93;
+  color: var(--text-secondary);
 }
 
 .menu-item-row.edit {
@@ -250,7 +260,11 @@
   align-items: stretch;
   gap: 12px;
   padding: 16px 0;
-  border-bottom: 1px solid #2A2A2F;
+  border-bottom: 1px solid var(--border);
+}
+
+.menu-item-row.edit .menu-save-actions {
+  border-top-color: var(--border);
 }
 
 .menu-item-row.edit .row-input.name {
@@ -270,6 +284,63 @@
 .menu-item-row.edit .row-edit-actions {
   display: flex;
   gap: 8px;
+}
+
+.set-groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.set-group-row {
+  padding: 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.set-group-row .row-spec-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.add-set-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  margin-top: 8px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed var(--accent);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.add-set-btn:hover {
+  background: var(--accent-bg-hover);
+}
+
+.btn-remove-set {
+  min-height: 36px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  background: transparent;
+}
+
+.btn-remove-set:hover {
+  background: rgba(255, 69, 58, 0.08);
+}
+
+.menu-save-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 768px) {
@@ -302,7 +373,7 @@
   min-height: 44px;
   padding: 10px 12px;
   background: var(--bg-primary);
-  border: 1px solid #2A2A2F;
+  border: 1px solid var(--border);
   border-radius: 14px;
   color: var(--text-primary);
 }
@@ -340,8 +411,8 @@
 }
 
 .btn-edit-sm {
-  color: #B0B0B5;
-  border-color: #3A3A40;
+  color: var(--text-secondary);
+  border-color: var(--border);
 }
 
 .btn-edit-sm:hover {
@@ -349,12 +420,12 @@
 }
 
 .btn-delete-sm {
-  color: #FF453A;
-  border-color: #FF453A;
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .btn-delete-sm:hover {
-  background: rgba(255, 69, 58, 0.08);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .add-item-btn {
@@ -362,8 +433,8 @@
   padding: 14px;
   margin-top: 8px;
   background: transparent;
-  color: #FF5A00;
-  border: 1.5px dashed rgba(255, 90, 0, 0.5);
+  color: var(--accent);
+  border: 2px dashed var(--accent);
   border-radius: 14px;
   font-size: 0.95rem;
   font-weight: 600;
@@ -376,10 +447,10 @@
 .empty-message {
   padding: 24px 20px;
   text-align: center;
-  color: #8A8A93;
+  color: var(--text-secondary);
   font-size: 14px;
-  background: #141419;
-  border: 1px solid #2A2A2F;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-sm);
 }

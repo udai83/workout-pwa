@@ -49,21 +49,37 @@ export default function HomeScreen() {
     setEditingItemId(null)
   }, [])
 
-  const completedCount = (itemId: string) =>
-    record?.completedMenus.find((m) => m.menuItemId === itemId)?.completedCount ?? 0
+  const getCompletedSetGroupCounts = (itemId: string, setGroupCount: number): number[] => {
+    const cm = record?.completedMenus.find((m) => m.menuItemId === itemId)
+    if (!cm) return Array(setGroupCount).fill(0)
+    if (cm.setGroupCounts && cm.setGroupCounts.length > 0) {
+      const arr = [...cm.setGroupCounts]
+      while (arr.length < setGroupCount) arr.push(0)
+      return arr.slice(0, setGroupCount)
+    }
+    const legacy = cm.completedCount ?? 0
+    return [legacy, ...Array(Math.max(0, setGroupCount - 1)).fill(0)]
+  }
 
   const handleDateChange = (newDate: string) => {
     setSearchParams({ date: newDate })
   }
 
-  const handleSetComplete = (itemId: string, setNum: number) => {
+  const handleSetComplete = (itemId: string, setGroupIndex: number, setNum: number) => {
     const item = menuItems.find((m) => m.id === itemId)
     if (!item) return
-    const current = completedCount(itemId)
+    const setGroups = item.setGroups?.length ? item.setGroups : [{ weight: 0, reps: 10, sets: 3 }]
+    const currentCounts = getCompletedSetGroupCounts(itemId, setGroups.length)
+    const current = currentCounts[setGroupIndex] ?? 0
     const next = setNum <= current ? current - 1 : current + 1
 
+    const newCounts = [...currentCounts]
+    newCounts[setGroupIndex] = Math.max(0, next)
+
+    const allZero = newCounts.every((c) => c === 0)
     let newCompleted: CompletedSet[]
-    if (next <= 0) {
+
+    if (allZero) {
       newCompleted = (record?.completedMenus ?? []).filter(
         (m) => m.menuItemId !== itemId
       )
@@ -71,15 +87,16 @@ export default function HomeScreen() {
       const idx = (record?.completedMenus ?? []).findIndex(
         (m) => m.menuItemId === itemId
       )
+      const newEntry: CompletedSet = {
+        menuItemId: itemId,
+        setGroupCounts: newCounts,
+      }
       if (idx >= 0) {
         newCompleted = (record?.completedMenus ?? []).map((m, i) =>
-          i === idx ? { ...m, completedCount: next } : m
+          i === idx ? newEntry : m
         )
       } else {
-        newCompleted = [
-          ...(record?.completedMenus ?? []),
-          { menuItemId: itemId, completedCount: next },
-        ]
+        newCompleted = [...(record?.completedMenus ?? []), newEntry]
       }
     }
 
@@ -94,10 +111,8 @@ export default function HomeScreen() {
   const handleAddMenu = () => {
     const newItem: MenuItem = {
       id: generateId(),
-      name: 'New menu',
-      weight: 0,
-      reps: 10,
-      sets: 3,
+      name: '',
+      setGroups: [{ weight: 0, reps: 0, sets: 0 }],
     }
     const overrides = record?.menuOverrides ?? []
     const newRecord: DailyRecord = {
@@ -106,6 +121,7 @@ export default function HomeScreen() {
     }
     setRecord(newRecord)
     storage.saveDailyRecord(newRecord)
+    setEditingItemId(newItem.id)
   }
 
   const handleUpdateMenuItem = (updated: MenuItem) => {
@@ -199,26 +215,30 @@ export default function HomeScreen() {
           ) : (
             menuItems
               .filter((item) => editingItemId !== item.id)
-              .map((item) => (
-                <MenuItemCard
-                  key={item.id}
-                  item={item}
-                  completedCount={completedCount(item.id)}
-                  onSetComplete={(setNum) => handleSetComplete(item.id, setNum)}
-                  onUpdate={handleUpdateMenuItem}
-                  onRemove={handleRemoveMenuItem}
-                  canRemove
-                  isEditing={false}
-                  onEditStart={() => handleEditStart(item.id)}
-                  onEditEnd={handleEditEnd}
-                />
-              ))
+              .map((item) => {
+                const setGroups = item.setGroups?.length ? item.setGroups : [{ weight: 0, reps: 10, sets: 3 }]
+                return (
+                  <MenuItemCard
+                    key={item.id}
+                    item={item}
+                    completedSetGroupCounts={getCompletedSetGroupCounts(item.id, setGroups.length)}
+                    onSetComplete={(groupIdx, setNum) => handleSetComplete(item.id, groupIdx, setNum)}
+                    onUpdate={handleUpdateMenuItem}
+                    onRemove={handleRemoveMenuItem}
+                    canRemove
+                    isEditing={false}
+                    onEditStart={() => handleEditStart(item.id)}
+                    onEditEnd={handleEditEnd}
+                  />
+                )
+              })
           )}
         </div>
 
         {editingItemId && (() => {
           const editingItem = menuItems.find((m) => m.id === editingItemId)
           if (!editingItem) return null
+          const setGroups = editingItem.setGroups?.length ? editingItem.setGroups : [{ weight: 0, reps: 10, sets: 3 }]
           return (
             <div
               className="edit-overlay"
@@ -231,8 +251,8 @@ export default function HomeScreen() {
                 <MenuItemCard
                   key={editingItem.id}
                   item={editingItem}
-                  completedCount={completedCount(editingItem.id)}
-                  onSetComplete={(setNum) => handleSetComplete(editingItem.id, setNum)}
+                  completedSetGroupCounts={getCompletedSetGroupCounts(editingItem.id, setGroups.length)}
+                  onSetComplete={(groupIdx, setNum) => handleSetComplete(editingItem.id, groupIdx, setNum)}
                   onUpdate={handleUpdateMenuItem}
                   onRemove={handleRemoveMenuItem}
                   canRemove
@@ -250,7 +270,7 @@ export default function HomeScreen() {
           onClick={handleAddMenu}
           aria-label="Add menu"
         >
-          ＋ Add menu
+          ＋ メニューを追加
         </button>
       </section>
 

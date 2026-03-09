@@ -10,18 +10,19 @@
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--text-primary);
-  background: #141419;
-  border: 1px solid #2A2A2F;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 50%;
   z-index: 90;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-sm);
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
 .help-btn:hover {
-  color: #FF5A00;
-  border-color: #FF5A00;
+  color: var(--accent);
+  border-color: var(--accent);
   background: var(--accent-bg-hover);
+  box-shadow: var(--purple-glow);
 }
 
 .help-overlay {
@@ -36,12 +37,12 @@
 }
 
 .help-panel {
-  background: #141419;
-  border: 1px solid #2A2A2F;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   max-width: 340px;
   width: 100%;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow-md);
 }
 
 .help-panel-header {
@@ -49,7 +50,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 18px;
-  border-bottom: 1px solid #2A2A2F;
+  border-bottom: 1px solid var(--border);
 }
 
 .help-panel-header h2 {
@@ -85,7 +86,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 10px 0;
-  border-bottom: 1px solid #2A2A2F;
+  border-bottom: 1px solid var(--border);
   font-size: 1rem;
   color: var(--text-secondary);
 }
@@ -95,6 +96,6 @@
 }
 
 .help-list li strong {
-  color: #FF5A00;
+  color: var(--accent);
   font-size: 0.9rem;
 }
