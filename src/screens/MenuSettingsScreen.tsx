@@ -380,17 +380,17 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           type="button"
           className="btn-edit-sm"
           onClick={() => setEditing(true)}
-          aria-label="編集"
+          aria-label="edit"
         >
-          ✏️
+          edit
         </button>
         <button
           type="button"
           className="btn-delete-sm"
           onClick={onDelete}
-          aria-label="削除"
+          aria-label="delete"
         >
-          🗑️
+          delete
         </button>
       </div>
     </div>

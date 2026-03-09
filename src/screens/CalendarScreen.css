@@ -10,9 +10,10 @@
 }
 
 .calendar-header h1 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-xl);
   font-weight: 700;
+  line-height: var(--leading-tight);
 }
 
 .month-nav {
@@ -40,9 +41,9 @@
 }
 
 .month-label {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-lg);
-  font-weight: 600;
+  font-weight: 700;
   min-width: 100px;
   text-align: center;
 }
@@ -54,9 +55,9 @@
 }
 
 .monthly-summary h2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: var(--space-md);
 }
 
@@ -78,7 +79,7 @@
 }
 
 .summary-value {
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-md);
   color: var(--accent);
 }
@@ -115,6 +116,7 @@
   justify-content: center;
   border-radius: var(--radius-sm);
   font-size: var(--text-md);
+  font-weight: 700;
   color: var(--text-primary);
   position: relative;
   transition: background 0.2s;
@@ -176,9 +178,11 @@
 }
 
 .day-detail h3 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-lg);
+  font-weight: 700;
   margin-bottom: var(--space-lg);
+  line-height: var(--leading-tight);
 }
 
 .no-data {
@@ -208,7 +212,7 @@
 
 .total-weight {
   margin-top: var(--space-sm);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-md);
   color: var(--accent);
 }
@@ -225,7 +229,7 @@
 
 .memo-text {
   font-size: var(--text-base);
-  line-height: 1.618;
+  line-height: var(--leading-base);
   white-space: pre-wrap;
 }
 
@@ -239,7 +243,7 @@
   border: 2px solid var(--accent);
   border-radius: var(--radius-md);
   transition: box-shadow 0.2s;
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-md);
   box-shadow: var(--purple-glow);
 }
@@ -258,7 +262,7 @@
   color: #fff;
   border: none;
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-md);
   box-shadow: var(--purple-glow);
 }

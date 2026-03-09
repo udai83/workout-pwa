@@ -10,9 +10,10 @@
 }
 
 .changes-header h1 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-lg);
   font-weight: 700;
+  line-height: var(--leading-tight);
 }
 
 .changes-desc {
@@ -82,7 +83,7 @@
   color: var(--text-secondary);
   padding: var(--space-2xl) var(--space-xl);
   font-size: var(--text-sm);
-  line-height: 1.618;
+  line-height: var(--leading-base);
 }
 
 .trend-section {
@@ -100,9 +101,9 @@
 }
 
 .trend-title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-base);
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: var(--space-md);
   color: var(--text-primary);
 }
@@ -129,7 +130,7 @@
 }
 
 .trend-value {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--accent);
 }
 

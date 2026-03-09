@@ -191,18 +191,18 @@ export default function MenuItemCard({
                 type="button"
                 className="btn-edit"
                 onClick={handleEditClick}
-                aria-label="編集"
+                aria-label="edit"
               >
-                編集
+                edit
               </button>
               {canRemove && (
                 <button
                   type="button"
                   className="btn-remove"
                   onClick={() => onRemove(item.id)}
-                  aria-label="削除"
+                  aria-label="delete"
                 >
-                  削除
+                  delete
                 </button>
               )}
             </div>

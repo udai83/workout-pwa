@@ -18,12 +18,12 @@
 }
 
 .menu-item-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-lg);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
   word-break: break-word;
-  line-height: 1.4;
+  line-height: var(--leading-tight);
 }
 
 .menu-item-actions {
@@ -108,7 +108,7 @@
   border: 1px solid var(--accent);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .add-set-btn:hover {
@@ -154,8 +154,10 @@
 
 .set-group-spec {
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: var(--space-md);
+  line-height: var(--leading-base);
 }
 
 .edit-input {
@@ -184,6 +186,7 @@
   width: 55px;
   max-width: 72px;
   margin-right: var(--space-xs);
+  font-weight: 700;
 }
 
 .edit-row {
@@ -211,7 +214,7 @@
   background: var(--accent);
   color: #fff;
   border-radius: var(--radius-md);
-  font-weight: 600;
+  font-weight: 700;
   border: none;
   box-shadow: var(--purple-glow);
 }
@@ -246,9 +249,9 @@
   min-height: 55px;
   border-radius: 50%;
   touch-action: manipulation;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-xl);
-  font-weight: 600;
+  font-weight: 700;
   background: var(--bg-secondary);
   color: var(--text-primary);
   border: 2px solid var(--accent);

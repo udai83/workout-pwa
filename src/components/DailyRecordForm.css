@@ -16,6 +16,7 @@
   border-top: 1px solid var(--border);
   color: var(--text-primary);
   font-size: var(--text-base);
+  line-height: var(--leading-base);
   resize: vertical;
   margin-bottom: 0;
 }

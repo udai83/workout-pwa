@@ -16,11 +16,11 @@
 }
 
 .growth-text {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.618;
+  line-height: var(--leading-base);
   margin: 0;
   letter-spacing: -0.01em;
 }

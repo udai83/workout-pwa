@@ -54,9 +54,9 @@
 }
 
 .help-panel-header h2 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
