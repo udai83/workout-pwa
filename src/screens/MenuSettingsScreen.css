@@ -388,6 +388,11 @@
   min-width: 56px;
 }
 
+.row-input.input-placeholder::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
 .btn-save-sm,
 .btn-cancel-sm {
   min-height: 44px;

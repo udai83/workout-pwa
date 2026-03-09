@@ -219,49 +219,65 @@ function isNewEmptyItem(item: MenuItem): boolean {
   )
 }
 
+interface SetGroupInputs {
+  weightStr: string
+  repsStr: string
+  setsStr: string
+}
+
+function toInputStrings(g: SetGroup): SetGroupInputs {
+  const isEmpty = g.weight === 0 && g.reps === 0 && g.sets === 0
+  return {
+    weightStr: isEmpty ? '' : String(g.weight),
+    repsStr: isEmpty ? '' : String(g.reps),
+    setsStr: isEmpty ? '' : String(g.sets),
+  }
+}
+
 function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
   const isNew = isNewEmptyItem(item)
   const [editing, setEditing] = useState(isNew)
   const [name, setName] = useState(item.name)
-  const [setGroups, setSetGroups] = useState<SetGroup[]>(() =>
-    item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }]
+  const [groupInputs, setGroupInputs] = useState<SetGroupInputs[]>(() =>
+    (item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }]).map(toInputStrings)
   )
 
   const handleAddSetGroup = () => {
-    setSetGroups((prev) => [...prev, { weight: 0, reps: 0, sets: 0 }])
+    setGroupInputs((prev) => [...prev, { weightStr: '', repsStr: '', setsStr: '' }])
   }
 
-  const handleUpdateSetGroup = (index: number, updates: Partial<SetGroup>) => {
-    setSetGroups((prev) =>
-      prev.map((g, i) => (i === index ? { ...g, ...updates } : g))
+  const handleUpdateGroupInput = (index: number, field: keyof SetGroupInputs, value: string) => {
+    setGroupInputs((prev) =>
+      prev.map((g, i) => (i === index ? { ...g, [field]: value } : g))
     )
   }
 
   const handleRemoveSetGroup = (index: number) => {
-    if (setGroups.length <= 1) return
-    setSetGroups((prev) => prev.filter((_, i) => i !== index))
+    if (groupInputs.length <= 1) return
+    setGroupInputs((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleSave = () => {
+    const setGroups: SetGroup[] = groupInputs.map((g) => ({
+      weight: Math.max(0, Number(g.weightStr) || 0),
+      reps: Math.max(1, parseInt(g.repsStr, 10) || 1),
+      sets: Math.max(1, parseInt(g.setsStr, 10) || 1),
+    }))
     onUpdate({
       ...item,
       name: name.trim() || item.name || '未設定',
-      setGroups: setGroups.map((g) => ({
-        weight: Math.max(0, parseFloat(String(g.weight)) || 0),
-        reps: Math.max(1, parseInt(String(g.reps), 10) || 1),
-        sets: Math.max(1, parseInt(String(g.sets), 10) || 1),
-      })),
+      setGroups,
     })
     setEditing(false)
   }
 
   const handleCancel = () => {
     setName(item.name)
-    setSetGroups(item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }])
+    setGroupInputs(
+      (item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }]).map(toInputStrings)
+    )
     setEditing(false)
   }
-
-  const showEmpty = (g: SetGroup) => g.weight === 0 && g.reps === 0 && g.sets === 0
 
   if (editing) {
     return (
@@ -283,44 +299,40 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
           className="row-input name"
         />
         <div className="set-groups-list">
-          {setGroups.map((g, idx) => (
+          {groupInputs.map((g, idx) => (
             <div key={idx} className="set-group-row">
               <div className="row-spec-inputs">
                 <input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  value={showEmpty(g) ? '' : g.weight}
-                  onChange={(e) =>
-                    handleUpdateSetGroup(idx, { weight: parseFloat(e.target.value) || 0 })
-                  }
+                  type="text"
+                  inputMode="decimal"
+                  value={g.weightStr}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
+                    handleUpdateGroupInput(idx, 'weightStr', v)
+                  }}
                   onFocus={(e) => e.target.select()}
-                  placeholder="重量"
-                  className="row-input small"
+                  placeholder="重さ"
+                  className="row-input small input-placeholder"
                 />
                 <input
-                  type="number"
-                  min="1"
-                  value={showEmpty(g) ? '' : g.reps}
-                  onChange={(e) =>
-                    handleUpdateSetGroup(idx, { reps: parseInt(e.target.value, 10) || 1 })
-                  }
+                  type="text"
+                  inputMode="numeric"
+                  value={g.repsStr}
+                  onChange={(e) => handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))}
                   onFocus={(e) => e.target.select()}
                   placeholder="回数"
-                  className="row-input small"
+                  className="row-input small input-placeholder"
                 />
                 <input
-                  type="number"
-                  min="1"
-                  value={showEmpty(g) ? '' : g.sets}
-                  onChange={(e) =>
-                    handleUpdateSetGroup(idx, { sets: parseInt(e.target.value, 10) || 1 })
-                  }
+                  type="text"
+                  inputMode="numeric"
+                  value={g.setsStr}
+                  onChange={(e) => handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))}
                   onFocus={(e) => e.target.select()}
-                  placeholder="セット数"
-                  className="row-input small"
+                  placeholder="セット"
+                  className="row-input small input-placeholder"
                 />
-                {setGroups.length > 1 && (
+                {groupInputs.length > 1 && (
                   <button
                     type="button"
                     className="btn-remove-set"

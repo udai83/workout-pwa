@@ -169,6 +169,11 @@
   margin-bottom: 0;
 }
 
+.edit-input.input-placeholder::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
 .edit-input::placeholder {
   color: var(--text-secondary);
 }

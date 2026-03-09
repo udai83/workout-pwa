@@ -3,6 +3,15 @@ import type { MenuItem } from '@/types'
 import { migrateMenuItem } from '@/lib/utils'
 import './MenuItemCard.css'
 
+function toInputStrings(g: { weight: number; reps: number; sets: number }) {
+  const isEmpty = g.weight === 0 && g.reps === 0 && g.sets === 0
+  return {
+    weightStr: isEmpty ? '' : String(g.weight),
+    repsStr: isEmpty ? '' : String(g.reps),
+    setsStr: isEmpty ? '' : String(g.sets),
+  }
+}
+
 interface MenuItemCardProps {
   item: MenuItem
   /** 各セットグループごとの完了数 [group0, group1, ...] */
@@ -30,36 +39,39 @@ export default function MenuItemCard({
   const item = migrateMenuItem(rawItem as MenuItem & { weight?: number; reps?: number; sets?: number })
   const editing = isEditing
   const [name, setName] = useState(item.name)
-  const [setGroups, setSetGroups] = useState(item.setGroups)
+  const [groupInputs, setGroupInputs] = useState<{ weightStr: string; repsStr: string; setsStr: string }[]>(() =>
+    item.setGroups.map(toInputStrings)
+  )
 
   useEffect(() => {
     setName(item.name)
-    setSetGroups(item.setGroups)
+    setGroupInputs(item.setGroups.map(toInputStrings))
   }, [item.name, item.setGroups])
 
   useEffect(() => {
     if (!isEditing) {
       setName(item.name)
-      setSetGroups(item.setGroups)
+      setGroupInputs(item.setGroups.map(toInputStrings))
     }
   }, [isEditing])
 
   const handleSave = () => {
+    const setGroups = groupInputs.map((g) => ({
+      weight: Math.max(0, Number(g.weightStr) || 0),
+      reps: Math.max(1, parseInt(g.repsStr, 10) || 1),
+      sets: Math.max(1, parseInt(g.setsStr, 10) || 1),
+    }))
     onUpdate({
       ...item,
       name: name.trim() || item.name || '未設定',
-      setGroups: setGroups.map((g) => ({
-        weight: Math.max(0, parseFloat(String(g.weight)) || 0),
-        reps: Math.max(1, parseInt(String(g.reps), 10) || 1),
-        sets: Math.max(1, parseInt(String(g.sets), 10) || 1),
-      })),
+      setGroups,
     })
     onEditEnd?.()
   }
 
   const handleCancel = () => {
     setName(item.name)
-    setSetGroups(item.setGroups)
+    setGroupInputs(item.setGroups.map(toInputStrings))
     onEditEnd?.()
   }
 
@@ -68,18 +80,18 @@ export default function MenuItemCard({
   }
 
   const handleAddSetGroup = () => {
-    setSetGroups((prev) => [...prev, { weight: 0, reps: 0, sets: 0 }])
+    setGroupInputs((prev) => [...prev, { weightStr: '', repsStr: '', setsStr: '' }])
   }
 
-  const handleUpdateSetGroup = (index: number, updates: Partial<{ weight: number; reps: number; sets: number }>) => {
-    setSetGroups((prev) =>
-      prev.map((g, i) => (i === index ? { ...g, ...updates } : g))
+  const handleUpdateGroupInput = (index: number, field: 'weightStr' | 'repsStr' | 'setsStr', value: string) => {
+    setGroupInputs((prev) =>
+      prev.map((g, i) => (i === index ? { ...g, [field]: value } : g))
     )
   }
 
   const handleRemoveSetGroup = (index: number) => {
-    if (setGroups.length <= 1) return
-    setSetGroups((prev) => prev.filter((_, i) => i !== index))
+    if (groupInputs.length <= 1) return
+    setGroupInputs((prev) => prev.filter((_, i) => i !== index))
   }
 
   const specText = item.setGroups
@@ -103,54 +115,54 @@ export default function MenuItemCard({
               autoFocus
             />
             <div className="set-groups-edit">
-              {setGroups.map((g, idx) => (
+              {groupInputs.map((g, idx) => (
                 <div key={idx} className="set-group-edit-row">
                   <div className="edit-row">
                     <label>
                       重量
                       <input
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        value={g.weight === 0 && g.reps === 0 && g.sets === 0 ? '' : g.weight}
-                        onChange={(e) =>
-                          handleUpdateSetGroup(idx, { weight: parseFloat(e.target.value) || 0 })
-                        }
+                        type="text"
+                        inputMode="decimal"
+                        value={g.weightStr}
+                        onChange={(e) => {
+                          const v = e.target.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
+                          handleUpdateGroupInput(idx, 'weightStr', v)
+                        }}
                         onFocus={(e) => e.target.select()}
-                        placeholder="重量"
-                        className="edit-input small"
+                        placeholder="重さ"
+                        className="edit-input small input-placeholder"
                       />
                       kg
                     </label>
                     <label>
                       回数
                       <input
-                        type="number"
-                        min="1"
-                        value={g.weight === 0 && g.reps === 0 && g.sets === 0 ? '' : g.reps}
+                        type="text"
+                        inputMode="numeric"
+                        value={g.repsStr}
                         onChange={(e) =>
-                          handleUpdateSetGroup(idx, { reps: parseInt(e.target.value, 10) || 1 })
+                          handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))
                         }
                         onFocus={(e) => e.target.select()}
                         placeholder="回数"
-                        className="edit-input small"
+                        className="edit-input small input-placeholder"
                       />
                     </label>
                     <label>
                       セット数
                       <input
-                        type="number"
-                        min="1"
-                        value={g.weight === 0 && g.reps === 0 && g.sets === 0 ? '' : g.sets}
+                        type="text"
+                        inputMode="numeric"
+                        value={g.setsStr}
                         onChange={(e) =>
-                          handleUpdateSetGroup(idx, { sets: parseInt(e.target.value, 10) || 1 })
+                          handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))
                         }
                         onFocus={(e) => e.target.select()}
-                        placeholder="セット数"
-                        className="edit-input small"
+                        placeholder="セット"
+                        className="edit-input small input-placeholder"
                       />
                     </label>
-                    {setGroups.length > 1 && (
+                    {groupInputs.length > 1 && (
                       <button
                         type="button"
                         className="btn-remove-set"
