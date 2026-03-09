@@ -1,30 +1,50 @@
 :root {
-  /* 無機質かつミニマルなジム空間テーマ */
-  --bg-primary: #E8E8EC;
-  --bg-secondary: #F2F2F6;
-  --bg-card: #FFFFFF;
-  --accent: #8B5CF6;
-  --accent-hover: #7C3AED;
-  --accent-muted: #A78BFA;
-  --accent-pink: #EC4899;
-  --accent-rgb: 139, 92, 246;
-  --accent-highlight: #A78BFA;
-  --accent-glow: rgba(139, 92, 246, 0.35);
-  --text-primary: #1A1A1F;
-  --text-secondary: #5C5C68;
+  /* 黄金比 φ ≈ 1.618 に基づくグリッドシステム */
+  --phi: 1.618;
+  --space-xs: 5px;
+  --space-sm: 8px;
+  --space-md: 13px;
+  --space-lg: 21px;
+  --space-xl: 34px;
+  --space-2xl: 55px;
+  --space-3xl: 89px;
+
+  /* フォントサイズ（黄金比階層） */
+  --text-xs: 0.618rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.382rem;
+  --text-xl: 1.618rem;
+  --text-2xl: 2.236rem;
+  --text-3xl: 2.618rem;
+
+  /* ダークテーマ・プロフェッショナルジム */
+  --bg-primary: #1A1A1A;
+  --bg-secondary: #242428;
+  --bg-card: #1E1E22;
+  --accent: #A855F7;
+  --accent-hover: #9333EA;
+  --accent-muted: #C084FC;
+  --accent-rgb: 168, 85, 247;
+  --text-primary: #F5F5F5;
+  --text-secondary: #A1A1AA;
   --danger: #EF4444;
   --success: #22C55E;
-  --border: #D1D1D8;
-  --border-subtle: #E0E0E6;
-  --accent-border: #8B5CF6;
-  --accent-bg-hover: rgba(var(--accent-rgb), 0.08);
-  --accent-bg-muted: rgba(var(--accent-rgb), 0.06);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --purple-glow: 0 0 20px rgba(139, 92, 246, 0.25);
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 20px;
+  --border: #2D2D32;
+  --border-subtle: #3F3F46;
+  --accent-bg-hover: rgba(var(--accent-rgb), 0.12);
+  --accent-bg-muted: rgba(var(--accent-rgb), 0.08);
+
+  /* 大人のネオン・柔らかいグロー */
+  --purple-glow: 0 0 34px rgba(168, 85, 247, 0.22), 0 0 55px rgba(168, 85, 247, 0.12);
+  --purple-glow-strong: 0 0 34px rgba(168, 85, 247, 0.3), 0 0 55px rgba(168, 85, 247, 0.18);
+  --shadow-sm: 0 2px 13px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 5px 21px rgba(0, 0, 0, 0.4);
+  --radius-sm: 8px;
+  --radius-md: 13px;
+  --radius-lg: 21px;
+  --radius-xl: 34px;
   --safe-bottom: env(safe-area-inset-bottom, 0);
 }
 
@@ -40,7 +60,7 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  font-family: 'Inter', 'Montserrat', 'Noto Sans JP', -apple-system, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100dvh;
@@ -49,7 +69,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.01em;
-  line-height: 1.5;
+  line-height: 1.618;
 }
 
 @media (max-width: 768px) {
@@ -60,7 +80,7 @@ body {
 
 #root {
   min-height: 100dvh;
-  padding-bottom: calc(80px + var(--safe-bottom));
+  padding-bottom: calc(var(--space-3xl) + var(--safe-bottom));
 }
 
 button {

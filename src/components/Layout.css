@@ -8,8 +8,8 @@
 
 .layout-main {
   flex: 1;
-  padding: 12px;
-  padding-bottom: 20px;
+  padding: var(--space-md);
+  padding-bottom: var(--space-lg);
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -23,12 +23,12 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
-  padding: 12px 4px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+  padding: var(--space-md) var(--space-xs);
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0));
   background: var(--bg-card);
   border-top: 1px solid var(--border);
   z-index: 100;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -2px 21px rgba(0, 0, 0, 0.4);
 }
 
 .nav-item {
@@ -36,19 +36,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-height: 60px;
-  padding: 8px 4px;
+  gap: var(--space-xs);
+  min-height: var(--space-2xl);
+  padding: var(--space-sm) var(--space-xs);
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   border-radius: var(--radius-sm);
   transition: color 0.2s, background 0.2s;
 }
 
 .nav-icon {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   line-height: 1;
   color: inherit;
 }

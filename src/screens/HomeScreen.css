@@ -2,15 +2,16 @@
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 4px;
+  padding: 0 var(--space-xs);
 }
 
 .home-header {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-xl);
 }
 
 .home-header h1 {
-  font-size: 1.75rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--text-2xl);
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: -0.02em;
@@ -19,26 +20,26 @@
 .date-selector-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
 }
 
 .date-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   flex: 1;
   min-width: 0;
 }
 
 .home-date-input {
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: var(--space-2xl);
+  padding: var(--space-md) var(--space-lg);
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   flex: 1;
   min-width: 0;
   box-shadow: var(--shadow-sm);
@@ -50,20 +51,20 @@
 }
 
 .date-weekday {
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   color: var(--text-secondary);
   font-weight: 500;
   white-space: nowrap;
 }
 
 .today-btn {
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: var(--space-2xl);
+  padding: var(--space-md) var(--space-lg);
   background: transparent;
   color: var(--accent);
   border: 2px solid var(--accent);
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
   font-weight: 600;
   white-space: nowrap;
   box-shadow: var(--purple-glow);
@@ -71,7 +72,7 @@
 
 .today-btn:hover {
   background: var(--accent-bg-hover);
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  box-shadow: var(--purple-glow-strong);
 }
 
 .today-btn:active {
@@ -79,36 +80,36 @@
 }
 
 .menu-section {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-xl);
 }
 
 .menu-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .empty-message {
-  padding: 24px 20px;
+  padding: var(--space-xl) var(--space-lg);
   text-align: center;
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: var(--text-base);
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
 
 .add-menu-btn {
   width: 100%;
-  min-height: 52px;
-  padding: 16px 20px;
+  min-height: var(--space-2xl);
+  padding: var(--space-lg) var(--space-xl);
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 16px;
-  font-size: 1rem;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
   font-weight: 600;
   transition: all 0.2s ease;
   box-shadow: var(--purple-glow);
@@ -116,7 +117,7 @@
 
 .add-menu-btn:hover {
   background: var(--accent-hover);
-  box-shadow: 0 0 24px rgba(139, 92, 246, 0.35);
+  box-shadow: var(--purple-glow-strong);
 }
 
 .add-menu-btn:active {
@@ -124,21 +125,21 @@
 }
 
 .daily-record-section {
-  padding-top: 24px;
+  padding-top: var(--space-xl);
 }
 
 .edit-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 150;
-  padding: 20px;
-  animation: overlayFadeIn 0.25s ease;
+  padding: var(--space-lg);
+  animation: overlayFadeIn 0.34s ease;
 }
 
 @keyframes overlayFadeIn {
@@ -152,9 +153,9 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: var(--space-xl);
   box-shadow: var(--shadow-md);
-  animation: editZoomIn 0.3s ease;
+  animation: editZoomIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes editZoomIn {
@@ -164,6 +165,6 @@
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1.02);
   }
 }

@@ -94,13 +94,6 @@ export default function MenuItemCard({
     setGroupInputs((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const specText = item.setGroups
-    .filter((g) => g.reps > 0 && g.sets > 0)
-    .map((g) =>
-      g.weight > 0 ? `${g.weight}kg × ${g.reps}回 × ${g.sets}セット` : `${g.reps}回 × ${g.sets}セット`
-    )
-    .join(' / ') || '（未入力）'
-
   return (
     <article className="menu-item-card">
       <div className="menu-item-header">
@@ -192,7 +185,6 @@ export default function MenuItemCard({
           <>
             <div className="menu-item-info">
               <h3 className="menu-item-name">{item.name || '（未設定）'}</h3>
-              <p className="menu-item-spec">{specText}</p>
             </div>
             <div className="menu-item-actions">
               <button

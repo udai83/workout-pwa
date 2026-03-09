@@ -1,9 +1,9 @@
 .growth-message {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 18px 22px;
-  margin-bottom: 24px;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-xl);
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -11,15 +11,16 @@
 }
 
 .growth-icon {
-  font-size: 1.6rem;
+  font-size: var(--text-2xl);
   flex-shrink: 0;
 }
 
 .growth-text {
-  font-size: 1.05rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--text-md);
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.45;
+  line-height: 1.618;
   margin: 0;
   letter-spacing: -0.01em;
 }

@@ -1,5 +1,5 @@
 .daily-record-form {
-  padding-top: 20px;
+  padding-top: var(--space-xl);
 }
 
 .daily-record-inner {
@@ -8,14 +8,14 @@
 
 .memo-input {
   width: 100%;
-  min-height: 80px;
-  padding: 14px 16px;
-  background: rgba(var(--accent-rgb), 0.03);
+  min-height: 89px;
+  padding: var(--space-lg) var(--space-lg);
+  background: rgba(var(--accent-rgb), 0.05);
   border: none;
   border-radius: 0;
   border-top: 1px solid var(--border);
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: var(--text-base);
   resize: vertical;
   margin-bottom: 0;
 }
@@ -28,28 +28,28 @@
 .body-info-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  padding: 16px 0 0;
+  gap: var(--space-md);
+  padding: var(--space-lg) 0 0;
 }
 
 .body-info-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-sm);
   min-width: 0;
 }
 
 .body-input {
   flex: 1;
   min-width: 0;
-  min-height: 44px;
-  padding: 10px 12px;
+  min-height: var(--space-2xl);
+  padding: var(--space-md);
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--border);
   border-radius: 0;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: var(--text-base);
 }
 
 .body-input::placeholder {
@@ -57,7 +57,7 @@
 }
 
 .unit {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   white-space: nowrap;
 }
