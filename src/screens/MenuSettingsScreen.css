@@ -240,6 +240,7 @@
 .menu-item-row .row-actions {
   display: flex;
   gap: var(--space-xs);
+  flex-shrink: 0;
 }
 
 .row-name {
@@ -317,7 +318,7 @@
   margin-top: var(--space-sm);
   background: transparent;
   color: var(--accent);
-  border: 1px dashed var(--accent);
+  border: 1px solid var(--accent);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -443,7 +444,7 @@
   margin-top: var(--space-sm);
   background: transparent;
   color: var(--accent);
-  border: 2px dashed var(--accent);
+  border: 2px solid var(--accent);
   border-radius: var(--radius-md);
   font-size: var(--text-base);
   font-weight: 600;

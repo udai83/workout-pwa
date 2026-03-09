@@ -19,28 +19,28 @@
   --text-2xl: 2.236rem;
   --text-3xl: 2.618rem;
 
-  /* ダークテーマ・プロフェッショナルジム */
-  --bg-primary: #1A1A1A;
-  --bg-secondary: #242428;
-  --bg-card: #1E1E22;
-  --accent: #A855F7;
-  --accent-hover: #9333EA;
-  --accent-muted: #C084FC;
-  --accent-rgb: 168, 85, 247;
-  --text-primary: #F5F5F5;
-  --text-secondary: #A1A1AA;
-  --danger: #EF4444;
-  --success: #22C55E;
-  --border: #2D2D32;
-  --border-subtle: #3F3F46;
-  --accent-bg-hover: rgba(var(--accent-rgb), 0.12);
-  --accent-bg-muted: rgba(var(--accent-rgb), 0.08);
+  /* ミニマル・都会的ジム（ホワイトグレー＋紫） */
+  --bg-primary: #F5F5F7;
+  --bg-secondary: #EBEBED;
+  --bg-card: #FFFFFF;
+  --accent: #7C3AED;
+  --accent-hover: #6D28D9;
+  --accent-muted: #A78BFA;
+  --accent-rgb: 124, 58, 237;
+  --text-primary: #1A1A1D;
+  --text-secondary: #52525B;
+  --danger: #DC2626;
+  --success: #16A34A;
+  --border: #E4E4E7;
+  --border-subtle: #D4D4D8;
+  --accent-bg-hover: rgba(var(--accent-rgb), 0.08);
+  --accent-bg-muted: rgba(var(--accent-rgb), 0.05);
 
-  /* 大人のネオン・柔らかいグロー */
-  --purple-glow: 0 0 34px rgba(168, 85, 247, 0.22), 0 0 55px rgba(168, 85, 247, 0.12);
-  --purple-glow-strong: 0 0 34px rgba(168, 85, 247, 0.3), 0 0 55px rgba(168, 85, 247, 0.18);
-  --shadow-sm: 0 2px 13px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 5px 21px rgba(0, 0, 0, 0.4);
+  /* ミニマル・控えめなグロー */
+  --purple-glow: 0 0 20px rgba(124, 58, 237, 0.08);
+  --purple-glow-strong: 0 0 24px rgba(124, 58, 237, 0.12);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --radius-sm: 8px;
   --radius-md: 13px;
   --radius-lg: 21px;
