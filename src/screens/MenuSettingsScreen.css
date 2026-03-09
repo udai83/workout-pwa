@@ -266,8 +266,11 @@
   flex-direction: column;
   align-items: stretch;
   gap: var(--space-md);
-  padding: var(--space-lg) 0;
+  padding: var(--space-lg);
   border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
 }
 
 .menu-item-row.edit .menu-save-actions {
@@ -318,7 +321,7 @@
   min-height: var(--space-2xl);
   padding: var(--space-md);
   margin-top: var(--space-sm);
-  background: transparent;
+  background: var(--bg-card);
   color: var(--accent);
   border: 1px solid var(--accent);
   border-radius: var(--radius-md);
@@ -405,7 +408,28 @@
   min-height: var(--space-2xl);
   padding: var(--space-md) var(--space-lg);
   font-size: var(--text-sm);
+  font-weight: 600;
   border-radius: var(--radius-md);
+}
+
+.btn-save-sm {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+}
+
+.btn-save-sm:hover {
+  background: var(--accent-hover);
+}
+
+.btn-cancel-sm {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel-sm:hover {
+  background: var(--bg-secondary);
 }
 
 .btn-edit-sm,

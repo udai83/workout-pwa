@@ -113,47 +113,55 @@ export default function MenuItemCard({
                   <div className="edit-row">
                     <label>
                       重量
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        value={g.weightStr}
-                        onChange={(e) => {
-                          const v = e.target.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
-                          handleUpdateGroupInput(idx, 'weightStr', v)
-                        }}
-                        onFocus={(e) => e.target.select()}
-                        placeholder="重さ"
-                        className="edit-input small input-placeholder"
-                      />
-                      kg
+                      <span className="input-with-unit">
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          value={g.weightStr}
+                          onChange={(e) => {
+                            const v = e.target.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
+                            handleUpdateGroupInput(idx, 'weightStr', v)
+                          }}
+                          onFocus={(e) => e.target.select()}
+                          placeholder="重さ"
+                          className="edit-input small input-placeholder"
+                        />
+                        kg
+                      </span>
                     </label>
                     <label>
                       回数
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        value={g.repsStr}
-                        onChange={(e) =>
-                          handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))
-                        }
-                        onFocus={(e) => e.target.select()}
-                        placeholder="回数"
-                        className="edit-input small input-placeholder"
-                      />
+                      <span className="input-with-unit">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={g.repsStr}
+                          onChange={(e) =>
+                            handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))
+                          }
+                          onFocus={(e) => e.target.select()}
+                          placeholder="回数"
+                          className="edit-input small input-placeholder"
+                        />
+                        回
+                      </span>
                     </label>
                     <label>
                       セット数
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        value={g.setsStr}
-                        onChange={(e) =>
-                          handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))
-                        }
-                        onFocus={(e) => e.target.select()}
-                        placeholder="セット"
-                        className="edit-input small input-placeholder"
-                      />
+                      <span className="input-with-unit">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={g.setsStr}
+                          onChange={(e) =>
+                            handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))
+                          }
+                          onFocus={(e) => e.target.select()}
+                          placeholder="セット"
+                          className="edit-input small input-placeholder"
+                        />
+                        セット
+                      </span>
                     </label>
                     {groupInputs.length > 1 && (
                       <button

@@ -183,22 +183,29 @@
 
 .edit-input.small {
   min-width: 0;
-  width: 55px;
-  max-width: 72px;
-  margin-right: var(--space-xs);
+  width: 88px;
+  min-height: var(--space-2xl);
+  padding: var(--space-md);
   font-weight: 700;
+  font-size: var(--text-base);
+  text-align: right;
+  box-sizing: border-box;
 }
 
-.edit-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: var(--space-md);
-  margin-bottom: 0;
+.edit-row .input-with-unit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.edit-row .input-with-unit .edit-input.small {
+  margin-right: 0;
 }
 
 .edit-row label {
   display: flex;
   align-items: center;
+  gap: var(--space-sm);
   font-size: var(--text-sm);
   color: var(--text-secondary);
 }
