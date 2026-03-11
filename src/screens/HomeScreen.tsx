@@ -33,7 +33,11 @@ export default function HomeScreen() {
   useEffect(() => {
     if (editingItemId) {
       document.body.style.overflow = 'hidden'
-      return () => { document.body.style.overflow = '' }
+      document.documentElement.classList.add('overlay-open')
+      return () => {
+        document.body.style.overflow = ''
+        document.documentElement.classList.remove('overlay-open')
+      }
     }
   }, [editingItemId])
 

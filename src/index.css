@@ -51,6 +51,7 @@
   --radius-lg: 21px;
   --radius-xl: 34px;
   --safe-bottom: env(safe-area-inset-bottom, 0);
+  --nav-height: 72px;
 }
 
 * {

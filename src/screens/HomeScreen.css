@@ -131,7 +131,10 @@
 
 .edit-overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--nav-height);
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -152,13 +155,21 @@
 .edit-overlay-content {
   width: 100%;
   max-width: 400px;
-  max-height: calc(100dvh - 2 * var(--space-lg));
+  max-height: calc(100dvh - 2 * var(--space-lg) - var(--nav-height));
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   animation: editZoomIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
   -webkit-overflow-scrolling: touch;
+}
+
+.edit-overlay-content .menu-item-actions,
+.edit-overlay-content .set-groups-stack,
+.edit-overlay-content .set-buttons {
+  display: none !important;
 }
 
 @keyframes editZoomIn {

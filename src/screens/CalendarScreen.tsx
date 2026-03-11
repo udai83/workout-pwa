@@ -41,8 +41,10 @@ export default function CalendarScreen() {
   useEffect(() => {
     if (selectedDate) {
       document.body.style.overflow = 'hidden'
+      document.documentElement.classList.add('overlay-open')
       return () => {
         document.body.style.overflow = ''
+        document.documentElement.classList.remove('overlay-open')
       }
     }
   }, [selectedDate])
