@@ -3,6 +3,8 @@ import type { MenuItem } from '@/types'
 import { migrateMenuItem } from '@/lib/utils'
 import './MenuItemCard.css'
 
+const MAX_SET_GROUPS = 5
+
 function toInputStrings(g: { weight: number; reps: number; sets: number }) {
   const isEmpty = g.weight === 0 && g.reps === 0 && g.sets === 0
   return {
@@ -88,6 +90,7 @@ function MenuItemCard({
   }
 
   const handleAddSetGroup = () => {
+    if (groupInputs.length >= MAX_SET_GROUPS) return
     setGroupInputs((prev) => [...prev, { weightStr: '', repsStr: '', setsStr: '' }])
   }
 
@@ -185,9 +188,11 @@ function MenuItemCard({
                 </div>
               ))}
             </div>
-            <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
-              ＋ セットを追加
-            </button>
+            {groupInputs.length < MAX_SET_GROUPS && (
+              <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
+                ＋ セットを追加（最大{MAX_SET_GROUPS}まで）
+              </button>
+            )}
             <div className="edit-actions">
               <button type="button" className="btn-save" onClick={handleSave}>
                 保存

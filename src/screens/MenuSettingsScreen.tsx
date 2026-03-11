@@ -5,6 +5,7 @@ import { generateId } from '@/lib/utils'
 import './MenuSettingsScreen.css'
 
 const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
+const MAX_SET_GROUPS = 5
 
 /** 7曜日分のスケジュールを取得。不足分は作成する */
 function getWeekdaySchedules(existing: MenuSchedule[]): MenuSchedule[] {
@@ -268,6 +269,7 @@ function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveD
   )
 
   const handleAddSetGroup = () => {
+    if (groupInputs.length >= MAX_SET_GROUPS) return
     setGroupInputs((prev) => [...prev, { weightStr: '', repsStr: '', setsStr: '' }])
   }
 
@@ -371,9 +373,11 @@ function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveD
             </div>
           ))}
         </div>
-        <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
-          ＋ セットを追加
-        </button>
+        {groupInputs.length < MAX_SET_GROUPS && (
+          <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
+            ＋ セットを追加（最大{MAX_SET_GROUPS}まで）
+          </button>
+        )}
         <div className="row-edit-actions menu-save-actions">
           <button type="button" className="btn-save-sm" onClick={handleSave}>
             保存

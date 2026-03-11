@@ -67,6 +67,15 @@ export default function HomeScreen() {
 
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (editingItemId) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [editingItemId])
+
   const handleEditStart = useCallback((id: string) => {
     setEditingItemId(id)
   }, [])
