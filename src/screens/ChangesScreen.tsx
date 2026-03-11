@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import { getMenuItemsForDate } from '@/lib/menuUtils'
@@ -20,7 +21,8 @@ interface MenuTrendPoint {
 }
 
 export default function ChangesScreen() {
-  const records = useMemo(() => storage.getDailyRecords(), [])
+  const location = useLocation()
+  const records = useMemo(() => storage.getDailyRecords(), [location.pathname])
 
   const { firstDate, lastDate } = useMemo(() => {
     const datesWithData = Object.entries(records)

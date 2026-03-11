@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { getWeekday, formatDate } from '@/lib/utils'
 import { findMenuItem } from '@/lib/menuUtils'
@@ -9,6 +10,7 @@ import './CalendarScreen.css'
 const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function CalendarScreen() {
+  const location = useLocation()
   const [currentDate, setCurrentDate] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
@@ -27,7 +29,7 @@ export default function CalendarScreen() {
     return days
   }, [year, month])
 
-  const records = useMemo(() => storage.getDailyRecords(), [currentDate])
+  const records = useMemo(() => storage.getDailyRecords(), [currentDate, location.pathname])
 
   const prevMonth = () =>
     setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1))
@@ -35,6 +37,15 @@ export default function CalendarScreen() {
     setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1))
 
   const selectedRecord = selectedDate ? records[selectedDate] : null
+
+  useEffect(() => {
+    if (selectedDate) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [selectedDate])
 
   return (
     <div className="calendar-screen">
@@ -106,13 +117,6 @@ export default function CalendarScreen() {
             ) : (
               <p className="no-data">記録がありません</p>
             )}
-            <button
-              type="button"
-              className="close-btn"
-              onClick={() => setSelectedDate(null)}
-            >
-              閉じる
-            </button>
           </div>
         </div>
       )}

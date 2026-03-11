@@ -8,11 +8,10 @@ export function findMenuItem(
   dateStr: string,
   record: DailyRecord | null
 ): MenuItem | undefined {
-  const items = getMenuItemsForDate(dateStr, record)
-  return items.find((m) => m.id === menuItemId)
+  return getMenuItemsForDate(dateStr, record).find((m) => m.id === menuItemId)
 }
 
-/** 指定日に適用されるメニュー一覧を取得（曜日指定 + 日付指定の両方） */
+/** 指定日のメニュー一覧を取得（スケジュール + オーバーライド + 並び順、ID重複排除） */
 export function getMenuItemsForDate(
   dateStr: string,
   record: DailyRecord | null
@@ -21,8 +20,11 @@ export function getMenuItemsForDate(
   const schedules = storage.getMenuSchedules()
   const hiddenIds = new Set(record?.hiddenScheduleItemIds ?? [])
   const overrides = record?.menuOverrides ?? []
+  const order = record?.menuItemOrder
 
+  const seen = new Set<string>()
   const items: MenuItem[] = []
+
   for (const s of schedules) {
     const matches =
       (s.scheduleType === 'weekday' && s.weekday === weekday) ||
@@ -32,12 +34,34 @@ export function getMenuItemsForDate(
     for (const m of s.menuItems) {
       if (hiddenIds.has(m.id)) continue
       const ov = overrides.find((o) => o.replacesId === m.id)
-      const item = ov ? ov.item : m
-      items.push(migrateMenuItem(item))
+      const item = migrateMenuItem(ov ? ov.item : (m as MenuItem & { weight?: number; reps?: number; sets?: number }))
+      if (!seen.has(item.id)) {
+        seen.add(item.id)
+        items.push(item)
+      }
     }
   }
+
   for (const ov of overrides) {
-    if (!ov.replacesId) items.push(migrateMenuItem(ov.item))
+    if (!ov.replacesId && !seen.has(ov.item.id)) {
+      seen.add(ov.item.id)
+      items.push(migrateMenuItem(ov.item as MenuItem & { weight?: number; reps?: number; sets?: number }))
+    }
   }
+
+  if (order && order.length > 0) {
+    const byId = new Map(items.map((m) => [m.id, m]))
+    const ordered: MenuItem[] = []
+    for (const id of order) {
+      const m = byId.get(id)
+      if (m) {
+        ordered.push(m)
+        byId.delete(id)
+      }
+    }
+    byId.forEach((m) => ordered.push(m))
+    return ordered
+  }
+
   return items
 }

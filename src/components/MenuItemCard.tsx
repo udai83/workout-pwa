@@ -16,13 +16,12 @@ function toInputStrings(g: { weight: number; reps: number; sets: number }) {
 
 interface MenuItemCardProps {
   item: MenuItem
-  /** 各セットグループごとの完了数 [group0, group1, ...] */
   completedSetGroupCounts: number[]
   onSetComplete: (setGroupIndex: number, setNum: number) => void
   onUpdate: (item: MenuItem) => void
   onRemove: (itemId: string) => void
-  onMoveUp?: (itemId: string) => void
-  onMoveDown?: (itemId: string) => void
+  onMoveUp?: () => void
+  onMoveDown?: () => void
   canMoveUp?: boolean
   canMoveDown?: boolean
   canRemove?: boolean
@@ -47,23 +46,13 @@ function MenuItemCard({
   onEditEnd,
 }: MenuItemCardProps) {
   const item = migrateMenuItem(rawItem as MenuItem & { weight?: number; reps?: number; sets?: number })
-  const editing = isEditing
   const [name, setName] = useState(item.name)
-  const [groupInputs, setGroupInputs] = useState<{ weightStr: string; repsStr: string; setsStr: string }[]>(() =>
-    item.setGroups.map(toInputStrings)
-  )
+  const [groupInputs, setGroupInputs] = useState(() => item.setGroups.map(toInputStrings))
 
   useEffect(() => {
     setName(item.name)
     setGroupInputs(item.setGroups.map(toInputStrings))
-  }, [item.name, item.setGroups])
-
-  useEffect(() => {
-    if (!isEditing) {
-      setName(item.name)
-      setGroupInputs(item.setGroups.map(toInputStrings))
-    }
-  }, [isEditing])
+  }, [item.id, item.name, item.setGroups])
 
   const handleSave = () => {
     const setGroups = groupInputs.map((g) => ({
@@ -71,11 +60,7 @@ function MenuItemCard({
       reps: Math.max(1, parseInt(g.repsStr, 10) || 1),
       sets: Math.max(1, parseInt(g.setsStr, 10) || 1),
     }))
-    onUpdate({
-      ...item,
-      name: name.trim() || item.name || '未設定',
-      setGroups,
-    })
+    onUpdate({ ...item, name: name.trim() || item.name || '未設定', setGroups })
     onEditEnd?.()
   }
 
@@ -85,19 +70,13 @@ function MenuItemCard({
     onEditEnd?.()
   }
 
-  const handleEditClick = () => {
-    onEditStart?.()
-  }
-
   const handleAddSetGroup = () => {
     if (groupInputs.length >= MAX_SET_GROUPS) return
     setGroupInputs((prev) => [...prev, { weightStr: '', repsStr: '', setsStr: '' }])
   }
 
   const handleUpdateGroupInput = (index: number, field: 'weightStr' | 'repsStr' | 'setsStr', value: string) => {
-    setGroupInputs((prev) =>
-      prev.map((g, i) => (i === index ? { ...g, [field]: value } : g))
-    )
+    setGroupInputs((prev) => prev.map((g, i) => (i === index ? { ...g, [field]: value } : g)))
   }
 
   const handleRemoveSetGroup = (index: number) => {
@@ -108,7 +87,7 @@ function MenuItemCard({
   return (
     <article className="menu-item-card">
       <div className="menu-item-header">
-        {editing ? (
+        {isEditing ? (
           <div className="edit-form">
             <input
               type="text"
@@ -147,9 +126,7 @@ function MenuItemCard({
                           type="text"
                           inputMode="numeric"
                           value={g.repsStr}
-                          onChange={(e) =>
-                            handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))
-                          }
+                          onChange={(e) => handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))}
                           onFocus={(e) => e.target.select()}
                           placeholder="回数"
                           className="edit-input small input-placeholder"
@@ -164,9 +141,7 @@ function MenuItemCard({
                           type="text"
                           inputMode="numeric"
                           value={g.setsStr}
-                          onChange={(e) =>
-                            handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))
-                          }
+                          onChange={(e) => handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))}
                           onFocus={(e) => e.target.select()}
                           placeholder="セット"
                           className="edit-input small input-placeholder"
@@ -175,12 +150,7 @@ function MenuItemCard({
                       </span>
                     </label>
                     {groupInputs.length > 1 && (
-                      <button
-                        type="button"
-                        className="btn-remove-set"
-                        onClick={() => handleRemoveSetGroup(idx)}
-                        aria-label="このセットを削除"
-                      >
+                      <button type="button" className="btn-remove-set" onClick={() => handleRemoveSetGroup(idx)} aria-label="このセットを削除">
                         削除
                       </button>
                     )}
@@ -194,12 +164,8 @@ function MenuItemCard({
               </button>
             )}
             <div className="edit-actions">
-              <button type="button" className="btn-save" onClick={handleSave}>
-                保存
-              </button>
-              <button type="button" className="btn-cancel" onClick={handleCancel}>
-                キャンセル
-              </button>
+              <button type="button" className="btn-save" onClick={handleSave}>保存</button>
+              <button type="button" className="btn-cancel" onClick={handleCancel}>キャンセル</button>
             </div>
           </div>
         ) : (
@@ -209,49 +175,21 @@ function MenuItemCard({
             </div>
             <div className="menu-item-actions">
               {canMoveUp && onMoveUp && (
-                <button
-                  type="button"
-                  className="btn-move"
-                  onClick={() => onMoveUp(item.id)}
-                  aria-label="上へ"
-                >
-                  ↑
-                </button>
+                <button type="button" className="btn-move" onClick={onMoveUp} aria-label="上へ">↑</button>
               )}
               {canMoveDown && onMoveDown && (
-                <button
-                  type="button"
-                  className="btn-move"
-                  onClick={() => onMoveDown(item.id)}
-                  aria-label="下へ"
-                >
-                  ↓
-                </button>
+                <button type="button" className="btn-move" onClick={onMoveDown} aria-label="下へ">↓</button>
               )}
-              <button
-                type="button"
-                className="btn-edit"
-                onClick={handleEditClick}
-                aria-label="edit"
-              >
-                edit
-              </button>
+              <button type="button" className="btn-edit" onClick={onEditStart} aria-label="edit">edit</button>
               {canRemove && (
-                <button
-                  type="button"
-                  className="btn-remove"
-                  onClick={() => onRemove(item.id)}
-                  aria-label="delete"
-                >
-                  delete
-                </button>
+                <button type="button" className="btn-remove" onClick={() => onRemove(item.id)} aria-label="delete">delete</button>
               )}
             </div>
           </>
         )}
       </div>
 
-      {!editing && (
+      {!isEditing && (
         <div className="set-groups-stack">
           {item.setGroups
             .map((group, groupIdx) => ({ group, groupIdx }))

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-/** 現在の日付（YYYY-MM-DD）。24時を過ぎると自動で更新される */
+/** 現在の日付（YYYY-MM-DD）。24時を過ぎると自動更新 */
 export function useLiveDate(): string {
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10))
 
@@ -10,7 +10,7 @@ export function useLiveDate(): string {
       setDate((prev) => (prev !== next ? next : prev))
     }
     update()
-    const id = setInterval(update, 60_000) // 1分ごとにチェック
+    const id = setInterval(update, 60_000)
     return () => clearInterval(id)
   }, [])
 
