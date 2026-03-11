@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { NavLink } from 'react-router-dom'
 import HelpButton from './HelpButton'
 import './Layout.css'
@@ -28,24 +29,28 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const nav = (
+    <nav className="bottom-nav" role="navigation">
+      {navItems.map(({ to, label, icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+        >
+          <span className={`nav-icon ${typeof icon === 'string' ? 'nav-icon--emoji' : ''}`}>
+            {icon}
+          </span>
+          <span className="nav-text">{label}</span>
+        </NavLink>
+      ))}
+    </nav>
+  )
+
   return (
     <div className="layout">
       <HelpButton />
       <main className="layout-main">{children}</main>
-      <nav className="bottom-nav" role="navigation">
-        {navItems.map(({ to, label, icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-          >
-            <span className={`nav-icon ${typeof icon === 'string' ? 'nav-icon--emoji' : ''}`}>
-              {icon}
-            </span>
-            <span className="nav-text">{label}</span>
-          </NavLink>
-        ))}
-      </nav>
+      {createPortal(nav, document.body)}
     </div>
   )
 }
