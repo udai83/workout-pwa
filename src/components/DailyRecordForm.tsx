@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import type { BodyInfo } from '@/types'
 import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import './DailyRecordForm.css'
@@ -7,6 +7,18 @@ interface DailyRecordFormProps {
   memo: string
   bodyInfo: BodyInfo
   onChange: (memo: string, bodyInfo: BodyInfo) => void
+}
+
+function buildBodyInfo(values: Record<string, string>): BodyInfo {
+  const newBodyInfo: BodyInfo = {}
+  for (const f of BODY_INFO_FIELDS) {
+    const v = values[f.key]
+    if (v) {
+      const num = parseFloat(v)
+      if (!isNaN(num)) newBodyInfo[f.key] = num
+    }
+  }
+  return newBodyInfo
 }
 
 export default function DailyRecordForm({
@@ -26,20 +38,22 @@ export default function DailyRecordForm({
     setValues(v)
   }, [memo, bodyInfo])
 
-  const handleBlur = () => {
-    const newBodyInfo: BodyInfo = {}
-    for (const f of BODY_INFO_FIELDS) {
-      const v = values[f.key]
-      if (v) {
-        const num = parseFloat(v)
-        if (!isNaN(num)) newBodyInfo[f.key] = num
-      }
-    }
-    onChange(localMemo, newBodyInfo)
+  const syncToParent = useCallback(
+    (newMemo: string, newValues: Record<string, string>) => {
+      onChange(newMemo, buildBodyInfo(newValues))
+    },
+    [onChange]
+  )
+
+  const handleMemoChange = (value: string) => {
+    setLocalMemo(value)
+    syncToParent(value, values)
   }
 
   const updateValue = (key: string, value: string) => {
-    setValues((prev) => ({ ...prev, [key]: value }))
+    const next = { ...values, [key]: value }
+    setValues(next)
+    syncToParent(localMemo, next)
   }
 
   return (
@@ -48,8 +62,7 @@ export default function DailyRecordForm({
         <textarea
           id="memo"
           value={localMemo}
-          onChange={(e) => setLocalMemo(e.target.value)}
-          onBlur={handleBlur}
+          onChange={(e) => handleMemoChange(e.target.value)}
           placeholder="今日の感想やメモ..."
           rows={3}
           className="memo-input"
@@ -65,7 +78,6 @@ export default function DailyRecordForm({
                 placeholder={field.label}
                 value={values[field.key] ?? ''}
                 onChange={(e) => updateValue(field.key, e.target.value)}
-                onBlur={handleBlur}
                 className="body-input"
               />
               <span className="unit">{field.unit}</span>

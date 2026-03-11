@@ -31,6 +31,23 @@
   gap: var(--space-xs);
   flex-shrink: 0;
   align-self: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-move {
+  min-height: var(--space-xl);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: transparent;
+}
+
+.btn-move:hover {
+  background: var(--accent-bg-hover);
+  color: var(--accent);
 }
 
 .menu-item-spec {

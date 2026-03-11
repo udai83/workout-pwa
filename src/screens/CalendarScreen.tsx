@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { getWeekday, formatDate } from '@/lib/utils'
 import { findMenuItem } from '@/lib/menuUtils'
@@ -10,7 +9,6 @@ import './CalendarScreen.css'
 const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function CalendarScreen() {
-  const navigate = useNavigate()
   const [currentDate, setCurrentDate] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
@@ -30,24 +28,6 @@ export default function CalendarScreen() {
   }, [year, month])
 
   const records = useMemo(() => storage.getDailyRecords(), [currentDate])
-
-  const monthlySummary = useMemo(() => {
-    const summary: Record<string, number> = {}
-    const start = new Date(year, month, 1)
-    const end = new Date(year, month + 1, 0)
-
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const dateStr = d.toISOString().slice(0, 10)
-      const record = records[dateStr]
-      if (!record) continue
-
-      const completedByMenu = getCompletedMenusWithWeight(record, dateStr)
-      for (const [name, total] of Object.entries(completedByMenu)) {
-        summary[name] = (summary[name] ?? 0) + total
-      }
-    }
-    return summary
-  }, [year, month, records])
 
   const prevMonth = () =>
     setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1))
@@ -72,20 +52,6 @@ export default function CalendarScreen() {
           </button>
         </div>
       </header>
-
-      {Object.keys(monthlySummary).length > 0 && (
-        <section className="monthly-summary">
-          <h2>今月の総重量</h2>
-          <div className="summary-list">
-            {Object.entries(monthlySummary).map(([name, total]) => (
-              <div key={name} className="summary-item">
-                <span className="summary-name">{name}</span>
-                <span className="summary-value">{total}kg</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
       <section className="calendar-grid">
         <div className="weekday-headers">
@@ -136,20 +102,10 @@ export default function CalendarScreen() {
           >
             <h3>{formatDate(selectedDate)}（{WEEKDAY_NAMES[getWeekday(selectedDate)]}）</h3>
             {selectedRecord ? (
-              <DayDetailContent record={selectedRecord} />
+              <DayDetailContent record={selectedRecord} dateStr={selectedDate} />
             ) : (
               <p className="no-data">記録がありません</p>
             )}
-            <button
-              type="button"
-              className="register-menu-btn"
-              onClick={() => {
-                setSelectedDate(null)
-                navigate(`/?date=${selectedDate}`)
-              }}
-            >
-              メニューに登録する
-            </button>
             <button
               type="button"
               className="close-btn"
@@ -188,10 +144,10 @@ function getCompletedMenusWithWeight(
 
 interface DayDetailContentProps {
   record: DailyRecord
+  dateStr: string
 }
 
-function DayDetailContent({ record }: DayDetailContentProps) {
-  const dateStr = record.date
+function DayDetailContent({ record, dateStr }: DayDetailContentProps) {
   const completedWithWeight = getCompletedMenusWithWeight(record, dateStr)
   const totalWeight = Object.values(completedWithWeight).reduce((a, b) => a + b, 0)
 

@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { MenuItem, DailyRecord, BodyInfo, CompletedSet } from '@/types'
 import { storage } from '@/lib/storage'
-import { getTodayString, getWeekday, generateId } from '@/lib/utils'
+import { getWeekday, generateId } from '@/lib/utils'
 import { useMenuForDate } from '@/hooks/useMenuForDate'
+import { useLiveDate } from '@/hooks/useLiveDate'
 import MenuItemCard from '@/components/MenuItemCard'
 import DailyRecordForm from '@/components/DailyRecordForm'
 import './HomeScreen.css'
@@ -13,7 +14,7 @@ const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 export default function HomeScreen() {
   const [searchParams, setSearchParams] = useSearchParams()
   const dateParam = searchParams.get('date')
-  const today = getTodayString()
+  const today = useLiveDate()
   const selectedDate = dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? dateParam : today
 
   const weekday = getWeekday(selectedDate)
@@ -26,17 +27,43 @@ export default function HomeScreen() {
     setEditingItemId(null)
   }, [selectedDate])
 
-  const overrides = record?.menuOverrides ?? []
-  const hiddenIds = new Set(record?.hiddenScheduleItemIds ?? [])
-  const replacedIds = new Set(overrides.map((o) => o.replacesId).filter(Boolean) as string[])
-  const fromScheduled = scheduledItems
-    .filter((s) => !hiddenIds.has(s.id) && !replacedIds.has(s.id))
-    .map((s) => {
+  const menuItems = useMemo(() => {
+    const overrides = record?.menuOverrides ?? []
+    const hiddenIds = new Set(record?.hiddenScheduleItemIds ?? [])
+    const order = record?.menuItemOrder ?? []
+    const seen = new Set<string>()
+    const result: MenuItem[] = []
+
+    for (const s of scheduledItems) {
+      if (hiddenIds.has(s.id)) continue
       const ov = overrides.find((o) => o.replacesId === s.id)
-      return ov ? ov.item : s
-    })
-  const additions = overrides.filter((o) => !o.replacesId).map((o) => o.item)
-  const menuItems = [...fromScheduled, ...additions]
+      const item = ov ? ov.item : s
+      if (!seen.has(item.id)) {
+        seen.add(item.id)
+        result.push(item)
+      }
+    }
+    for (const ov of overrides) {
+      if (!ov.replacesId && !seen.has(ov.item.id)) {
+        seen.add(ov.item.id)
+        result.push(ov.item)
+      }
+    }
+    if (order.length > 0) {
+      const byId = new Map(result.map((m) => [m.id, m]))
+      const ordered: MenuItem[] = []
+      for (const id of order) {
+        const m = byId.get(id)
+        if (m) {
+          ordered.push(m)
+          byId.delete(id)
+        }
+      }
+      byId.forEach((m) => ordered.push(m))
+      return ordered
+    }
+    return result
+  }, [record, scheduledItems])
 
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
 
@@ -114,9 +141,11 @@ export default function HomeScreen() {
       setGroups: [{ weight: 0, reps: 0, sets: 0 }],
     }
     const overrides = record?.menuOverrides ?? []
+    const order = record?.menuItemOrder?.length ? record.menuItemOrder : menuItems.map((m) => m.id)
     const newRecord: DailyRecord = {
       ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       menuOverrides: [...overrides, { item: newItem }],
+      menuItemOrder: [...order, newItem.id],
     }
     setRecord(newRecord)
     storage.saveDailyRecord(newRecord)
@@ -139,17 +168,21 @@ export default function HomeScreen() {
     }
     const newItem = { ...updated, id: generateId() }
     const newOverrides = [...(record?.menuOverrides ?? []), { item: newItem, replacesId: updated.id }]
+    const order = record?.menuItemOrder ?? menuItems.map((m) => m.id)
+    const newOrder = order.map((id) => (id === updated.id ? newItem.id : id))
     const newRecord: DailyRecord = {
       ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       menuOverrides: newOverrides,
+      menuItemOrder: newOrder.length > 0 ? newOrder : undefined,
     }
     setRecord(newRecord)
     storage.saveDailyRecord(newRecord)
   }
 
   const handleRemoveMenuItem = (itemId: string) => {
+    const overrides = record?.menuOverrides ?? []
     const isFromOverride = overrides.some((o) => o.item.id === itemId)
-    const newOverrides = (record?.menuOverrides ?? []).filter(
+    const newOverrides = overrides.filter(
       (o) => o.item.id !== itemId && o.replacesId !== itemId
     )
     const newHidden = !isFromOverride
@@ -158,14 +191,17 @@ export default function HomeScreen() {
     const newCompleted = (record?.completedMenus ?? []).filter(
       (m) => m.menuItemId !== itemId
     )
+    const newOrder = (record?.menuItemOrder ?? []).filter((id) => id !== itemId)
     const newRecord: DailyRecord = {
       ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       menuOverrides: newOverrides,
       hiddenScheduleItemIds: newHidden,
       completedMenus: newCompleted,
+      menuItemOrder: newOrder.length > 0 ? newOrder : undefined,
     }
     setRecord(newRecord)
     storage.saveDailyRecord(newRecord)
+    if (editingItemId === itemId) setEditingItemId(null)
   }
 
   const handleRecordChange = (memo: string, bodyInfo: BodyInfo) => {
@@ -173,6 +209,21 @@ export default function HomeScreen() {
       ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
       memo,
       bodyInfo,
+    }
+    setRecord(newRecord)
+    storage.saveDailyRecord(newRecord)
+  }
+
+  const handleMoveMenuItem = (itemId: string, direction: 'up' | 'down') => {
+    const ids = menuItems.map((m) => m.id)
+    const idx = ids.indexOf(itemId)
+    if (idx < 0) return
+    const nextIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (nextIdx < 0 || nextIdx >= ids.length) return
+    ;[ids[idx], ids[nextIdx]] = [ids[nextIdx], ids[idx]]
+    const newRecord: DailyRecord = {
+      ...(record ?? { date: selectedDate, completedMenus: [], memo: '', bodyInfo: {} }),
+      menuItemOrder: ids,
     }
     setRecord(newRecord)
     storage.saveDailyRecord(newRecord)
@@ -213,6 +264,7 @@ export default function HomeScreen() {
             menuItems
               .filter((item) => editingItemId !== item.id)
               .map((item) => {
+                const index = menuItems.findIndex((m) => m.id === item.id)
                 const setGroups = item.setGroups?.length ? item.setGroups : [{ weight: 0, reps: 10, sets: 3 }]
                 return (
                   <MenuItemCard
@@ -222,6 +274,10 @@ export default function HomeScreen() {
                     onSetComplete={(groupIdx, setNum) => handleSetComplete(item.id, groupIdx, setNum)}
                     onUpdate={handleUpdateMenuItem}
                     onRemove={handleRemoveMenuItem}
+                    onMoveUp={() => handleMoveMenuItem(item.id, 'up')}
+                    onMoveDown={() => handleMoveMenuItem(item.id, 'down')}
+                    canMoveUp={index > 0}
+                    canMoveDown={index < menuItems.length - 1}
                     canRemove
                     isEditing={false}
                     onEditStart={() => handleEditStart(item.id)}

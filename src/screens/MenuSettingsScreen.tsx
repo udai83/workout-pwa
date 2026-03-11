@@ -94,6 +94,18 @@ export default function MenuSettingsScreen() {
     })
   }
 
+  const handleMoveMenuItem = (weekday: number, itemId: string, direction: 'up' | 'down') => {
+    const schedule = weekdaySchedules[weekday]
+    if (!schedule) return
+    const items = [...schedule.menuItems]
+    const idx = items.findIndex((m) => m.id === itemId)
+    if (idx < 0) return
+    const nextIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (nextIdx < 0 || nextIdx >= items.length) return
+    ;[items[idx], items[nextIdx]] = [items[nextIdx], items[idx]]
+    handleUpdateSchedule(weekday, { menuItems: items })
+  }
+
   return (
     <div className="menu-settings-screen">
       <header className="settings-header">
@@ -123,6 +135,9 @@ export default function MenuSettingsScreen() {
               onDeleteMenuItem={(itemId) =>
                 handleDeleteMenuItem(weekday, itemId)
               }
+              onMoveMenuItem={(itemId, dir) =>
+                handleMoveMenuItem(weekday, itemId, dir)
+              }
             />
           )
         })}
@@ -140,6 +155,7 @@ interface ScheduleCardProps {
   onAddMenuItem: () => void
   onUpdateMenuItem: (itemId: string, item: MenuItem) => void
   onDeleteMenuItem: (itemId: string) => void
+  onMoveMenuItem: (itemId: string, direction: 'up' | 'down') => void
 }
 
 function ScheduleCard({
@@ -151,6 +167,7 @@ function ScheduleCard({
   onAddMenuItem,
   onUpdateMenuItem,
   onDeleteMenuItem,
+  onMoveMenuItem,
 }: ScheduleCardProps) {
   const label = `${WEEKDAY_NAMES[weekday]}曜日`
 
@@ -181,12 +198,16 @@ function ScheduleCard({
           </div>
 
           <div className="menu-items">
-            {schedule.menuItems.map((item) => (
+            {schedule.menuItems.map((item, index) => (
               <MenuItemRow
                 key={item.id}
                 item={item}
+                index={index}
+                total={schedule.menuItems.length}
                 onUpdate={(updated) => onUpdateMenuItem(item.id, updated)}
                 onDelete={() => onDeleteMenuItem(item.id)}
+                onMoveUp={() => onMoveMenuItem(item.id, 'up')}
+                onMoveDown={() => onMoveMenuItem(item.id, 'down')}
               />
             ))}
             <button
@@ -205,8 +226,12 @@ function ScheduleCard({
 
 interface MenuItemRowProps {
   item: MenuItem
+  index: number
+  total: number
   onUpdate: (item: MenuItem) => void
   onDelete: () => void
+  onMoveUp: () => void
+  onMoveDown: () => void
 }
 
 function isNewEmptyItem(item: MenuItem): boolean {
@@ -234,7 +259,7 @@ function toInputStrings(g: SetGroup): SetGroupInputs {
   }
 }
 
-function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
+function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveDown }: MenuItemRowProps) {
   const isNew = isNewEmptyItem(item)
   const [editing, setEditing] = useState(isNew)
   const [name, setName] = useState(item.name)
@@ -376,6 +401,16 @@ function MenuItemRow({ item, onUpdate, onDelete }: MenuItemRowProps) {
         <span className="row-spec">{specText}</span>
       </div>
       <div className="row-actions">
+        {index > 0 && (
+          <button type="button" className="btn-move-sm" onClick={onMoveUp} aria-label="上へ">
+            ↑
+          </button>
+        )}
+        {index < total - 1 && (
+          <button type="button" className="btn-move-sm" onClick={onMoveDown} aria-label="下へ">
+            ↓
+          </button>
+        )}
         <button
           type="button"
           className="btn-edit-sm"

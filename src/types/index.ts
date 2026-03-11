@@ -66,6 +66,8 @@ export interface DailyRecord {
   menuOverrides?: MenuOverride[]
   /** その日非表示にしたスケジュール項目のID */
   hiddenScheduleItemIds?: string[]
+  /** メニュー表示順（IDの配列。未指定時はデフォルト順） */
+  menuItemOrder?: string[]
   completedMenus: CompletedSet[]
   memo: string
   bodyInfo: BodyInfo

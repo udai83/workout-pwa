@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import type { MenuItem } from '@/types'
 import { migrateMenuItem } from '@/lib/utils'
 import './MenuItemCard.css'
@@ -19,18 +19,26 @@ interface MenuItemCardProps {
   onSetComplete: (setGroupIndex: number, setNum: number) => void
   onUpdate: (item: MenuItem) => void
   onRemove: (itemId: string) => void
+  onMoveUp?: (itemId: string) => void
+  onMoveDown?: (itemId: string) => void
+  canMoveUp?: boolean
+  canMoveDown?: boolean
   canRemove?: boolean
   isEditing?: boolean
   onEditStart?: () => void
   onEditEnd?: () => void
 }
 
-export default function MenuItemCard({
+function MenuItemCard({
   item: rawItem,
   completedSetGroupCounts,
   onSetComplete,
   onUpdate,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  canMoveUp = false,
+  canMoveDown = false,
   canRemove = true,
   isEditing = false,
   onEditStart,
@@ -195,6 +203,26 @@ export default function MenuItemCard({
               <h3 className="menu-item-name">{item.name || '（未設定）'}</h3>
             </div>
             <div className="menu-item-actions">
+              {canMoveUp && onMoveUp && (
+                <button
+                  type="button"
+                  className="btn-move"
+                  onClick={() => onMoveUp(item.id)}
+                  aria-label="上へ"
+                >
+                  ↑
+                </button>
+              )}
+              {canMoveDown && onMoveDown && (
+                <button
+                  type="button"
+                  className="btn-move"
+                  onClick={() => onMoveDown(item.id)}
+                  aria-label="下へ"
+                >
+                  ↓
+                </button>
+              )}
               <button
                 type="button"
                 className="btn-edit"
@@ -257,3 +285,5 @@ export default function MenuItemCard({
     </article>
   )
 }
+
+export default memo(MenuItemCard)

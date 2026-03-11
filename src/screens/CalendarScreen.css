@@ -48,42 +48,6 @@
   text-align: center;
 }
 
-.monthly-summary {
-  background: transparent;
-  padding: var(--space-lg) 0;
-  margin-bottom: var(--space-xl);
-}
-
-.monthly-summary h2 {
-  font-family: 'Inter', sans-serif;
-  font-size: var(--text-md);
-  font-weight: 700;
-  margin-bottom: var(--space-md);
-}
-
-.summary-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.summary-name {
-  color: var(--text-secondary);
-  font-size: var(--text-base);
-}
-
-.summary-value {
-  font-weight: 700;
-  font-size: var(--text-md);
-  color: var(--accent);
-}
-
 .calendar-grid {
   background: transparent;
   padding: 0;
@@ -233,31 +197,11 @@
   white-space: pre-wrap;
 }
 
-.register-menu-btn {
-  width: 100%;
-  min-height: var(--space-2xl);
-  padding: var(--space-lg);
-  margin-top: var(--space-lg);
-  background: transparent;
-  color: var(--accent);
-  border: 2px solid var(--accent);
-  border-radius: var(--radius-md);
-  transition: box-shadow 0.2s;
-  font-weight: 700;
-  font-size: var(--text-md);
-  box-shadow: var(--purple-glow);
-}
-
-.register-menu-btn:hover {
-  background: var(--accent-bg-hover);
-  box-shadow: var(--purple-glow-strong);
-}
-
 .close-btn {
   width: 100%;
   min-height: var(--space-2xl);
   padding: var(--space-lg);
-  margin-top: var(--space-md);
+  margin-top: var(--space-lg);
   background: var(--accent);
   color: #fff;
   border: none;
