@@ -63,48 +63,153 @@ export function ensureDefaultPatterns(schedules: MenuSchedule[]): MenuSchedule[]
   return [...schedules, ...created]
 }
 
+function getCompletedCounts(
+  record: DailyRecord,
+  itemId: string,
+  groupCount: number
+): number[] {
+  const cm = record.completedMenus.find((m) => m.menuItemId === itemId)
+  if (!cm) return Array(groupCount).fill(0)
+  if (cm.setGroupCounts?.length) {
+    const arr = [...cm.setGroupCounts]
+    while (arr.length < groupCount) arr.push(0)
+    return arr.slice(0, groupCount)
+  }
+  const legacy = cm.completedCount ?? 0
+  return [legacy, ...Array(Math.max(0, groupCount - 1)).fill(0)]
+}
+
+export function isItemFullyCompleted(item: MenuItem, record: DailyRecord): boolean {
+  const groups = item.setGroups?.length ? item.setGroups : [{ weight: 0, reps: 10, sets: 3 }]
+  const counts = getCompletedCounts(record, item.id, groups.length)
+  return groups.every((g, i) => (counts[i] ?? 0) >= Math.max(1, g.sets || 0))
+}
+
+function inferPatternFromRecord(
+  record: DailyRecord,
+  patterns: MenuSchedule[]
+): MenuSchedule | undefined {
+  if (record.assignedPatternId) {
+    return patterns.find((p) => p.id === record.assignedPatternId)
+  }
+  const ids = new Set(record.completedMenus.map((c) => c.menuItemId))
+  return patterns.find((p) => p.menuItems.some((m) => ids.has(m.id)))
+}
+
+function getSessionItems(record: DailyRecord, pattern?: MenuSchedule): MenuItem[] {
+  const hidden = new Set(record.hiddenScheduleItemIds ?? [])
+  const overrides = record.menuOverrides ?? []
+  const items: MenuItem[] = []
+  const seen = new Set<string>()
+
+  if (pattern) {
+    for (const m of pattern.menuItems) {
+      if (hidden.has(m.id)) continue
+      const ov = overrides.find((o) => o.replacesId === m.id)
+      const item = migrateMenuItem(ov ? ov.item : (m as MenuItem & { weight?: number; reps?: number; sets?: number }))
+      if (!seen.has(item.id)) {
+        seen.add(item.id)
+        items.push(item)
+      }
+    }
+  }
+
+  for (const ov of overrides) {
+    if (!ov.replacesId && !seen.has(ov.item.id)) {
+      seen.add(ov.item.id)
+      items.push(migrateMenuItem(ov.item as MenuItem & { weight?: number; reps?: number; sets?: number }))
+    }
+  }
+
+  return items
+}
+
+/** その日の全メニューでセット完了が揃っているか */
+export function isSessionFullyCompleted(record: DailyRecord | null, pattern?: MenuSchedule): boolean {
+  if (!record) return false
+  const resolved = pattern ?? inferPatternFromRecord(record, getPatternSchedules())
+  const items = getSessionItems(record, resolved)
+  if (items.length === 0) return false
+  return items.every((item) => isItemFullyCompleted(item, record))
+}
+
+export function findLastTrainingSession(beforeDate: string): { date: string; record: DailyRecord } | null {
+  const records = storage.getDailyRecords()
+  const dates = Object.keys(records)
+    .filter((d) => d < beforeDate)
+    .sort()
+    .reverse()
+  for (const d of dates) {
+    if ((records[d].completedMenus?.length ?? 0) > 0) {
+      return { date: d, record: records[d] }
+    }
+  }
+  return null
+}
+
+export interface PatternDecision {
+  pattern?: MenuSchedule
+  lastPattern?: MenuSchedule
+  nextPattern?: MenuSchedule
+  lastFullyComplete: boolean
+  needsChoice: boolean
+}
+
+/** 前回が全種目完了なら次のパターン、未完了なら同じパターン＋選択を促す */
+export function getPatternDecision(
+  dateStr: string,
+  record: DailyRecord | null,
+  schedules?: MenuSchedule[]
+): PatternDecision {
+  const patterns = getPatternSchedules(schedules)
+  if (patterns.length === 0) {
+    return { lastFullyComplete: false, needsChoice: false }
+  }
+
+  if (record?.assignedPatternId) {
+    const pattern = patterns.find((p) => p.id === record.assignedPatternId) ?? patterns[0]
+    const idx = patterns.findIndex((p) => p.id === pattern.id)
+    return {
+      pattern,
+      nextPattern: patterns[(idx + 1) % patterns.length],
+      lastFullyComplete: true,
+      needsChoice: false,
+    }
+  }
+
+  const last = findLastTrainingSession(dateStr)
+  if (!last) {
+    return {
+      pattern: patterns[0],
+      nextPattern: patterns[patterns.length > 1 ? 1 : 0],
+      lastFullyComplete: true,
+      needsChoice: false,
+    }
+  }
+
+  const lastPattern = inferPatternFromRecord(last.record, patterns) ?? patterns[0]
+  const lastIndex = patterns.findIndex((p) => p.id === lastPattern.id)
+  const idx = lastIndex >= 0 ? lastIndex : 0
+  const same = patterns[idx]
+  const next = patterns[(idx + 1) % patterns.length]
+  const fully = isSessionFullyCompleted(last.record, same)
+
+  return {
+    pattern: fully ? next : same,
+    lastPattern: same,
+    nextPattern: next,
+    lastFullyComplete: fully,
+    needsChoice: !fully,
+  }
+}
+
 /** その日に割り当てる回転パターンを解決する */
 export function resolvePatternForDate(
   dateStr: string,
   record: DailyRecord | null,
   schedules?: MenuSchedule[]
 ): MenuSchedule | undefined {
-  const patterns = getPatternSchedules(schedules)
-  if (patterns.length === 0) return undefined
-
-  if (record?.assignedPatternId) {
-    return patterns.find((p) => p.id === record.assignedPatternId) ?? patterns[0]
-  }
-
-  const records = storage.getDailyRecords()
-  const previousDates = Object.keys(records)
-    .filter((d) => d < dateStr)
-    .sort()
-    .reverse()
-
-  for (const d of previousDates) {
-    const prev = records[d]
-    const hasWorkout = (prev?.completedMenus?.length ?? 0) > 0
-    const lastIndex = prev?.assignedPatternId
-      ? patterns.findIndex((p) => p.id === prev.assignedPatternId)
-      : -1
-
-    if (hasWorkout) {
-      if (lastIndex >= 0) {
-        return patterns[(lastIndex + 1) % patterns.length]
-      }
-      break
-    }
-
-    if (lastIndex >= 0) {
-      return patterns[lastIndex]
-    }
-  }
-
-  const completedBefore = Object.values(records).filter(
-    (r) => r.date < dateStr && (r.completedMenus?.length ?? 0) > 0
-  ).length
-  return patterns[completedBefore % patterns.length]
+  return getPatternDecision(dateStr, record, schedules).pattern
 }
 
 function matchesSchedule(

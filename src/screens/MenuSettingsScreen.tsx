@@ -302,14 +302,16 @@ function ScheduleCard({
   canMoveUp,
   canMoveDown,
 }: ScheduleCardProps) {
-  const [editingName, setEditingName] = useState(false)
   const [nameDraft, setNameDraft] = useState(label)
+
+  useEffect(() => {
+    setNameDraft(label)
+  }, [label])
 
   const commitRename = () => {
     const next = nameDraft.trim()
     if (next && next !== label) onRename?.(next)
     else setNameDraft(label)
-    setEditingName(false)
   }
 
   return (
@@ -330,43 +332,36 @@ function ScheduleCard({
 
       {isExpanded && (
         <div className="schedule-body">
-          <div className="schedule-actions">
-            {nameEditable && (
-              editingName ? (
-                <div className="pattern-rename-row">
-                  <input
-                    type="text"
-                    className="edit-input pattern-name-input"
-                    value={nameDraft}
-                    onChange={(e) => setNameDraft(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') commitRename()
-                      if (e.key === 'Escape') {
-                        setNameDraft(label)
-                        setEditingName(false)
-                      }
-                    }}
-                    placeholder="パターン名"
-                    aria-label="パターン名"
-                    autoFocus
-                  />
-                  <button type="button" className="btn-save-sm" onClick={commitRename}>
-                    保存
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  className="btn-edit"
-                  onClick={() => {
+          {nameEditable && (
+            <div className="pattern-rename-block">
+              <label className="pattern-rename-label" htmlFor={`pattern-name-${schedule.id}`}>
+                パターン名
+              </label>
+              <input
+                id={`pattern-name-${schedule.id}`}
+                type="text"
+                className="edit-input pattern-name-input"
+                value={nameDraft}
+                onChange={(e) => setNameDraft(e.target.value)}
+                onBlur={commitRename}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    commitRename()
+                    ;(e.target as HTMLInputElement).blur()
+                  }
+                  if (e.key === 'Escape') {
                     setNameDraft(label)
-                    setEditingName(true)
-                  }}
-                >
-                  名前を変更
-                </button>
-              )
-            )}
+                    ;(e.target as HTMLInputElement).blur()
+                  }
+                }}
+                placeholder="パターン名（A, 胸 など）"
+                aria-label="パターン名"
+              />
+            </div>
+          )}
+          {(canMoveUp || canMoveDown || schedule.menuItems.length > 0 || canDeleteSchedule) && (
+          <div className="schedule-actions">
             {onMoveSchedule && canMoveUp && (
               <button type="button" className="btn-move-sm" onClick={() => onMoveSchedule('up')}>
                 上へ
@@ -388,6 +383,7 @@ function ScheduleCard({
               </button>
             )}
           </div>
+          )}
 
           <div className="menu-items">
             {schedule.menuItems.map((item, index) => (

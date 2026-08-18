@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import type { MenuItem, DailyRecord, BodyInfo, CompletedSet, RoutineMode } from '@/types'
 import { storage } from '@/lib/storage'
-import { getMenuItemsForDate, getPatternSchedules, getRoutineMode, resolvePatternForDate } from '@/lib/menuUtils'
+import { getMenuItemsForDate, getPatternSchedules, getRoutineMode, getPatternDecision } from '@/lib/menuUtils'
 import { getWeekday, generateId } from '@/lib/utils'
 import { useLiveDate } from '@/hooks/useLiveDate'
 import MenuItemCard from '@/components/MenuItemCard'
@@ -20,6 +20,16 @@ export default function HomeScreen() {
   const dateParam = searchParams.get('date')
   const today = useLiveDate()
   const selectedDate = dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam) ? dateParam : today
+  const prevTodayRef = useRef(today)
+
+  useEffect(() => {
+    if (prevTodayRef.current === today) return
+    const previousToday = prevTodayRef.current
+    prevTodayRef.current = today
+    if (!dateParam || dateParam === previousToday) {
+      setSearchParams({})
+    }
+  }, [today, dateParam, setSearchParams])
 
   const [record, setRecord] = useState<DailyRecord | null>(null)
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
@@ -46,14 +56,12 @@ export default function HomeScreen() {
   const baseRecord = record ?? createEmptyRecord(selectedDate)
   const menuItems = getMenuItemsForDate(selectedDate, record)
   const patternSchedules = routineMode === 'pattern' ? getPatternSchedules() : []
-  const currentPattern = routineMode === 'pattern'
-    ? resolvePatternForDate(selectedDate, record)
+  const patternDecision = routineMode === 'pattern'
+    ? getPatternDecision(selectedDate, record)
     : undefined
-  const nextPattern = currentPattern && patternSchedules.length > 0
-    ? patternSchedules[
-        (patternSchedules.findIndex((p) => p.id === currentPattern.id) + 1) % patternSchedules.length
-      ]
-    : undefined
+  const currentPattern = patternDecision?.pattern
+  const nextPattern = patternDecision?.nextPattern
+  const needsPatternChoice = Boolean(patternDecision?.needsChoice)
 
   const saveRecord = useCallback((updates: Partial<DailyRecord>) => {
     const next: DailyRecord = { ...baseRecord, ...updates }
@@ -157,19 +165,15 @@ export default function HomeScreen() {
     saveRecord({ menuItemOrder: ids })
   }, [menuItems, saveRecord])
 
-  const handleDateChange = (newDate: string) => setSearchParams({ date: newDate })
+  const handleDateChange = (newDate: string) => {
+    if (newDate === today) setSearchParams({})
+    else setSearchParams({ date: newDate })
+  }
   const handleEditStart = (id: string) => setEditingItemId(id)
   const handleEditEnd = () => setEditingItemId(null)
 
-  const handleShiftPattern = (direction: -1 | 1) => {
-    if (patternSchedules.length === 0) return
-    const currentId = currentPattern?.id
-    const idx = currentId ? patternSchedules.findIndex((p) => p.id === currentId) : 0
-    const safeIdx = idx >= 0 ? idx : 0
-    const nextIdx = (safeIdx + direction + patternSchedules.length) % patternSchedules.length
-    const next = patternSchedules[nextIdx]
-    if (!next) return
-    saveRecord({ assignedPatternId: next.id })
+  const handleChoosePattern = (patternId: string) => {
+    saveRecord({ assignedPatternId: patternId, menuItemOrder: undefined })
   }
 
   return (
@@ -192,35 +196,49 @@ export default function HomeScreen() {
           </button>
         </div>
         {routineMode === 'pattern' && patternSchedules.length > 0 && (
-          <div className="pattern-selector">
-            <button
-              type="button"
-              className="pattern-shift-btn"
-              onClick={() => handleShiftPattern(-1)}
-              aria-label="前のパターン"
-            >
-              ‹
-            </button>
-            <div className="pattern-selector-main">
-              <span className="pattern-selector-label">今日のパターン</span>
-              <span className="pattern-selector-name">
-                {currentPattern?.patternName || '未設定'}
-              </span>
-              {nextPattern && nextPattern.id !== currentPattern?.id && (
-                <span className="pattern-selector-next">
-                  次は {nextPattern.patternName}（セット完了後）
+          <>
+            <div className="pattern-selector">
+              <div className="pattern-selector-main">
+                <span className="pattern-selector-label">今日のパターン</span>
+                <span className="pattern-selector-name">
+                  {currentPattern?.patternName || '未設定'}
                 </span>
-              )}
+                {!needsPatternChoice && patternDecision?.lastPattern && currentPattern && patternDecision.lastPattern.id !== currentPattern.id && (
+                  <span className="pattern-selector-next">
+                    前回 {patternDecision.lastPattern.patternName} 完了 → 今日は {currentPattern.patternName}
+                  </span>
+                )}
+                {!needsPatternChoice && !patternDecision?.lastPattern && nextPattern && nextPattern.id !== currentPattern?.id && (
+                  <span className="pattern-selector-next">
+                    全種目完了後は {nextPattern.patternName}
+                  </span>
+                )}
+              </div>
             </div>
-            <button
-              type="button"
-              className="pattern-shift-btn"
-              onClick={() => handleShiftPattern(1)}
-              aria-label="次のパターン"
-            >
-              ›
-            </button>
-          </div>
+            {needsPatternChoice && patternDecision?.lastPattern && patternDecision.nextPattern && (
+              <div className="pattern-choice">
+                <p className="pattern-choice-text">
+                  前回の「{patternDecision.lastPattern.patternName}」は未完了の種目があります。今回はどうしますか？
+                </p>
+                <div className="pattern-choice-actions">
+                  <button
+                    type="button"
+                    className="pattern-choice-btn"
+                    onClick={() => handleChoosePattern(patternDecision.lastPattern!.id)}
+                  >
+                    {patternDecision.lastPattern.patternName} を続ける
+                  </button>
+                  <button
+                    type="button"
+                    className="pattern-choice-btn primary"
+                    onClick={() => handleChoosePattern(patternDecision.nextPattern!.id)}
+                  >
+                    {patternDecision.nextPattern.patternName} に進む
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </header>
 

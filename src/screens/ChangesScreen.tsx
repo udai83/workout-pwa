@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import { getMenuItemsForDate } from '@/lib/menuUtils'
-import { formatDate } from '@/lib/utils'
+import { formatDate, getTodayString } from '@/lib/utils'
 import type { BodyInfo } from '@/types'
 import './ChangesScreen.css'
 
@@ -29,7 +29,7 @@ export default function ChangesScreen() {
       .filter(([, r]) => Object.values(r.bodyInfo ?? {}).some((v) => v != null))
       .map(([date]) => date)
     if (datesWithData.length === 0) {
-      const today = new Date().toISOString().slice(0, 10)
+      const today = getTodayString()
       return { firstDate: today, lastDate: today }
     }
     datesWithData.sort()
