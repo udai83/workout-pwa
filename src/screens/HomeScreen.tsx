@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useSearchParams } from 'react-router-dom'
 import type { MenuItem, DailyRecord, BodyInfo, CompletedSet, RoutineMode } from '@/types'
 import { storage } from '@/lib/storage'
 import { getMenuItemsForDate, getPatternSchedules, getRoutineMode, getPatternDecision } from '@/lib/menuUtils'
 import { getWeekday, generateId } from '@/lib/utils'
 import { useLiveDate } from '@/hooks/useLiveDate'
+import { useOverlayViewport } from '@/hooks/useOverlayViewport'
 import MenuItemCard from '@/components/MenuItemCard'
 import DailyRecordForm from '@/components/DailyRecordForm'
 import './HomeScreen.css'
@@ -42,19 +44,11 @@ export default function HomeScreen() {
     setRoutineMode(getRoutineMode())
   }, [selectedDate])
 
-  useEffect(() => {
-    if (editingItemId) {
-      document.body.style.overflow = 'hidden'
-      document.documentElement.classList.add('overlay-open')
-      return () => {
-        document.body.style.overflow = ''
-        document.documentElement.classList.remove('overlay-open')
-      }
-    }
-  }, [editingItemId])
+  useOverlayViewport(Boolean(editingItemId))
 
   const baseRecord = record ?? createEmptyRecord(selectedDate)
   const menuItems = getMenuItemsForDate(selectedDate, record)
+  const editingItem = editingItemId ? menuItems.find((m) => m.id === editingItemId) : undefined
   const patternSchedules = routineMode === 'pattern' ? getPatternSchedules() : []
   const patternDecision = routineMode === 'pattern'
     ? getPatternDecision(selectedDate, record)
@@ -171,6 +165,15 @@ export default function HomeScreen() {
   }
   const handleEditStart = (id: string) => setEditingItemId(id)
   const handleEditEnd = () => setEditingItemId(null)
+  const [overlayArmed, setOverlayArmed] = useState(false)
+  useEffect(() => {
+    if (!editingItemId) {
+      setOverlayArmed(false)
+      return
+    }
+    const t = window.setTimeout(() => setOverlayArmed(true), 400)
+    return () => window.clearTimeout(t)
+  }, [editingItemId])
 
   const handleChoosePattern = (patternId: string) => {
     saveRecord({ assignedPatternId: patternId, menuItemOrder: undefined })
@@ -278,35 +281,33 @@ export default function HomeScreen() {
           )}
         </div>
 
-        {editingItemId && (() => {
-          const editingItem = menuItems.find((m) => m.id === editingItemId)
-          if (!editingItem) return null
-          const setGroups = editingItem.setGroups?.length ? editingItem.setGroups : [{ weight: 0, reps: 10, sets: 3 }]
-          return (
-            <div
-              className="edit-overlay"
-              onClick={(e) => e.target === e.currentTarget && handleEditEnd()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Escape' && handleEditEnd()}
-            >
-              <div className="edit-overlay-content">
-                <MenuItemCard
-                  key={editingItem.id}
-                  item={editingItem}
-                  completedSetGroupCounts={getCompletedSetGroupCounts(editingItem.id, setGroups.length)}
-                  onSetComplete={(g, n) => handleSetComplete(editingItem.id, g, n)}
-                  onUpdate={handleUpdateMenuItem}
-                  onRemove={handleRemoveMenuItem}
-                  canRemove
-                  isEditing
-                  onEditStart={() => {}}
-                  onEditEnd={handleEditEnd}
-                />
-              </div>
+        {editingItem && createPortal(
+          <div
+            className="edit-overlay"
+            onClick={(e) => overlayArmed && e.target === e.currentTarget && handleEditEnd()}
+            role="presentation"
+            onKeyDown={(e) => e.key === 'Escape' && handleEditEnd()}
+          >
+            <div className="edit-overlay-content">
+              <MenuItemCard
+                key={editingItem.id}
+                item={editingItem}
+                completedSetGroupCounts={getCompletedSetGroupCounts(
+                  editingItem.id,
+                  (editingItem.setGroups?.length ? editingItem.setGroups : [{ weight: 0, reps: 10, sets: 3 }]).length
+                )}
+                onSetComplete={(g, n) => handleSetComplete(editingItem.id, g, n)}
+                onUpdate={handleUpdateMenuItem}
+                onRemove={handleRemoveMenuItem}
+                canRemove
+                isEditing
+                onEditStart={() => {}}
+                onEditEnd={handleEditEnd}
+              />
             </div>
-          )
-        })()}
+          </div>,
+          document.body
+        )}
         <button type="button" className="add-menu-btn" onClick={handleAddMenu} aria-label="Add menu">
           ＋ メニューを追加
         </button>

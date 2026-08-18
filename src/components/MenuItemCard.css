@@ -92,6 +92,14 @@
   gap: var(--space-lg);
 }
 
+.edit-form-title {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
 .edit-form .edit-input.name-input {
   min-width: 20ch;
 }
@@ -225,6 +233,46 @@
   gap: var(--space-sm);
   font-size: var(--text-sm);
   color: var(--text-secondary);
+}
+
+@media (max-width: 480px) {
+  .set-group-edit-row .edit-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .edit-row label {
+    display: grid;
+    grid-template-columns: 4.5em 1fr;
+    width: 100%;
+    align-items: center;
+  }
+
+  .edit-row .input-with-unit {
+    width: 100%;
+  }
+
+  .edit-row .input-with-unit .edit-input.small {
+    width: 100%;
+    text-align: left;
+  }
+
+  .btn-remove-set {
+    align-self: flex-end;
+  }
+
+  .edit-form .edit-actions {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-card);
+    padding-top: var(--space-sm);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .edit-form .edit-actions .btn-save,
+  .edit-form .edit-actions .btn-cancel {
+    flex: 1;
+  }
 }
 
 .edit-actions {

@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { getWeekday, formatDate } from '@/lib/utils'
 import { findMenuItem, getPatternSchedules } from '@/lib/menuUtils'
-import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import type { DailyRecord } from '@/types'
 import './CalendarScreen.css'
 
@@ -134,26 +133,72 @@ export default function CalendarScreen() {
   )
 }
 
-function getCompletedMenusWithWeight(
-  record: DailyRecord,
-  dateStr: string
-): Record<string, number> {
-  const result: Record<string, number> = {}
+interface PerformedSet {
+  id: string
+  text: string
+}
+
+interface PerformedExercise {
+  id: string
+  name: string
+  sets: PerformedSet[]
+}
+
+function formatSetWeight(weight: number, reps: number): string {
+  if (weight > 0) return `${weight}kg × ${reps}回`
+  return `${reps}回`
+}
+
+function getPerformedExercises(record: DailyRecord, dateStr: string): PerformedExercise[] {
+  const exercises: PerformedExercise[] = []
   for (const cm of record.completedMenus) {
     const menuItem = findMenuItem(cm.menuItemId, dateStr, record)
     if (!menuItem) continue
     const setGroups = menuItem.setGroups ?? []
     const counts = cm.setGroupCounts ?? (cm.completedCount != null ? [cm.completedCount] : [])
-    let total = 0
+    const sets: PerformedSet[] = []
     setGroups.forEach((g, i) => {
-      const c = counts[i] ?? 0
-      total += g.weight * g.reps * c
+      const done = counts[i] ?? 0
+      if (done <= 0 || g.reps <= 0) return
+      const text = formatSetWeight(g.weight, g.reps)
+      for (let s = 0; s < done; s += 1) {
+        sets.push({ id: `${menuItem.id}-${i}-${s}`, text })
+      }
     })
-    if (total > 0) {
-      result[menuItem.name] = (result[menuItem.name] ?? 0) + total
+    if (sets.length > 0) {
+      exercises.push({
+        id: menuItem.id,
+        name: menuItem.name || '（未設定）',
+        sets,
+      })
     }
   }
-  return result
+  return exercises
+}
+
+async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text)
+      return true
+    }
+  } catch {
+    /* fallback */
+  }
+  const ta = document.createElement('textarea')
+  ta.value = text
+  ta.setAttribute('readonly', '')
+  ta.style.position = 'fixed'
+  ta.style.left = '-9999px'
+  document.body.appendChild(ta)
+  ta.select()
+  try {
+    return document.execCommand('copy')
+  } catch {
+    return false
+  } finally {
+    document.body.removeChild(ta)
+  }
 }
 
 interface DayDetailContentProps {
@@ -162,44 +207,50 @@ interface DayDetailContentProps {
 }
 
 function DayDetailContent({ record, dateStr }: DayDetailContentProps) {
-  const completedWithWeight = getCompletedMenusWithWeight(record, dateStr)
-  const totalWeight = Object.values(completedWithWeight).reduce((a, b) => a + b, 0)
+  const exercises = getPerformedExercises(record, dateStr)
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    setCopied(false)
+  }, [dateStr])
+
+  const handleCopy = async () => {
+    if (exercises.length === 0) return
+    const text = exercises
+      .map((ex) => [ex.name, ...ex.sets.map((s, i) => `${i + 1}. ${s.text}`)].join('\n'))
+      .join('\n\n')
+    const ok = await copyToClipboard(text)
+    if (!ok) return
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1600)
+  }
+
+  if (exercises.length === 0) {
+    return <p className="no-data">トレーニング記録がありません</p>
+  }
 
   return (
     <div className="day-detail-content">
-      {record.completedMenus.length > 0 && (
-        <div className="detail-section">
-          <h4>完了メニュー</h4>
-          <ul className="completed-list">
-            {Object.entries(completedWithWeight).map(([name, weight]) => (
-              <li key={name}>
-                {name}: {weight}kg
-              </li>
-            ))}
-          </ul>
-          <p className="total-weight">総重量: {totalWeight}kg</p>
-        </div>
-      )}
-      {Object.values(record.bodyInfo ?? {}).some((v) => v != null) && (
-        <div className="detail-section">
-          <h4>身体情報</h4>
-          <div className="body-info">
-            {BODY_INFO_FIELDS.filter((f) => record.bodyInfo![f.key] != null).map(
-              (f) => (
-                <span key={f.key}>
-                  {f.label}: {record.bodyInfo![f.key]}{f.unit}
-                </span>
-              )
-            )}
-          </div>
-        </div>
-      )}
-      {record.memo && (
-        <div className="detail-section">
-          <h4>メモ</h4>
-          <p className="memo-text">{record.memo}</p>
-        </div>
-      )}
+      <div className="detail-toolbar">
+        <button type="button" className="copy-day-btn" onClick={handleCopy}>
+          {copied ? 'コピーしました' : 'コピー'}
+        </button>
+      </div>
+      <ul className="completed-exercises">
+        {exercises.map((ex) => (
+          <li key={ex.id} className="completed-exercise">
+            <p className="completed-exercise-name">{ex.name}</p>
+            <ul className="completed-sets">
+              {ex.sets.map((set, i) => (
+                <li key={set.id}>
+                  <span className="set-index">{i + 1}</span>
+                  {set.text}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

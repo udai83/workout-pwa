@@ -228,38 +228,29 @@
 
 .edit-overlay {
   position: fixed;
-  top: 0;
+  top: var(--overlay-top, 0px);
   left: 0;
   right: 0;
-  bottom: var(--nav-height);
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  height: var(--overlay-vh, 100dvh);
+  background: rgba(20, 20, 24, 0.72);
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  z-index: 150;
-  padding: var(--space-lg);
+  z-index: 400;
+  padding: max(var(--space-lg), env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
   overflow: hidden;
-  animation: overlayFadeIn 0.34s ease;
-}
-
-@keyframes overlayFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 .edit-overlay-content {
   width: 100%;
-  max-width: 400px;
-  max-height: calc(100dvh - 2 * var(--space-lg) - var(--nav-height));
+  max-width: 420px;
+  max-height: calc(var(--overlay-vh, 100dvh) - 2 * var(--space-lg));
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
   touch-action: pan-y;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  animation: editZoomIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -267,15 +258,4 @@
 .edit-overlay-content .set-groups-stack,
 .edit-overlay-content .set-buttons {
   display: none !important;
-}
-
-@keyframes editZoomIn {
-  from {
-    opacity: 0.7;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.02);
-  }
 }

@@ -89,6 +89,7 @@ function MenuItemCard({
       <div className="menu-item-header">
         {isEditing ? (
           <div className="edit-form">
+            <p className="edit-form-title">メニュー登録</p>
             <input
               type="text"
               value={name}

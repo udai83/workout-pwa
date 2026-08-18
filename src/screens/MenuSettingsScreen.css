@@ -161,35 +161,92 @@
 
 .edit-focus-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 140;
-  animation: overlayFadeIn 0.34s ease;
-}
-
-@keyframes overlayFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  top: var(--overlay-top, 0px);
+  left: 0;
+  right: 0;
+  height: var(--overlay-vh, 100dvh);
+  background: rgba(20, 20, 24, 0.72);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 400;
+  padding: max(var(--space-lg), env(safe-area-inset-top, 0px)) var(--space-md) var(--space-md);
+  overflow: hidden;
 }
 
 .menu-item-row.edit.edit-focus-zoom {
   position: relative;
-  z-index: 150;
-  animation: editZoomIn 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform-origin: center;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  max-height: calc(var(--overlay-vh, 100dvh) - 2 * var(--space-lg));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  box-shadow: var(--shadow-md);
+  -webkit-overflow-scrolling: touch;
 }
 
-@keyframes editZoomIn {
-  from {
-    opacity: 0.7;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.02);
-  }
+.menu-item-row--placeholder {
+  min-height: var(--space-2xl);
+  padding: 0;
+  border-bottom: none;
+}
+
+.confirm-overlay {
+  position: fixed;
+  top: var(--overlay-top, 0px);
+  left: 0;
+  right: 0;
+  height: var(--overlay-vh, 100dvh);
+  background: rgba(20, 20, 24, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 410;
+  padding: var(--space-lg);
+  pointer-events: none;
+}
+
+.confirm-overlay.is-armed {
+  pointer-events: auto;
+}
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-xl);
+}
+
+.confirm-dialog h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md);
+}
+
+.confirm-dialog p {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-base);
+  margin: 0 0 var(--space-xl);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: flex-end;
+}
+
+.confirm-delete-btn:disabled,
+.confirm-actions .btn-cancel-sm:disabled {
+  opacity: 0.5;
 }
 
 .schedule-edit,
@@ -337,12 +394,48 @@
   padding: var(--space-lg);
   border-bottom: 1px solid var(--border);
   background: var(--bg-card);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border);
+}
+
+.edit-form-title {
+  font-family: 'Inter', sans-serif;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 0;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.edit-field .input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.set-group-row-label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm);
 }
 
 .menu-item-row.edit .menu-save-actions {
   border-top-color: var(--border);
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-card);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .menu-item-row.edit .row-input.name {
@@ -351,17 +444,25 @@
 
 .menu-item-row.edit .row-spec-inputs {
   display: flex;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-md);
 }
 
 .menu-item-row.edit .row-spec-inputs .row-input.small {
   flex: 1;
+  width: 100%;
   min-width: 0;
+  text-align: left;
 }
 
 .menu-item-row.edit .row-edit-actions {
   display: flex;
   gap: var(--space-sm);
+}
+
+.menu-item-row.edit .btn-save-sm,
+.menu-item-row.edit .btn-cancel-sm {
+  flex: 1;
 }
 
 .set-groups-list {

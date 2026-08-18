@@ -1,7 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
+﻿import { useState, useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import type { MenuSchedule, MenuItem, SetGroup, RoutineMode } from '@/types'
 import { storage } from '@/lib/storage'
 import { generateId } from '@/lib/utils'
+import { useOverlayViewport } from '@/hooks/useOverlayViewport'
 import {
   createPatternSchedule,
   ensureDefaultPatterns,
@@ -38,6 +40,9 @@ export default function MenuSettingsScreen() {
   const [schedules, setSchedules] = useState<MenuSchedule[]>([])
   const [mode, setMode] = useState<RoutineMode>('weekday')
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [pending, setPending] = useState<
+    { kind: 'pattern' | 'menus'; id: string } | null
+  >(null)
 
   const weekdaySchedules = useMemo(
     () => getWeekdaySchedules(schedules),
@@ -99,6 +104,7 @@ export default function MenuSettingsScreen() {
 
   const handleClearRoutine = (scheduleId: string) => {
     handleUpdateSchedule(scheduleId, { menuItems: [] })
+    setPending(null)
   }
 
   const handleAddMenuItem = (scheduleId: string) => {
@@ -162,6 +168,31 @@ export default function MenuSettingsScreen() {
     const others = schedules.filter((s) => s.scheduleType !== 'pattern')
     saveSchedules([...others, ...remaining])
     if (expandedId === scheduleId) setExpandedId(null)
+    setPending(null)
+  }
+
+  const handleCopyPattern = (scheduleId: string) => {
+    const source = findSchedule(scheduleId)
+    if (!source) return
+    const clonedItems: MenuItem[] = source.menuItems.map((item) => ({
+      id: generateId(),
+      name: item.name,
+      setGroups: item.setGroups.map((g) => ({ ...g })),
+    }))
+    const baseName = source.patternName?.trim() || 'パターン'
+    const existingNames = new Set(patternSchedules.map((s) => s.patternName ?? ''))
+    let copiedName = `${baseName}のコピー`
+    let n = 2
+    while (existingNames.has(copiedName)) {
+      copiedName = `${baseName}のコピー${n}`
+      n += 1
+    }
+    const next = {
+      ...createPatternSchedule(copiedName, patternSchedules.length),
+      menuItems: clonedItems,
+    }
+    saveSchedules([...schedules, next])
+    setExpandedId(next.id)
   }
 
   const handleMovePattern = (scheduleId: string, direction: 'up' | 'down') => {
@@ -177,6 +208,12 @@ export default function MenuSettingsScreen() {
   }
 
   const visibleSchedules = mode === 'weekday' ? weekdaySchedules : patternSchedules
+  const pendingSchedule = pending ? findSchedule(pending.id) : undefined
+  const pendingLabel = pendingSchedule
+    ? pendingSchedule.scheduleType === 'pattern'
+      ? pendingSchedule.patternName || 'このパターン'
+      : `${WEEKDAY_NAMES[pendingSchedule.weekday ?? 0]}曜日`
+    : 'このメニュー'
 
   return (
     <div className="menu-settings-screen">
@@ -224,7 +261,7 @@ export default function MenuSettingsScreen() {
             onToggleExpand={() =>
               setExpandedId((prev) => (prev === schedule.id ? null : schedule.id))
             }
-            onClearRoutine={() => handleClearRoutine(schedule.id)}
+            onClearMenus={() => setPending({ kind: 'menus', id: schedule.id })}
             onAddMenuItem={() => handleAddMenuItem(schedule.id)}
             onUpdateMenuItem={(itemId, item) =>
               handleUpdateMenuItem(schedule.id, itemId, item)
@@ -242,9 +279,12 @@ export default function MenuSettingsScreen() {
                 : undefined
             }
             onDeleteSchedule={
-              mode === 'pattern' ? () => handleDeletePattern(schedule.id) : undefined
+              mode === 'pattern' ? () => setPending({ kind: 'pattern', id: schedule.id }) : undefined
             }
             canDeleteSchedule={mode === 'pattern' && patternSchedules.length > 1}
+            onCopySchedule={
+              mode === 'pattern' ? () => handleCopyPattern(schedule.id) : undefined
+            }
             onMoveSchedule={
               mode === 'pattern'
                 ? (dir) => handleMovePattern(schedule.id, dir)
@@ -261,6 +301,23 @@ export default function MenuSettingsScreen() {
           ＋ パターンを追加
         </button>
       )}
+
+      {pending && (
+        <ConfirmDialog
+          title={pending.kind === 'pattern' ? 'パターンを削除' : 'メニューをすべて削除'}
+          message={
+            pending.kind === 'pattern'
+              ? `「${pendingLabel}」を本当に消しますか？`
+              : `「${pendingLabel}」のメニューをすべて消しますか？`
+          }
+          confirmLabel="削除する"
+          onCancel={() => setPending(null)}
+          onConfirm={() => {
+            if (pending.kind === 'pattern') handleDeletePattern(pending.id)
+            else handleClearRoutine(pending.id)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -270,7 +327,7 @@ interface ScheduleCardProps {
   label: string
   isExpanded: boolean
   onToggleExpand: () => void
-  onClearRoutine: () => void
+  onClearMenus: () => void
   onAddMenuItem: () => void
   onUpdateMenuItem: (itemId: string, item: MenuItem) => void
   onDeleteMenuItem: (itemId: string) => void
@@ -279,6 +336,7 @@ interface ScheduleCardProps {
   onRename?: (name: string) => void
   onDeleteSchedule?: () => void
   canDeleteSchedule?: boolean
+  onCopySchedule?: () => void
   onMoveSchedule?: (direction: 'up' | 'down') => void
   canMoveUp?: boolean
   canMoveDown?: boolean
@@ -289,7 +347,7 @@ function ScheduleCard({
   label,
   isExpanded,
   onToggleExpand,
-  onClearRoutine,
+  onClearMenus,
   onAddMenuItem,
   onUpdateMenuItem,
   onDeleteMenuItem,
@@ -298,6 +356,7 @@ function ScheduleCard({
   onRename,
   onDeleteSchedule,
   canDeleteSchedule,
+  onCopySchedule,
   onMoveSchedule,
   canMoveUp,
   canMoveDown,
@@ -360,8 +419,13 @@ function ScheduleCard({
               />
             </div>
           )}
-          {(canMoveUp || canMoveDown || schedule.menuItems.length > 0 || canDeleteSchedule) && (
+          {(canMoveUp || canMoveDown || schedule.menuItems.length > 0 || canDeleteSchedule || onCopySchedule) && (
           <div className="schedule-actions">
+            {onCopySchedule && (
+              <button type="button" className="btn-edit" onClick={onCopySchedule}>
+                内容をコピー
+              </button>
+            )}
             {onMoveSchedule && canMoveUp && (
               <button type="button" className="btn-move-sm" onClick={() => onMoveSchedule('up')}>
                 上へ
@@ -373,12 +437,26 @@ function ScheduleCard({
               </button>
             )}
             {schedule.menuItems.length > 0 && (
-              <button type="button" className="btn-delete" onClick={onClearRoutine}>
-                ルーティンをクリア
+              <button
+                type="button"
+                className="btn-delete"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onClearMenus()
+                }}
+              >
+                メニューをすべて削除
               </button>
             )}
             {canDeleteSchedule && (
-              <button type="button" className="btn-delete" onClick={onDeleteSchedule}>
+              <button
+                type="button"
+                className="btn-delete"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDeleteSchedule?.()
+                }}
+              >
                 パターンを削除
               </button>
             )}
@@ -454,6 +532,25 @@ function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveD
   const [groupInputs, setGroupInputs] = useState<SetGroupInputs[]>(() =>
     (item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }]).map(toInputStrings)
   )
+  const nameInputRef = useRef<HTMLInputElement>(null)
+
+  useOverlayViewport(editing)
+
+  useEffect(() => {
+    if (!editing) return
+    const t = window.setTimeout(() => nameInputRef.current?.focus(), 80)
+    return () => window.clearTimeout(t)
+  }, [editing])
+
+  const [overlayArmed, setOverlayArmed] = useState(false)
+  useEffect(() => {
+    if (!editing) {
+      setOverlayArmed(false)
+      return
+    }
+    const t = window.setTimeout(() => setOverlayArmed(true), 400)
+    return () => window.clearTimeout(t)
+  }, [editing])
 
   const handleAddSetGroup = () => {
     if (groupInputs.length >= MAX_SET_GROUPS) return
@@ -486,6 +583,10 @@ function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveD
   }
 
   const handleCancel = () => {
+    if (isNew) {
+      onDelete()
+      return
+    }
     setName(item.name)
     setGroupInputs(
       (item.setGroups.length > 0 ? item.setGroups : [{ weight: 0, reps: 0, sets: 0 }]).map(toInputStrings)
@@ -496,84 +597,116 @@ function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveD
   if (editing) {
     return (
       <>
-        <div
-          className="edit-focus-overlay"
-          onClick={handleCancel}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Escape' && handleCancel()}
-          aria-label="編集をキャンセル"
-        />
-        <div className="menu-item-row edit edit-focus-zoom">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="種目名"
-          className="row-input name"
-        />
-        <div className="set-groups-list">
-          {groupInputs.map((g, idx) => (
-            <div key={idx} className="set-group-row">
-              <div className="row-spec-inputs">
+        <div className="menu-item-row menu-item-row--placeholder" aria-hidden />
+        {createPortal(
+          <div
+            className="edit-focus-overlay"
+            onClick={() => overlayArmed && handleCancel()}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Escape' && handleCancel()}
+            aria-label="編集をキャンセル"
+          >
+            <div
+              className="menu-item-row edit edit-focus-zoom"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p className="edit-form-title">メニュー登録</p>
+              <label className="edit-field">
+                <span>種目名</span>
                 <input
+                  ref={nameInputRef}
                   type="text"
-                  inputMode="decimal"
-                  value={g.weightStr}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
-                    handleUpdateGroupInput(idx, 'weightStr', v)
-                  }}
-                  onFocus={(e) => e.target.select()}
-                  placeholder="重さ"
-                  className="row-input small input-placeholder"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="例: ベンチプレス"
+                  className="row-input name"
                 />
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={g.repsStr}
-                  onChange={(e) => handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))}
-                  onFocus={(e) => e.target.select()}
-                  placeholder="回数"
-                  className="row-input small input-placeholder"
-                />
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={g.setsStr}
-                  onChange={(e) => handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))}
-                  onFocus={(e) => e.target.select()}
-                  placeholder="セット"
-                  className="row-input small input-placeholder"
-                />
-                {groupInputs.length > 1 && (
-                  <button
-                    type="button"
-                    className="btn-remove-set"
-                    onClick={() => handleRemoveSetGroup(idx)}
-                    aria-label="このセットを削除"
-                  >
-                    削除
-                  </button>
-                )}
+              </label>
+              <div className="set-groups-list">
+                {groupInputs.map((g, idx) => (
+                  <div key={idx} className="set-group-row">
+                    <p className="set-group-row-label">セット {idx + 1}</p>
+                    <div className="row-spec-inputs">
+                      <label className="edit-field">
+                        <span>重量</span>
+                        <span className="input-with-unit">
+                          <input
+                            type="text"
+                            inputMode="decimal"
+                            value={g.weightStr}
+                            onChange={(e) => {
+                              const v = e.target.value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1')
+                              handleUpdateGroupInput(idx, 'weightStr', v)
+                            }}
+                            onFocus={(e) => e.target.select()}
+                            placeholder="0"
+                            className="row-input small input-placeholder"
+                          />
+                          kg
+                        </span>
+                      </label>
+                      <label className="edit-field">
+                        <span>回数</span>
+                        <span className="input-with-unit">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={g.repsStr}
+                            onChange={(e) => handleUpdateGroupInput(idx, 'repsStr', e.target.value.replace(/\D/g, ''))}
+                            onFocus={(e) => e.target.select()}
+                            placeholder="0"
+                            className="row-input small input-placeholder"
+                          />
+                          回
+                        </span>
+                      </label>
+                      <label className="edit-field">
+                        <span>セット数</span>
+                        <span className="input-with-unit">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={g.setsStr}
+                            onChange={(e) => handleUpdateGroupInput(idx, 'setsStr', e.target.value.replace(/\D/g, ''))}
+                            onFocus={(e) => e.target.select()}
+                            placeholder="0"
+                            className="row-input small input-placeholder"
+                          />
+                          セット
+                        </span>
+                      </label>
+                      {groupInputs.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn-remove-set"
+                          onClick={() => handleRemoveSetGroup(idx)}
+                          aria-label="このセットを削除"
+                        >
+                          削除
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {groupInputs.length < MAX_SET_GROUPS && (
+                <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
+                  ＋ セットを追加（最大{MAX_SET_GROUPS}まで）
+                </button>
+              )}
+              <div className="row-edit-actions menu-save-actions">
+                <button type="button" className="btn-save-sm" onClick={handleSave}>
+                  保存
+                </button>
+                <button type="button" className="btn-cancel-sm" onClick={handleCancel}>
+                  キャンセル
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-        {groupInputs.length < MAX_SET_GROUPS && (
-          <button type="button" className="add-set-btn" onClick={handleAddSetGroup}>
-            ＋ セットを追加（最大{MAX_SET_GROUPS}まで）
-          </button>
+          </div>,
+          document.body
         )}
-        <div className="row-edit-actions menu-save-actions">
-          <button type="button" className="btn-save-sm" onClick={handleSave}>
-            保存
-          </button>
-          <button type="button" className="btn-cancel-sm" onClick={handleCancel}>
-            キャンセル
-          </button>
-        </div>
-      </div>
       </>
     )
   }
@@ -620,5 +753,65 @@ function MenuItemRow({ item, index, total, onUpdate, onDelete, onMoveUp, onMoveD
         </button>
       </div>
     </div>
+  )
+}
+
+interface ConfirmDialogProps {
+  title: string
+  message: string
+  confirmLabel: string
+  onConfirm: () => void
+  onCancel: () => void
+}
+
+function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel }: ConfirmDialogProps) {
+  const [armed, setArmed] = useState(false)
+  useOverlayViewport(true)
+
+  useEffect(() => {
+    const armTimer = window.setTimeout(() => setArmed(true), 500)
+    return () => window.clearTimeout(armTimer)
+  }, [])
+
+  return createPortal(
+    <div
+      className={`confirm-overlay ${armed ? 'is-armed' : ''}`}
+      onClick={() => {
+        if (!armed) return
+        onCancel()
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onCancel()
+      }}
+      role="presentation"
+    >
+      <div
+        className="confirm-dialog"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+      >
+        <h2 id="confirm-title">{title}</h2>
+        <p>{message}</p>
+        <div className="confirm-actions">
+          <button type="button" className="btn-cancel-sm" onClick={onCancel} disabled={!armed}>
+            キャンセル
+          </button>
+          <button
+            type="button"
+            className="btn-delete confirm-delete-btn"
+            onClick={() => {
+              if (!armed) return
+              onConfirm()
+            }}
+            disabled={!armed}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
   )
 }
