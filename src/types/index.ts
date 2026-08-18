@@ -23,9 +23,16 @@ export interface MenuItemLegacy {
 }
 
 /** スケジュールタイプ */
-export type ScheduleType = 'weekday' | 'date'
+export type ScheduleType = 'weekday' | 'date' | 'pattern'
 
-/** メニュースケジュール（曜日 or 日付に紐づくメニュー） */
+/** ルーティン方式 */
+export type RoutineMode = 'weekday' | 'pattern'
+
+export interface RoutineSettings {
+  mode: RoutineMode
+}
+
+/** メニュースケジュール（曜日 / 日付 / 回転パターン） */
 export interface MenuSchedule {
   id: string
   scheduleType: ScheduleType
@@ -33,6 +40,10 @@ export interface MenuSchedule {
   weekday?: number
   /** 日付指定時: YYYY-MM-DD */
   date?: string
+  /** パターン指定時: 表示名（A, B, 胸 など） */
+  patternName?: string
+  /** パターン指定時: 回転順（小さいほど先） */
+  patternOrder?: number
   menuItems: MenuItem[]
   createdAt: string
 }
@@ -68,6 +79,8 @@ export interface DailyRecord {
   hiddenScheduleItemIds?: string[]
   /** メニュー表示順（IDの配列。未指定時はデフォルト順） */
   menuItemOrder?: string[]
+  /** パターン方式時にその日へ割り当てたパターンID */
+  assignedPatternId?: string
   completedMenus: CompletedSet[]
   memo: string
   bodyInfo: BodyInfo

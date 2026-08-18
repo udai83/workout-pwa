@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { storage } from '@/lib/storage'
 import { getWeekday, formatDate } from '@/lib/utils'
-import { findMenuItem } from '@/lib/menuUtils'
+import { findMenuItem, getPatternSchedules } from '@/lib/menuUtils'
 import { BODY_INFO_FIELDS } from '@/lib/bodyInfoFields'
 import type { DailyRecord } from '@/types'
 import './CalendarScreen.css'
@@ -113,7 +113,15 @@ export default function CalendarScreen() {
             className="day-detail"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3>{formatDate(selectedDate)}（{WEEKDAY_NAMES[getWeekday(selectedDate)]}）</h3>
+            <h3>
+              {formatDate(selectedDate)}（{WEEKDAY_NAMES[getWeekday(selectedDate)]}）
+              {selectedRecord?.assignedPatternId && (
+                <span className="day-pattern-label">
+                  {' '}
+                  {getPatternSchedules().find((p) => p.id === selectedRecord.assignedPatternId)?.patternName}
+                </span>
+              )}
+            </h3>
             {selectedRecord ? (
               <DayDetailContent record={selectedRecord} dateStr={selectedDate} />
             ) : (

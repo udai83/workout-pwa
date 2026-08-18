@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import type { MenuItem, DailyRecord, BodyInfo, CompletedSet } from '@/types'
+import type { MenuItem, DailyRecord, BodyInfo, CompletedSet, RoutineMode } from '@/types'
 import { storage } from '@/lib/storage'
-import { getMenuItemsForDate } from '@/lib/menuUtils'
+import { getMenuItemsForDate, getPatternSchedules, getRoutineMode, resolvePatternForDate } from '@/lib/menuUtils'
 import { getWeekday, generateId } from '@/lib/utils'
 import { useLiveDate } from '@/hooks/useLiveDate'
 import MenuItemCard from '@/components/MenuItemCard'
@@ -23,11 +23,13 @@ export default function HomeScreen() {
 
   const [record, setRecord] = useState<DailyRecord | null>(null)
   const [editingItemId, setEditingItemId] = useState<string | null>(null)
+  const [routineMode, setRoutineMode] = useState<RoutineMode>(() => getRoutineMode())
 
   useEffect(() => {
     const r = storage.getDailyRecord(selectedDate)
     setRecord(r ?? createEmptyRecord(selectedDate))
     setEditingItemId(null)
+    setRoutineMode(getRoutineMode())
   }, [selectedDate])
 
   useEffect(() => {
@@ -43,6 +45,15 @@ export default function HomeScreen() {
 
   const baseRecord = record ?? createEmptyRecord(selectedDate)
   const menuItems = getMenuItemsForDate(selectedDate, record)
+  const patternSchedules = routineMode === 'pattern' ? getPatternSchedules() : []
+  const currentPattern = routineMode === 'pattern'
+    ? resolvePatternForDate(selectedDate, record)
+    : undefined
+  const nextPattern = currentPattern && patternSchedules.length > 0
+    ? patternSchedules[
+        (patternSchedules.findIndex((p) => p.id === currentPattern.id) + 1) % patternSchedules.length
+      ]
+    : undefined
 
   const saveRecord = useCallback((updates: Partial<DailyRecord>) => {
     const next: DailyRecord = { ...baseRecord, ...updates }
@@ -84,8 +95,11 @@ export default function HomeScreen() {
           return [...baseRecord.completedMenus, entry]
         })()
 
-    saveRecord({ completedMenus: newCompleted })
-  }, [menuItems, baseRecord, getCompletedSetGroupCounts, saveRecord])
+    saveRecord({
+      completedMenus: newCompleted,
+      assignedPatternId: currentPattern?.id ?? baseRecord.assignedPatternId,
+    })
+  }, [menuItems, baseRecord, currentPattern, getCompletedSetGroupCounts, saveRecord])
 
   const handleAddMenu = useCallback(() => {
     const newItem: MenuItem = { id: generateId(), name: '', setGroups: [{ weight: 0, reps: 0, sets: 0 }] }
@@ -147,6 +161,17 @@ export default function HomeScreen() {
   const handleEditStart = (id: string) => setEditingItemId(id)
   const handleEditEnd = () => setEditingItemId(null)
 
+  const handleShiftPattern = (direction: -1 | 1) => {
+    if (patternSchedules.length === 0) return
+    const currentId = currentPattern?.id
+    const idx = currentId ? patternSchedules.findIndex((p) => p.id === currentId) : 0
+    const safeIdx = idx >= 0 ? idx : 0
+    const nextIdx = (safeIdx + direction + patternSchedules.length) % patternSchedules.length
+    const next = patternSchedules[nextIdx]
+    if (!next) return
+    saveRecord({ assignedPatternId: next.id })
+  }
+
   return (
     <div className="home-screen">
       <header className="home-header">
@@ -166,13 +191,46 @@ export default function HomeScreen() {
             今日
           </button>
         </div>
+        {routineMode === 'pattern' && patternSchedules.length > 0 && (
+          <div className="pattern-selector">
+            <button
+              type="button"
+              className="pattern-shift-btn"
+              onClick={() => handleShiftPattern(-1)}
+              aria-label="前のパターン"
+            >
+              ‹
+            </button>
+            <div className="pattern-selector-main">
+              <span className="pattern-selector-label">今日のパターン</span>
+              <span className="pattern-selector-name">
+                {currentPattern?.patternName || '未設定'}
+              </span>
+              {nextPattern && nextPattern.id !== currentPattern?.id && (
+                <span className="pattern-selector-next">
+                  次は {nextPattern.patternName}（セット完了後）
+                </span>
+              )}
+            </div>
+            <button
+              type="button"
+              className="pattern-shift-btn"
+              onClick={() => handleShiftPattern(1)}
+              aria-label="次のパターン"
+            >
+              ›
+            </button>
+          </div>
+        )}
       </header>
 
       <section className="menu-section">
         <div className="menu-list">
           {menuItems.length === 0 ? (
             <p className="empty-message">
-              メニューがありません。メニュー設定で登録するか、下のボタンから追加してください。
+              {routineMode === 'pattern'
+                ? 'メニューがありません。メニュー設定でパターンを登録するか、下のボタンから追加してください。'
+                : 'メニューがありません。メニュー設定で登録するか、下のボタンから追加してください。'}
             </p>
           ) : (
             menuItems

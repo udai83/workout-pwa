@@ -158,6 +158,12 @@
   line-height: var(--leading-tight);
 }
 
+.day-pattern-label {
+  color: var(--accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
 .no-data {
   color: var(--text-secondary);
   padding: var(--space-xl) 0;

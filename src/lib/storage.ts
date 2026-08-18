@@ -1,10 +1,13 @@
-import type { MenuSchedule, DailyRecord, MenuItem } from '@/types'
+import type { MenuSchedule, DailyRecord, MenuItem, RoutineSettings } from '@/types'
 import { migrateMenuItem } from '@/lib/utils'
 
 const STORAGE_KEYS = {
   MENU_SCHEDULES: 'workout_menu_schedules',
   DAILY_RECORDS: 'workout_daily_records',
+  ROUTINE_SETTINGS: 'workout_routine_settings',
 } as const
+
+const DEFAULT_ROUTINE_SETTINGS: RoutineSettings = { mode: 'weekday' }
 
 function getItem<T>(key: string, defaultValue: T): T {
   try {
@@ -58,5 +61,17 @@ export const storage = {
     const records = this.getDailyRecords()
     records[record.date] = record
     this.setDailyRecords(records)
+  },
+
+  getRoutineSettings(): RoutineSettings {
+    const raw = getItem<Partial<RoutineSettings>>(STORAGE_KEYS.ROUTINE_SETTINGS, {})
+    if (raw.mode === 'pattern' || raw.mode === 'weekday') {
+      return { mode: raw.mode }
+    }
+    return { ...DEFAULT_ROUTINE_SETTINGS }
+  },
+
+  setRoutineSettings(settings: RoutineSettings): void {
+    setItem(STORAGE_KEYS.ROUTINE_SETTINGS, settings)
   },
 }

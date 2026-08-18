@@ -1,7 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import type { MenuSchedule, MenuItem, SetGroup } from '@/types'
+import type { MenuSchedule, MenuItem, SetGroup, RoutineMode } from '@/types'
 import { storage } from '@/lib/storage'
 import { generateId } from '@/lib/utils'
+import {
+  createPatternSchedule,
+  ensureDefaultPatterns,
+  getPatternSchedules,
+  nextPatternName,
+} from '@/lib/menuUtils'
 import './MenuSettingsScreen.css'
 
 const WEEKDAY_NAMES = ['日', '月', '火', '水', '木', '金', '土']
@@ -30,10 +36,15 @@ function getWeekdaySchedules(existing: MenuSchedule[]): MenuSchedule[] {
 
 export default function MenuSettingsScreen() {
   const [schedules, setSchedules] = useState<MenuSchedule[]>([])
-  const [expandedWeekday, setExpandedWeekday] = useState<number | null>(null)
+  const [mode, setMode] = useState<RoutineMode>('weekday')
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const weekdaySchedules = useMemo(
     () => getWeekdaySchedules(schedules),
+    [schedules]
+  )
+  const patternSchedules = useMemo(
+    () => getPatternSchedules(schedules),
     [schedules]
   )
 
@@ -46,7 +57,15 @@ export default function MenuSettingsScreen() {
       toSave.push(existing ?? s)
     }
     storage.setMenuSchedules(toSave)
-    setSchedules(toSave)
+    const loadedMode = storage.getRoutineSettings().mode
+    setMode(loadedMode)
+    if (loadedMode === 'pattern' && getPatternSchedules(toSave).length === 0) {
+      const withDefaults = ensureDefaultPatterns(toSave)
+      storage.setMenuSchedules(withDefaults)
+      setSchedules(withDefaults)
+    } else {
+      setSchedules(toSave)
+    }
   }, [])
 
   const saveSchedules = (newSchedules: MenuSchedule[]) => {
@@ -54,49 +73,65 @@ export default function MenuSettingsScreen() {
     storage.setMenuSchedules(newSchedules)
   }
 
-  const handleUpdateSchedule = (weekday: number, updates: Partial<MenuSchedule>) => {
-    const schedule = weekdaySchedules[weekday]
+  const findSchedule = (scheduleId: string) =>
+    schedules.find((s) => s.id === scheduleId) ??
+    weekdaySchedules.find((s) => s.id === scheduleId) ??
+    patternSchedules.find((s) => s.id === scheduleId)
+
+  const handleModeChange = (nextMode: RoutineMode) => {
+    setMode(nextMode)
+    storage.setRoutineSettings({ mode: nextMode })
+    if (nextMode === 'pattern' && getPatternSchedules(schedules).length === 0) {
+      const withDefaults = ensureDefaultPatterns(schedules)
+      saveSchedules(withDefaults)
+    }
+  }
+
+  const handleUpdateSchedule = (scheduleId: string, updates: Partial<MenuSchedule>) => {
+    const schedule = findSchedule(scheduleId)
     if (!schedule) return
     const updated = { ...schedule, ...updates }
-    const others = schedules.filter((s) => s.scheduleType !== 'weekday' || s.weekday !== weekday)
-    saveSchedules([...others, updated])
+    const exists = schedules.some((s) => s.id === scheduleId)
+    saveSchedules(exists
+      ? schedules.map((s) => (s.id === scheduleId ? updated : s))
+      : [...schedules, updated])
   }
 
-  const handleClearRoutine = (weekday: number) => {
-    handleUpdateSchedule(weekday, { menuItems: [] })
+  const handleClearRoutine = (scheduleId: string) => {
+    handleUpdateSchedule(scheduleId, { menuItems: [] })
   }
 
-  const handleAddMenuItem = (weekday: number) => {
-    const schedule = weekdaySchedules[weekday]
+  const handleAddMenuItem = (scheduleId: string) => {
+    const schedule = findSchedule(scheduleId)
     if (!schedule) return
     const newItem: MenuItem = {
       id: generateId(),
       name: '',
       setGroups: [{ weight: 0, reps: 0, sets: 0 }],
     }
-    handleUpdateSchedule(weekday, {
+    handleUpdateSchedule(scheduleId, {
       menuItems: [...schedule.menuItems, newItem],
     })
   }
 
-  const handleUpdateMenuItem = (weekday: number, itemId: string, item: MenuItem) => {
-    const schedule = weekdaySchedules[weekday]
+  const handleUpdateMenuItem = (scheduleId: string, itemId: string, item: MenuItem) => {
+    const schedule = findSchedule(scheduleId)
     if (!schedule) return
-    handleUpdateSchedule(weekday, {
+    handleUpdateSchedule(scheduleId, {
       menuItems: schedule.menuItems.map((m) => (m.id === itemId ? item : m)),
     })
   }
 
-  const handleDeleteMenuItem = (weekday: number, itemId: string) => {
-    const schedule = weekdaySchedules[weekday]
+  const handleDeleteMenuItem = (scheduleId: string, itemId: string) => {
+    const schedule = findSchedule(scheduleId)
     if (!schedule) return
-    handleUpdateSchedule(weekday, {
+    handleUpdateSchedule(scheduleId, {
       menuItems: schedule.menuItems.filter((m) => m.id !== itemId),
     })
   }
 
-  const handleMoveMenuItem = (weekday: number, itemId: string, direction: 'up' | 'down') => {
-    const schedule = weekdaySchedules[weekday]
+  const handleMoveMenuItem = (scheduleId: string, itemId: string, direction: 'up' | 'down') => {
+    const schedule = findSchedule(scheduleId)
     if (!schedule) return
     const items = [...schedule.menuItems]
     const idx = items.findIndex((m) => m.id === itemId)
@@ -104,52 +139,135 @@ export default function MenuSettingsScreen() {
     const nextIdx = direction === 'up' ? idx - 1 : idx + 1
     if (nextIdx < 0 || nextIdx >= items.length) return
     ;[items[idx], items[nextIdx]] = [items[nextIdx], items[idx]]
-    handleUpdateSchedule(weekday, { menuItems: items })
+    handleUpdateSchedule(scheduleId, { menuItems: items })
   }
+
+  const handleAddPattern = () => {
+    const next = createPatternSchedule(
+      nextPatternName(patternSchedules),
+      patternSchedules.length
+    )
+    saveSchedules([...schedules, next])
+    setExpandedId(next.id)
+  }
+
+  const handleRenamePattern = (scheduleId: string, name: string) => {
+    handleUpdateSchedule(scheduleId, { patternName: name })
+  }
+
+  const handleDeletePattern = (scheduleId: string) => {
+    if (patternSchedules.length <= 1) return
+    const remaining = getPatternSchedules(schedules.filter((s) => s.id !== scheduleId))
+      .map((s, i) => ({ ...s, patternOrder: i }))
+    const others = schedules.filter((s) => s.scheduleType !== 'pattern')
+    saveSchedules([...others, ...remaining])
+    if (expandedId === scheduleId) setExpandedId(null)
+  }
+
+  const handleMovePattern = (scheduleId: string, direction: 'up' | 'down') => {
+    const items = [...patternSchedules]
+    const idx = items.findIndex((s) => s.id === scheduleId)
+    if (idx < 0) return
+    const nextIdx = direction === 'up' ? idx - 1 : idx + 1
+    if (nextIdx < 0 || nextIdx >= items.length) return
+    ;[items[idx], items[nextIdx]] = [items[nextIdx], items[idx]]
+    const reordered = items.map((s, i) => ({ ...s, patternOrder: i }))
+    const others = schedules.filter((s) => s.scheduleType !== 'pattern')
+    saveSchedules([...others, ...reordered])
+  }
+
+  const visibleSchedules = mode === 'weekday' ? weekdaySchedules : patternSchedules
 
   return (
     <div className="menu-settings-screen">
       <header className="settings-header">
         <h1>Set Menu設定</h1>
         <p className="settings-desc">
-          各曜日のトレーニングルーティンを構成・管理しましょう
+          {mode === 'weekday'
+            ? '各曜日のトレーニングルーティンを構成・管理しましょう'
+            : 'ABCなどのパターンを順番に回します。休んだ日はスキップされます。'}
         </p>
       </header>
 
-      <div className="schedule-list">
-        {weekdaySchedules.map((schedule, idx) => {
-          const weekday = schedule.weekday ?? idx
-          return (
-            <ScheduleCard
-              key={schedule.id}
-              schedule={schedule}
-              weekday={weekday}
-              isExpanded={expandedWeekday === weekday}
-              onToggleExpand={() =>
-                setExpandedWeekday((prev) => (prev === weekday ? null : weekday))
-              }
-              onClearRoutine={() => handleClearRoutine(weekday)}
-              onAddMenuItem={() => handleAddMenuItem(weekday)}
-              onUpdateMenuItem={(itemId, item) =>
-                handleUpdateMenuItem(weekday, itemId, item)
-              }
-              onDeleteMenuItem={(itemId) =>
-                handleDeleteMenuItem(weekday, itemId)
-              }
-              onMoveMenuItem={(itemId, dir) =>
-                handleMoveMenuItem(weekday, itemId, dir)
-              }
-            />
-          )
-        })}
+      <div className="mode-toggle" role="tablist" aria-label="ルーティン方式">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === 'weekday'}
+          className={`mode-toggle-btn ${mode === 'weekday' ? 'active' : ''}`}
+          onClick={() => handleModeChange('weekday')}
+        >
+          曜日ごと
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === 'pattern'}
+          className={`mode-toggle-btn ${mode === 'pattern' ? 'active' : ''}`}
+          onClick={() => handleModeChange('pattern')}
+        >
+          パターン
+        </button>
       </div>
+
+      <div className="schedule-list">
+        {visibleSchedules.map((schedule, idx) => (
+          <ScheduleCard
+            key={schedule.id}
+            schedule={schedule}
+            label={
+              mode === 'weekday'
+                ? `${WEEKDAY_NAMES[schedule.weekday ?? idx]}曜日`
+                : schedule.patternName || `パターン${idx + 1}`
+            }
+            isExpanded={expandedId === schedule.id}
+            onToggleExpand={() =>
+              setExpandedId((prev) => (prev === schedule.id ? null : schedule.id))
+            }
+            onClearRoutine={() => handleClearRoutine(schedule.id)}
+            onAddMenuItem={() => handleAddMenuItem(schedule.id)}
+            onUpdateMenuItem={(itemId, item) =>
+              handleUpdateMenuItem(schedule.id, itemId, item)
+            }
+            onDeleteMenuItem={(itemId) =>
+              handleDeleteMenuItem(schedule.id, itemId)
+            }
+            onMoveMenuItem={(itemId, dir) =>
+              handleMoveMenuItem(schedule.id, itemId, dir)
+            }
+            nameEditable={mode === 'pattern'}
+            onRename={
+              mode === 'pattern'
+                ? (name) => handleRenamePattern(schedule.id, name)
+                : undefined
+            }
+            onDeleteSchedule={
+              mode === 'pattern' ? () => handleDeletePattern(schedule.id) : undefined
+            }
+            canDeleteSchedule={mode === 'pattern' && patternSchedules.length > 1}
+            onMoveSchedule={
+              mode === 'pattern'
+                ? (dir) => handleMovePattern(schedule.id, dir)
+                : undefined
+            }
+            canMoveUp={mode === 'pattern' && idx > 0}
+            canMoveDown={mode === 'pattern' && idx < patternSchedules.length - 1}
+          />
+        ))}
+      </div>
+
+      {mode === 'pattern' && (
+        <button type="button" className="add-pattern-btn" onClick={handleAddPattern}>
+          ＋ パターンを追加
+        </button>
+      )}
     </div>
   )
 }
 
 interface ScheduleCardProps {
   schedule: MenuSchedule
-  weekday: number
+  label: string
   isExpanded: boolean
   onToggleExpand: () => void
   onClearRoutine: () => void
@@ -157,11 +275,18 @@ interface ScheduleCardProps {
   onUpdateMenuItem: (itemId: string, item: MenuItem) => void
   onDeleteMenuItem: (itemId: string) => void
   onMoveMenuItem: (itemId: string, direction: 'up' | 'down') => void
+  nameEditable?: boolean
+  onRename?: (name: string) => void
+  onDeleteSchedule?: () => void
+  canDeleteSchedule?: boolean
+  onMoveSchedule?: (direction: 'up' | 'down') => void
+  canMoveUp?: boolean
+  canMoveDown?: boolean
 }
 
 function ScheduleCard({
   schedule,
-  weekday,
+  label,
   isExpanded,
   onToggleExpand,
   onClearRoutine,
@@ -169,8 +294,23 @@ function ScheduleCard({
   onUpdateMenuItem,
   onDeleteMenuItem,
   onMoveMenuItem,
+  nameEditable,
+  onRename,
+  onDeleteSchedule,
+  canDeleteSchedule,
+  onMoveSchedule,
+  canMoveUp,
+  canMoveDown,
 }: ScheduleCardProps) {
-  const label = `${WEEKDAY_NAMES[weekday]}曜日`
+  const [editingName, setEditingName] = useState(false)
+  const [nameDraft, setNameDraft] = useState(label)
+
+  const commitRename = () => {
+    const next = nameDraft.trim()
+    if (next && next !== label) onRename?.(next)
+    else setNameDraft(label)
+    setEditingName(false)
+  }
 
   return (
     <article className={`schedule-card ${isExpanded ? 'expanded' : ''}`}>
@@ -191,9 +331,60 @@ function ScheduleCard({
       {isExpanded && (
         <div className="schedule-body">
           <div className="schedule-actions">
+            {nameEditable && (
+              editingName ? (
+                <div className="pattern-rename-row">
+                  <input
+                    type="text"
+                    className="edit-input pattern-name-input"
+                    value={nameDraft}
+                    onChange={(e) => setNameDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') commitRename()
+                      if (e.key === 'Escape') {
+                        setNameDraft(label)
+                        setEditingName(false)
+                      }
+                    }}
+                    placeholder="パターン名"
+                    aria-label="パターン名"
+                    autoFocus
+                  />
+                  <button type="button" className="btn-save-sm" onClick={commitRename}>
+                    保存
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-edit"
+                  onClick={() => {
+                    setNameDraft(label)
+                    setEditingName(true)
+                  }}
+                >
+                  名前を変更
+                </button>
+              )
+            )}
+            {onMoveSchedule && canMoveUp && (
+              <button type="button" className="btn-move-sm" onClick={() => onMoveSchedule('up')}>
+                上へ
+              </button>
+            )}
+            {onMoveSchedule && canMoveDown && (
+              <button type="button" className="btn-move-sm" onClick={() => onMoveSchedule('down')}>
+                下へ
+              </button>
+            )}
             {schedule.menuItems.length > 0 && (
               <button type="button" className="btn-delete" onClick={onClearRoutine}>
                 ルーティンをクリア
+              </button>
+            )}
+            {canDeleteSchedule && (
+              <button type="button" className="btn-delete" onClick={onDeleteSchedule}>
+                パターンを削除
               </button>
             )}
           </div>

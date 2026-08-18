@@ -3,7 +3,7 @@ import './HelpButton.css'
 
 const HELP_CONTENT = [
   { title: 'Today', text: 'メニューの数字ボタンをタップしてセット完了を記録。editで内容変更、＋Add menuで追加。' },
-  { title: 'Menu', text: '曜日・日付ごとにメニューを登録。登録したメニューがTodayに表示されます。' },
+  { title: 'Menu', text: '「曜日ごと」か「パターン（ABCなど）」を選んでメニューを登録。パターンはトレーニングした日だけ順番に進み、休んだ日はスキップされます。' },
   { title: 'Calendar', text: '日付をタップして過去の記録を確認できます。' },
   { title: 'Changes', text: '身体情報やトレーニング量の変化を確認できます。' },
 ]

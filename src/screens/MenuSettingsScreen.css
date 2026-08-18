@@ -33,6 +33,65 @@
   color: var(--text-secondary);
 }
 
+.mode-toggle {
+  display: flex;
+  gap: var(--space-xs);
+  padding: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.mode-toggle-btn {
+  flex: 1;
+  min-height: var(--space-2xl);
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mode-toggle-btn.active {
+  background: var(--bg-card);
+  color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.pattern-rename-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.pattern-name-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-pattern-btn {
+  width: 100%;
+  min-height: var(--space-2xl);
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  padding: var(--space-lg);
+  background: transparent;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 700;
+}
+
+.add-pattern-btn:hover {
+  background: var(--accent-bg-hover);
+}
+
 .schedule-list {
   display: flex;
   flex-direction: column;
