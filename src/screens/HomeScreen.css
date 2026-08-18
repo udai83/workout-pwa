@@ -92,25 +92,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-.pattern-shift-btn {
-  flex-shrink: 0;
-  width: var(--space-2xl);
-  min-height: var(--space-2xl);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: var(--text-xl);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.pattern-shift-btn:hover {
-  background: var(--accent-bg-hover);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
 .pattern-selector-main {
   flex: 1;
   min-width: 0;
@@ -126,55 +107,40 @@
   font-weight: 600;
 }
 
-.pattern-selector-name {
-  font-size: var(--text-lg);
+.pattern-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  margin-top: var(--space-xs);
+}
+
+.pattern-pill {
+  min-height: var(--space-2xl);
+  min-width: var(--space-2xl);
+  padding: var(--space-sm) var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: var(--text-base);
   font-weight: 700;
-  color: var(--accent);
-  line-height: var(--leading-tight);
+}
+
+.pattern-pill.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: var(--purple-glow);
 }
 
 .pattern-selector-next {
   font-size: var(--text-xs);
   color: var(--text-secondary);
-}
-
-.pattern-choice {
-  margin-top: var(--space-sm);
-  padding: var(--space-lg);
-  background: var(--bg-card);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.pattern-choice-text {
-  font-size: var(--text-sm);
-  color: var(--text-primary);
+  text-align: center;
   line-height: var(--leading-base);
-  margin-bottom: var(--space-md);
-}
-
-.pattern-choice-actions {
-  display: flex;
-  gap: var(--space-sm);
-}
-
-.pattern-choice-btn {
-  flex: 1;
-  min-height: var(--space-2xl);
-  padding: var(--space-md);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-  font-weight: 700;
-}
-
-.pattern-choice-btn.primary {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
+  margin-top: var(--space-xs);
 }
 
 .menu-section {

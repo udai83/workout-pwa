@@ -176,7 +176,13 @@ export default function HomeScreen() {
   }, [editingItemId])
 
   const handleChoosePattern = (patternId: string) => {
-    saveRecord({ assignedPatternId: patternId, menuItemOrder: undefined })
+    setEditingItemId(null)
+    if (baseRecord.assignedPatternId === patternId) return
+    const switching = currentPattern?.id !== patternId
+    saveRecord({
+      assignedPatternId: patternId,
+      menuItemOrder: switching ? undefined : baseRecord.menuItemOrder,
+    })
   }
 
   return (
@@ -199,13 +205,26 @@ export default function HomeScreen() {
           </button>
         </div>
         {routineMode === 'pattern' && patternSchedules.length > 0 && (
-          <>
             <div className="pattern-selector">
               <div className="pattern-selector-main">
                 <span className="pattern-selector-label">今日のパターン</span>
-                <span className="pattern-selector-name">
-                  {currentPattern?.patternName || '未設定'}
-                </span>
+                <div className="pattern-pills" role="tablist" aria-label="パターン切り替え">
+                  {patternSchedules.map((p) => {
+                    const active = currentPattern?.id === p.id
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
+                        className={`pattern-pill ${active ? 'active' : ''}`}
+                        onClick={() => handleChoosePattern(p.id)}
+                      >
+                        {p.patternName || 'パターン'}
+                      </button>
+                    )
+                  })}
+                </div>
                 {!needsPatternChoice && patternDecision?.lastPattern && currentPattern && patternDecision.lastPattern.id !== currentPattern.id && (
                   <span className="pattern-selector-next">
                     前回 {patternDecision.lastPattern.patternName} 完了 → 今日は {currentPattern.patternName}
@@ -216,32 +235,13 @@ export default function HomeScreen() {
                     全種目完了後は {nextPattern.patternName}
                   </span>
                 )}
+                {needsPatternChoice && patternDecision?.lastPattern && (
+                  <span className="pattern-selector-next">
+                    前回の「{patternDecision.lastPattern.patternName}」は未完了です。続けるか、別のパターンに切り替えてください。
+                  </span>
+                )}
               </div>
             </div>
-            {needsPatternChoice && patternDecision?.lastPattern && patternDecision.nextPattern && (
-              <div className="pattern-choice">
-                <p className="pattern-choice-text">
-                  前回の「{patternDecision.lastPattern.patternName}」は未完了の種目があります。今回はどうしますか？
-                </p>
-                <div className="pattern-choice-actions">
-                  <button
-                    type="button"
-                    className="pattern-choice-btn"
-                    onClick={() => handleChoosePattern(patternDecision.lastPattern!.id)}
-                  >
-                    {patternDecision.lastPattern.patternName} を続ける
-                  </button>
-                  <button
-                    type="button"
-                    className="pattern-choice-btn primary"
-                    onClick={() => handleChoosePattern(patternDecision.nextPattern!.id)}
-                  >
-                    {patternDecision.nextPattern.patternName} に進む
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
         )}
       </header>
 
